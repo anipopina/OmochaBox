@@ -1,0 +1,243 @@
+import { createServer } from 'node:http';
+import { readFile, mkdir, writeFile, mkdtemp, rm } from 'node:fs/promises';
+import { spawn } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import assert from 'node:assert/strict';
+
+// No packages required. Uses a local Chromium binary and its DevTools protocol.
+const root = resolve(import.meta.dirname, '..');
+const binary = process.env.CHROME_PATH || '/usr/bin/chromium';
+const profile = await mkdtemp(join(tmpdir(), 'hikari-browser-'));
+const errors = [], reports = [];
+let audioFailure=false,audioDelay=0,audioRequests=0;
+const hook = `const audioEvents=[]; const originalSound=sound; sound=(...args)=>{const before=lastSound;originalSound(...args);if(before!==lastSound){audioEvents.push({time:lastSound,kind:args[1]||'flower',peak:args[1]==='sparkle'?sparkleGain(args[2]):.24});if(audioEvents.length>500)audioEvents.shift();}};
+const originalPlaySample=playSample;playSample=(...args)=>{const before=nextSampleAt;originalPlaySample(...args);if(before!==nextSampleAt){audioEvents.push({time:args[0],kind:'sample',peak:sparkleGain(args[1])});if(audioEvents.length>500)audioEvents.shift();}};
+window.__test = { snapshot: () => ({ points: points.length, particles: particles.length, flowers: flowers.length, fingers: fingers.size, voices: voices.size, samples:[...voices].filter(v=>v.kind==='sample').map(v=>({peak:v.peak,fading:v.fading,bufferMatch:v.osc.buffer===sampleBuffer})), sampleStatus, sampleDuration:sampleBuffer?.duration, raf, muted, audio: audio?.state, width, height, released: flowers.map(f=>f.released), radii: flowers.map(f=>f.radius), charges: [...fingers.values()].map(p=>chargeAt(p,performance.now())), peaks: [...fingers.values()].map(p=>p.peakTime), notes: audioEvents.slice(), masterGain:master?.gain.value, compressorRatio:compressor?.ratio.value, newestParticle: Math.max(0,...particles.map(p=>p.time)), pixels: canvas.width * canvas.height }), clear: reset, hold: (id, ms) => { fingers.get(id).time=performance.now()-ms; }, curve: ms => ({ charge: chargeAt({time:0},ms), radius: flowerRadius(chargeAt({time:0},ms)), sparkle:sparkleGain(chargeAt({time:0},ms)), scale: sceneScale() }), age: ms => {for(const list of [points,flowers,particles])for(const p of list)p.time-=ms;wake();} };`;
+const server = createServer(async (req, res) => {
+  const url=new URL(req.url,'http://localhost').pathname;
+  if (['/','/index.html','/box.js','/box.css','/games.js'].includes(url)) {
+    const name=url==='/'?'index.html':url.slice(1);
+    res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html');
+    res.end(await readFile(join(root,'dist',name)));return;
+  }
+  const path = url.replace(/^\/games\/hikari-no-oekaki\//,'') || 'index.html';
+  if(path==='assets/ta_ta_hosikuzu01.mp3'){
+    audioRequests++;if(audioDelay)await new Promise(r=>setTimeout(r,audioDelay));
+    if(audioFailure){res.writeHead(503).end();return;}
+    res.setHeader('Content-Type','audio/mpeg');res.end(await readFile(join(root,'dist/games/hikari-no-oekaki',path)));return;
+  }
+  if (/^assets\/leaves-(top|bottom)-(left|right)\.webp$/.test(path)) {
+    res.setHeader('Content-Type','image/webp');res.end(await readFile(join(root,'dist/games/hikari-no-oekaki',path)));return;
+  }
+  if (!['index.html', 'app.js', 'style.css'].includes(path)) { res.writeHead(404).end(); return; }
+  let data = await readFile(join(root, 'dist/games/hikari-no-oekaki', path), 'utf8');
+  if (path === 'app.js') data = data.replace(/\}\)\(\);\s*$/, hook + `
+    window.__test.layerScene=()=>{
+      reset(); const now=performance.now(),time=now-500;
+      push(points,LIMIT,{sx:130,sy:150,x:260,y:150,color:0,time,grain:0});
+      push(points,LIMIT,{sx:200,sy:90,x:200,y:220,color:1,time,grain:0});
+      push(flowers,FLOWERS,{x:400,y:200,color:0,time,radius:55,released:0});
+      push(flowers,FLOWERS,{x:400,y:200,color:2,time,radius:55,released:0});
+      push(flowers,FLOWERS,{x:600,y:200,color:0,time,radius:55,released:0});
+      push(points,LIMIT,{sx:540,sy:160,x:670,y:160,color:1,time:now,grain:0});
+      draw(now); const scale=ctx.getTransform().a;
+      return [[200,150],[400,160],[600,160]].map(([x,y])=>[...ctx.getImageData(Math.round(x*scale),Math.round(y*scale),1,1).data]);
+    };\n})();`);
+  res.setHeader('Content-Type', path.endsWith('.js') ? 'text/javascript' : path.endsWith('.css') ? 'text/css' : 'text/html');
+  res.end(data);
+});
+await new Promise(r => server.listen(0, '127.0.0.1', r));
+const chrome = spawn(binary, ['--headless=new', '--no-sandbox', '--no-first-run', '--no-default-browser-check', '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: 'ignore' });
+let ws;
+const delay = ms => new Promise(r => setTimeout(r, ms));
+try {
+  let port;
+  for (let i = 0; i < 100; i++) { try { port = (await readFile(join(profile, 'DevToolsActivePort'), 'utf8')).split('\n')[0]; break; } catch { await delay(100); } }
+  assert.ok(port, 'Chromium started');
+  const tabs = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
+  ws = new WebSocket(tabs.find(t => t.type === 'page').webSocketDebuggerUrl);
+  await new Promise(r => ws.addEventListener('open', r, { once: true }));
+  let id = 0; const pending = new Map();
+  ws.addEventListener('message', e => {
+    const m = JSON.parse(e.data);
+    if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails);
+    if (m.id) { const p = pending.get(m.id); pending.delete(m.id); m.error ? p.reject(m.error) : p.resolve(m.result); }
+  });
+  const call = (method, params = {}) => new Promise((resolve, reject) => { const key = ++id; pending.set(key, { resolve, reject }); ws.send(JSON.stringify({ id: key, method, params })); });
+  const evaluate = async expression => {
+    const r = await call('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
+    if (r.exceptionDetails) throw new Error(JSON.stringify(r.exceptionDetails));
+    return r.result.value;
+  };
+  await call('Runtime.enable'); await call('Page.enable');
+  await call('Page.navigate', { url: `http://127.0.0.1:${server.address().port}/games/hikari-no-oekaki/` });
+  for (let i = 0; i < 100 && !await evaluate('!!window.__test'); i++) await delay(50);
+  const assetResponse=await fetch(`http://127.0.0.1:${server.address().port}/games/hikari-no-oekaki/assets/ta_ta_hosikuzu01.mp3`);
+  assert.equal(assetResponse.headers.get('content-type'),'audio/mpeg');assert.deepEqual(Buffer.from(await assetResponse.arrayBuffer()),await readFile(join(root,'dist/games/hikari-no-oekaki/assets/ta_ta_hosikuzu01.mp3')));
+  assert.equal(await evaluate(`Promise.all(['top-left','top-right','bottom-left','bottom-right'].map(c=>new Promise(resolve=>{const i=new Image();i.onload=()=>resolve(i.naturalWidth===660);i.onerror=()=>resolve(false);i.src='assets/leaves-'+c+'.webp'}))).then(r=>r.filter(Boolean).length)`),4,'All four optimized WebPs served and decoded');
+  const state = () => evaluate('__test.snapshot()');
+  const pointer = (type, x, y, pointerId = 1) => evaluate(`document.querySelector('canvas').dispatchEvent(new PointerEvent('${type}', {pointerId:${pointerId}, pointerType:'touch', clientX:${x}, clientY:${y}, buttons:1, bubbles:true,cancelable:true}))`);
+  await mkdir(join(root, 'test-results'), { recursive: true });
+  for (const [name, width, height, mobile] of [['iphone-portrait',390,844,true], ['iphone-landscape',844,390,true], ['ipad',820,1180,true], ['ipad-landscape',1180,820,true], ['desktop',1280,800,false]]) {
+    await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 2, mobile }); await delay(100);
+    assert.deepEqual(await evaluate('[innerWidth,innerHeight]'), [width,height]);
+    assert.ok((await state()).pixels <= 4005000);
+    const layout = await evaluate(`(()=>{const r=document.querySelector('button').getBoundingClientRect();return {inside:r.right<=innerWidth&&r.bottom<=innerHeight,scroll:document.documentElement.scrollWidth>innerWidth}})()`);
+    assert.ok(layout.inside && !layout.scroll);
+    const gardenShot=await call('Page.captureScreenshot',{format:'png'});
+    await writeFile(join(root,'test-results','garden-'+name+'.png'),Buffer.from(gardenShot.data,'base64'));
+    await call('Input.dispatchMouseEvent',{type:'mousePressed',x:25,y:height-35,button:'left',clickCount:1});
+    await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:25,y:height-35,button:'left',clickCount:1});
+    assert.equal((await state()).flowers,1,'Tap on leaf reaches drawing canvas');
+    await evaluate('__test.clear()');
+    await pointer('pointerdown', width*.25, height*.4);
+    await pointer('pointerdown', width*.7, height*.5, 2);
+    assert.equal((await state()).flowers, 0, 'No flower on pointerdown');
+    for(let i=0;i<25;i++) { await pointer('pointermove', width*(.25+i*.014), height*(.4+Math.sin(i/8)*.1)); await pointer('pointermove', width*(.7-i*.013), height*(.6+Math.sin(i/9)*.12), 2); }
+    assert.equal((await state()).fingers, 2);
+    await pointer('pointerup',width*.59,height*.414);
+    await pointer('pointerup',width*.39,height*.655,2);
+    assert.equal((await state()).flowers,2,'One flower per normal release');
+    await pointer('pointerup',width*.59,height*.414);
+    assert.equal((await state()).flowers,2,'Duplicate up cannot bloom');
+    await pointer('pointerdown',width*.78,height*.78,3);
+    await pointer('pointerup',width*.78,height*.78,3);
+    assert.equal((await state()).flowers,3,'Short tap blooms');
+    await delay(450);
+    const shot = await call('Page.captureScreenshot', { format:'png' });
+    await writeFile(join(root, 'test-results', name+'.png'), Buffer.from(shot.data,'base64'));
+    await pointer('pointerdown',100,100,4);await pointer('pointercancel',100,100,4);await pointer('pointerup',100,100,4);
+    assert.equal((await state()).flowers,3,'Cancel never blooms');
+    assert.equal((await state()).fingers, 0);
+    reports.push(`${name}: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS`);
+    await evaluate('__test.clear()');
+    const portrait=height>width;
+    const layoutPoints=portrait?[[.5,.23],[.5,.74],[.8,.485]]:[[.21,.48],[.79,.48],[.50,.48]];
+    for(let i=0;i<3;i++){
+      const [x,y]=layoutPoints[i];await pointer('pointerdown',width*x,height*y,10+i);
+      if(i<2)await evaluate(`__test.hold(${10+i},6000)`);
+      await evaluate(`if(${i}===2)__test.hold(${10+i},0);document.querySelector('canvas').dispatchEvent(new PointerEvent('pointerup',{pointerId:${10+i},pointerType:'touch',clientX:${width*x},clientY:${height*y},bubbles:true}))`);
+    }
+    await delay(450);
+    const sizes=(await state()).radii;assert.ok(Math.abs(sizes[0]/sizes[2]-2)<.003);assert.equal(sizes[0],sizes[1]);
+    const maxShot=await call('Page.captureScreenshot',{format:'png'});
+    await writeFile(join(root,'test-results',name+'-charge-comparison.png'),Buffer.from(maxShot.data,'base64'));
+    await evaluate('__test.clear()');
+  }
+  const curve=await evaluate('[0,3000,5999,6000,9000].map(ms=>__test.curve(ms))');
+  assert.equal(curve[0].charge,0);assert.equal(curve[1].charge,.5);assert.ok(curve[2].charge<1);assert.equal(curve[3].charge,1);assert.equal(curve[4].radius,curve[3].radius);
+  assert.ok(Math.abs(curve[0].radius-50.7*1.5*curve[0].scale)<1e-9,'Initial v3 flower size unchanged');
+  assert.ok(Math.abs(curve[1].radius/curve[0].radius-1.5)<1e-9);assert.equal(curve[3].radius/curve[0].radius,2);
+  assert.ok(curve[0].sparkle<curve[1].sparkle&&curve[1].sparkle<curve[3].sparkle&&curve[3].sparkle===curve[4].sparkle);
+  await pointer('pointerdown',350,350,31);
+  const start=await state();await delay(3000);const middle=await state();
+  assert.ok(middle.charges[0]>.49&&middle.charges[0]<.57&&middle.newestParticle>start.newestParticle&&middle.raf>0);
+  await pointer('pointerdown',700,350,32);
+  await delay(3100);const full=await state();
+  assert.equal(full.charges[0],1);assert.ok(full.charges[1]>.5&&full.charges[1]<.6);assert.ok(full.peaks[0]>0&&full.peaks[1]===0);
+  assert.ok(full.notes.some(n=>n.kind==='sample'),'Stationary touch uses MP3 AudioBufferSource');
+  assert.equal(full.sampleStatus,'ready');assert.ok(full.sampleDuration>7.2&&full.sampleDuration<7.4);assert.ok(full.samples.length<=2&&full.samples.every(s=>s.bufferMatch&&s.peak<=2.25));
+  assert.ok(full.newestParticle>middle.newestParticle&&full.particles<=220);
+  const holdShot=await call('Page.captureScreenshot',{format:'png'});await writeFile(join(root,'test-results','stationary-6s-and-3s.png'),Buffer.from(holdShot.data,'base64'));
+  await delay(900);assert.equal((await state()).peaks[0],full.peaks[0],'Peak does not repeat');
+  await pointer('pointercancel',350,350,31);await pointer('pointercancel',700,350,32);assert.equal((await state()).flowers,0);
+  const cancelledNotes=(await state()).notes.length;await delay(500);assert.equal((await state()).notes.length,cancelledNotes);assert.equal((await state()).voices,0);
+  await evaluate('__test.clear()');
+  reports.push('Unchanged initial size; 0/3/6/9s flower factors 1/1.5/2/2; independent 2 fingers; peak once; shared decoded MP3 used during hold PASS');
+  for(let id=40;id<50;id++){await pointer('pointerdown',150+(id-40)*90,400,id);await evaluate(`__test.hold(${id},6000)`);}
+  await delay(900);const multi=await state();assert.equal(multi.peaks.filter(Boolean).length,10);assert.ok(multi.voices<=4&&multi.particles<=220&&multi.samples.length<=2&&multi.samples.every(s=>s.peak<=2.25));assert.ok(multi.masterGain<=.221&&multi.compressorRatio===8);
+  await delay(500);assert.deepEqual((await state()).peaks,multi.peaks,'No repeated 10-finger bursts');
+  await evaluate(`document.querySelector('button').click()`);const mutedNotes=(await state()).notes.length;assert.equal((await state()).voices,0);
+  await delay(650);assert.equal((await state()).notes.length,mutedNotes);
+  await evaluate(`document.querySelector('button').click()`);await delay(600);assert.ok((await state()).notes.length-mutedNotes<=5,'No catch-up notes after unmute');
+  await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`);
+  const hidden=await state();assert.equal(hidden.fingers+hidden.voices+hidden.particles,0);await delay(500);assert.equal((await state()).notes.length,hidden.notes.length);
+  await evaluate(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'))`);await delay(400);assert.equal((await state()).notes.length,hidden.notes.length,'No stale sound after visibility restore');
+  const notes=(await state()).notes;assert.ok(notes.every(n=>n.peak<=(n.kind==='sample'?2.25:.24)));const flowerNotes=notes.filter(n=>n.kind==='flower');assert.ok(flowerNotes.slice(1).every((n,i)=>n.time-flowerNotes[i].time>=149.5));
+  reports.push('10 fingers: particles<=220 total voices<=4 MP3 voices<=2 gain<=2.25 each; mute/cancel/hidden restore without stale playback PASS');
+  // Trusted mouse input exercises actual browser capture and audio activation.
+  await call('Input.dispatchMouseEvent',{type:'mousePressed',x:200,y:200,button:'left',clickCount:1});
+  await delay(80); assert.equal((await state()).audio, 'running');
+  await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:600,y:300,buttons:1});
+  await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:600,y:300,button:'left',clickCount:1});
+  assert.equal((await state()).fingers,0);
+  await delay(20);assert.ok((await state()).voices>0,'Release plays a short sound');
+  await evaluate(`document.querySelector('button').click()`);
+  assert.equal((await state()).muted,true); assert.equal((await state()).voices,0);
+  await evaluate(`document.querySelector('button').click()`);
+  await evaluate(`(async()=>{const c=document.querySelector('canvas');for(let i=0;i<2000;i++){c.dispatchEvent(new PointerEvent('pointerdown',{pointerId:42,pointerType:'touch',clientX:100,clientY:100}));c.dispatchEvent(new PointerEvent('pointermove',{pointerId:42,pointerType:'touch',clientX:1000,clientY:600}));c.dispatchEvent(new PointerEvent('pointerup',{pointerId:42}));}await Promise.resolve()})()`);
+  const stress = await state(); assert.ok(stress.flowers<=32 && stress.points<=480 && stress.voices<=4 && stress.fingers===0);
+  assert.ok(stress.particles<=220);
+  await pointer('pointerdown',200,200,7);
+  await evaluate(`(()=>{const c=document.querySelector('canvas');for(let i=0;i<5000;i++)c.dispatchEvent(new PointerEvent('pointermove',{pointerId:7,pointerType:'touch',clientX:100+(i%900),clientY:250+Math.sin(i/20)*90,buttons:1}))})()`);
+  assert.ok((await state()).points<=480&&(await state()).particles<=220);
+  await pointer('pointerup',600,250,7);
+  reports.push('Trusted mouse, Web Audio activation, mute, 2,000 taps and 5,000 long-drag moves bounded PASS');
+  await delay(6900);
+  const idle = await state(); assert.equal(idle.points+idle.flowers+idle.particles+idle.voices+idle.raf,0);
+  reports.push('After release: all effects/voices expire and animation stops PASS');
+  await pointer('pointerdown',200,200);
+  await call('Emulation.setDeviceMetricsOverride',{width:800,height:600,deviceScaleFactor:1,mobile:false}); await delay(100);
+  assert.equal((await state()).fingers,0);
+  await pointer('pointerdown',200,200); await evaluate(`window.dispatchEvent(new PageTransitionEvent('pagehide'))`);
+  assert.equal((await state()).flowers,0); assert.equal((await state()).fingers,0);
+  await evaluate(`window.dispatchEvent(new PageTransitionEvent('pageshow'))`);
+  await pointer('pointerup',200,200);assert.equal((await state()).flowers,0,'Stale release after pagehide does not bloom');
+  await pointer('pointerdown',250,250);await pointer('pointermove',400,300);await pointer('pointerup',400,300); assert.equal((await state()).flowers,1);
+  await evaluate('__test.age(2900)');await delay(60);
+  assert.equal((await state()).points,0);assert.ok((await state()).particles>0,'Old line becomes particles');
+  await evaluate('__test.age(1000)');await delay(60);
+  assert.ok((await state()).released[0]>0,'Petals dissolve in sequence');
+  const dissolveShot=await call('Page.captureScreenshot',{format:'png'});
+  await writeFile(join(root,'test-results','dissolving.png'),Buffer.from(dissolveShot.data,'base64'));
+  reports.push('Old segments become particles; petals release particles while remaining shape stays visible PASS');
+  reports.push('Resize clears captures; pagehide/pageshow recovery PASS (synthetic lifecycle events)');
+  assert.deepEqual(await evaluate('__test.layerScene()'),[[255,226,118,255],[255,183,214,255],[118,221,255,255]],'New line over old line; new flower over old flower; old flower over new line');
+  const layers=await call('Page.captureScreenshot',{format:'png'});await writeFile(join(root,'test-results','layer-order.png'),Buffer.from(layers.data,'base64'));
+  reports.push('Exact overlap pixels: newer yellow line above cyan line; newer pink flower above cyan flower (equal timestamps); older cyan flower above newer yellow line PASS');
+  assert.equal(audioRequests,2,'One verification fetch plus one app fetch; buffer reused across gestures');
+  audioDelay=400;
+  await call('Page.reload');for(let i=0;i<100&&!await evaluate('!!window.__test');i++)await delay(50);await delay(100);
+  await call('Input.dispatchMouseEvent',{type:'mousePressed',x:300,y:300,button:'left',clickCount:1});
+  await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:300,y:300,button:'left',clickCount:1});
+  await delay(800);const quick=await state();assert.equal(quick.sampleStatus,'ready');assert.equal(quick.samples.length,0);assert.ok(!quick.notes.some(n=>n.kind==='sample'),'No deferred MP3 after quick release during load');
+  await call('Input.dispatchMouseEvent',{type:'mousePressed',x:300,y:300,button:'left',clickCount:1});await delay(150);assert.ok((await state()).samples.length>0);
+  await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:300,y:300,button:'left',clickCount:1});
+  assert.ok((await state()).samples.every(s=>s.fading));await delay(1300);assert.equal((await state()).samples.length,0,'Release tail <=1.21 seconds');
+  audioDelay=0;audioFailure=true;
+  await call('Page.reload');await delay(250);
+  await call('Input.dispatchMouseEvent',{type:'mousePressed',x:300,y:300,button:'left',clickCount:1});await delay(250);
+  await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:300,y:300,button:'left',clickCount:1});
+  assert.equal((await state()).sampleStatus,'failed');assert.equal((await state()).flowers,1);assert.equal((await state()).samples.length,0);
+  reports.push('MP3 exact bytes and audio/mpeg; single fetch/shared decode; no delayed play after first-load release; release tail bounded; HTTP503 keeps drawing functional PASS');
+  // Exercise the real hub → game → hub navigation, plus reset and repeat entry.
+  const origin=`http://127.0.0.1:${server.address().port}`;
+  for (const [w,h] of [[320,568],[390,844],[1180,820]]) {
+    await call('Emulation.setDeviceMetricsOverride',{width:w,height:h,deviceScaleFactor:2,mobile:true});
+    await call('Page.navigate',{url:origin+'/'}); await delay(300);
+    assert.equal(await evaluate('document.querySelectorAll(".game-card").length'),1);
+    assert.ok(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
+    await writeFile(join(root,`test-results/home-${w}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:true})).data,'base64'));
+    for(let n=0;n<3;n++) {
+      await evaluate('document.querySelector(".game-card").click()');await delay(300);
+      assert.ok(await evaluate('!!window.__test'));
+      assert.ok(await evaluate(`[...document.querySelectorAll('button,#back')].every(el=>{const r=el.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight})`));
+      await pointer('pointerdown',160,200);await pointer('pointermove',200,250);await pointer('pointerup',200,250);
+      assert.equal((await state()).flowers,1);
+      await evaluate('document.querySelector("#reset").click()');
+      const clean=await state();assert.equal(clean.points+clean.flowers+clean.particles+clean.fingers+clean.voices+clean.raf,0);
+      await evaluate('document.querySelector("#mute").click()');assert.equal((await state()).muted,true);
+      await evaluate('document.querySelector("#back").click()');await delay(300);
+      assert.equal(await evaluate('document.title'),'おもちゃボックス');
+    }
+  }
+  reports.push('Hub: 320/390/1180px, single card, 56px controls, reset, mute, return/re-entry x9, no horizontal overflow PASS');
+  assert.deepEqual(errors,[]); reports.push('No browser JavaScript exceptions PASS');
+  await writeFile(join(root,'test-results','results.txt'), reports.join('\n')+'\n');
+  console.log(reports.join('\n'));
+} finally {
+  ws?.close(); chrome.kill(); server.close();
+  await delay(400);
+  await rm(profile,{recursive:true,force:true}).catch(()=>{});
+}

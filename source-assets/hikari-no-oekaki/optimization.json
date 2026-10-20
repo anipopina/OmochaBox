@@ -1,0 +1,30 @@
+[
+  {
+    "name": "leaves-bottom-left.png",
+    "original": 1279314,
+    "png660": 371972,
+    "webp660": 80108,
+    "lossless660": 257426
+  },
+  {
+    "name": "leaves-bottom-right.png",
+    "original": 1155381,
+    "png660": 342246,
+    "webp660": 78302,
+    "lossless660": 234690
+  },
+  {
+    "name": "leaves-top-left.png",
+    "original": 1149845,
+    "png660": 336017,
+    "webp660": 75322,
+    "lossless660": 230258
+  },
+  {
+    "name": "leaves-top-right.png",
+    "original": 1218920,
+    "png660": 364960,
+    "webp660": 82622,
+    "lossless660": 248614
+  }
+]

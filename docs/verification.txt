@@ -1,0 +1,15 @@
+iphone-portrait: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+iphone-landscape: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+ipad: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+ipad-landscape: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+desktop: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+Unchanged initial size; 0/3/6/9s flower factors 1/1.5/2/2; independent 2 fingers; peak once; shared decoded MP3 used during hold PASS
+10 fingers: particles<=220 total voices<=4 MP3 voices<=2 gain<=2.25 each; mute/cancel/hidden restore without stale playback PASS
+Trusted mouse, Web Audio activation, mute, 2,000 taps and 5,000 long-drag moves bounded PASS
+After release: all effects/voices expire and animation stops PASS
+Old segments become particles; petals release particles while remaining shape stays visible PASS
+Resize clears captures; pagehide/pageshow recovery PASS (synthetic lifecycle events)
+Exact overlap pixels: newer yellow line above cyan line; newer pink flower above cyan flower (equal timestamps); older cyan flower above newer yellow line PASS
+MP3 exact bytes and audio/mpeg; single fetch/shared decode; no delayed play after first-load release; release tail bounded; HTTP503 keeps drawing functional PASS
+Hub: 320/390/1180px, single card, 56px controls, reset, mute, return/re-entry x9, no horizontal overflow PASS
+No browser JavaScript exceptions PASS
