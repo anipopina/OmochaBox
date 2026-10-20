@@ -11,5 +11,5 @@
 ```python
 from PIL import Image
 Image.open('source-assets/fukifuki-mado/garden-original.png').convert('RGB').save(
-    'src/games/fukifuki-mado/assets/garden.webp', 'WEBP', quality=86, method=6)
+    'src/fukifuki-mado/assets/garden.webp', 'WEBP', quality=86, method=6)
 ```

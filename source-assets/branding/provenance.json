@@ -29,7 +29,7 @@
   },
   "ogp": "Approved 1200x630 PNG copied byte-for-byte unchanged.",
   "sha256": {
-    "src/assets/branding/ogp.png": "600be44f4c4293ed1b6f5ad4cde1da2e9b21aa26b154362845512112ef2d2065",
+    "src/public/assets/branding/ogp.png": "600be44f4c4293ed1b6f5ad4cde1da2e9b21aa26b154362845512112ef2d2065",
     "source-assets/branding/favicon-approved.png": "090763a36723b8eb36419f98d9031c6c5f797b0bfbec5e1e0478effe5deac1f2"
   }
 }

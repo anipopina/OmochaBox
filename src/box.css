@@ -1,5 +1,298 @@
-:root{font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;color:#344c48;background:#faf6ed;font-synthesis:none}*{box-sizing:border-box}body{margin:0}header{max-width:1120px;margin:auto;padding:28px 32px;display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-weight:800;color:inherit;text-decoration:none;display:flex;align-items:center;min-height:48px;gap:10px}.box-mark{display:grid;place-items:center;background:#e6a263;color:#fff7e5;width:42px;height:42px;border-radius:13px;transform:rotate(-7deg);font-size:30px}.small-label{font-size:12px;letter-spacing:.14em;color:#78877b}main{max-width:1000px;margin:55px auto 48px;display:grid;grid-template-columns:1fr 1.16fr;gap:64px;align-items:center;padding:0 32px}.eyebrow{font-size:13px;font-weight:bold;letter-spacing:.12em;color:#8a7357}h1{font-size:clamp(30px,4vw,46px);line-height:1.7;letter-spacing:.06em;margin:22px 0}p{font-size:14px;line-height:1.9}.intro>p:last-child{color:#78877b}.game-card{display:block;background:white;border:1px solid #e6e5d9;border-radius:30px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 14px 40px #4a4b4010;transition:transform .2s}.game-card:hover{transform:translateY(-4px)}a:focus-visible{outline:4px solid #cf803e;outline-offset:5px}.garden-preview{position:relative;height:260px;background: url('games/hikari-no-oekaki/assets/leaves-top-left.webp') top left/180px no-repeat,url('games/hikari-no-oekaki/assets/leaves-bottom-right.webp') bottom right/180px no-repeat,radial-gradient(circle,#20364a,#101a30);overflow:hidden}.flower{position:absolute;left:50%;top:48%;width:1px;height:1px}.flower i{position:absolute;left:-25px;top:-68px;width:50px;height:70px;border-radius:50%;background:#ffe276;transform-origin:25px 68px}.flower i:nth-child(2){transform:rotate(60deg)}.flower i:nth-child(3){transform:rotate(120deg)}.flower i:nth-child(4){transform:rotate(180deg)}.flower i:nth-child(5){transform:rotate(240deg)}.flower i:nth-child(6){transform:rotate(300deg)}.flower b{position:absolute;width:32px;height:32px;left:-16px;top:-16px;border-radius:50%;background:#fff7d7}.spark{position:absolute;color:#b4aaff;font-size:35px}.one{left:24%;top:25%}.two{right:18%;bottom:21%;color:#76ddff}.trail{position:absolute;width:80px;height:60px;border:10px solid #76ddff;border-top:0;border-right:0;border-radius:0 0 0 65%;left:17%;bottom:23%;transform:rotate(-25deg)}.card-copy{padding:24px 28px 28px}.card-sub{margin:0;color:#8a7357;font-size:12px;letter-spacing:.1em}h2{font-size:24px;margin:6px 0}.card-copy>p:not(.card-sub){margin:5px 0 20px;color:#78877b;font-size:13px}.start{display:flex;min-height:56px;background:#e9eee1;border-radius:18px;align-items:center;justify-content:center;font-size:17px;font-weight:bold}footer{text-align:center;color:#78877b;font-size:13px;padding:24px 24px 34px}footer>span{color:#bc8d55;margin-right:8px}footer p{font-size:11px;margin:9px 0}@media(max-width:700px){header{padding:14px 22px}.small-label{display:none}main{margin:20px auto 24px;display:block;padding:0 22px;max-width:480px}.intro{text-align:center}.eyebrow{font-size:12px}h1{font-size:30px;line-height:1.5;margin:14px 0}h1 br{display:initial}.intro>p:last-child{font-size:12px;margin-bottom:24px}.garden-preview{height:220px}.card-copy{padding:20px 24px}h2{font-size:23px}footer{padding-top:10px}}@media(prefers-reduced-motion:reduce){.game-card{transition:none}}
+:root {
+  font-family: 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+  color: #344c48;
+  background: #faf6ed;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+header {
+  max-width: 1120px;
+  margin: auto;
+  padding: 28px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.brand {
+  font-weight: 800;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  gap: 10px;
+}
+.box-mark {
+  display: grid;
+  place-items: center;
+  background: #e6a263;
+  color: #fff7e5;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  transform: rotate(-7deg);
+  font-size: 30px;
+}
+.small-label {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: #78877b;
+}
+main {
+  max-width: 1000px;
+  margin: 55px auto 48px;
+  display: grid;
+  grid-template-columns: 1fr 1.16fr;
+  gap: 64px;
+  align-items: center;
+  padding: 0 32px;
+}
+.eyebrow {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  color: #8a7357;
+}
+h1 {
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  margin: 22px 0;
+}
+p {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.intro > p:last-child {
+  color: #78877b;
+}
+.game-card {
+  display: block;
+  background: white;
+  border: 1px solid #e6e5d9;
+  border-radius: 30px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 14px 40px #4a4b4010;
+  transition: transform 0.2s;
+}
+.game-card:hover {
+  transform: translateY(-4px);
+}
+a:focus-visible {
+  outline: 4px solid #cf803e;
+  outline-offset: 5px;
+}
+.garden-preview {
+  position: relative;
+  height: 260px;
+  background:
+    url('hikari-no-oekaki/assets/leaves-top-left.webp') top left/180px no-repeat,
+    url('hikari-no-oekaki/assets/leaves-bottom-right.webp') bottom right/180px
+      no-repeat,
+    radial-gradient(circle, #20364a, #101a30);
+  overflow: hidden;
+}
+.flower {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 1px;
+  height: 1px;
+}
+.flower i {
+  position: absolute;
+  left: -25px;
+  top: -68px;
+  width: 50px;
+  height: 70px;
+  border-radius: 50%;
+  background: #ffe276;
+  transform-origin: 25px 68px;
+}
+.flower i:nth-child(2) {
+  transform: rotate(60deg);
+}
+.flower i:nth-child(3) {
+  transform: rotate(120deg);
+}
+.flower i:nth-child(4) {
+  transform: rotate(180deg);
+}
+.flower i:nth-child(5) {
+  transform: rotate(240deg);
+}
+.flower i:nth-child(6) {
+  transform: rotate(300deg);
+}
+.flower b {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  left: -16px;
+  top: -16px;
+  border-radius: 50%;
+  background: #fff7d7;
+}
+.spark {
+  position: absolute;
+  color: #b4aaff;
+  font-size: 35px;
+}
+.one {
+  left: 24%;
+  top: 25%;
+}
+.two {
+  right: 18%;
+  bottom: 21%;
+  color: #76ddff;
+}
+.trail {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  border: 10px solid #76ddff;
+  border-top: 0;
+  border-right: 0;
+  border-radius: 0 0 0 65%;
+  left: 17%;
+  bottom: 23%;
+  transform: rotate(-25deg);
+}
+.card-copy {
+  padding: 24px 28px 28px;
+}
+.card-sub {
+  margin: 0;
+  color: #8a7357;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+h2 {
+  font-size: 24px;
+  margin: 6px 0;
+}
+.card-copy > p:not(.card-sub) {
+  margin: 5px 0 20px;
+  color: #78877b;
+  font-size: 13px;
+}
+.start {
+  display: flex;
+  min-height: 56px;
+  background: #e9eee1;
+  border-radius: 18px;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: bold;
+}
+footer {
+  text-align: center;
+  color: #78877b;
+  font-size: 13px;
+  padding: 24px 24px 34px;
+}
+footer > span {
+  color: #bc8d55;
+  margin-right: 8px;
+}
+footer p {
+  font-size: 11px;
+  margin: 9px 0;
+}
+@media (max-width: 700px) {
+  header {
+    padding: 14px 22px;
+  }
+  .small-label {
+    display: none;
+  }
+  main {
+    margin: 20px auto 24px;
+    display: block;
+    padding: 0 22px;
+    max-width: 480px;
+  }
+  .intro {
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: 12px;
+  }
+  h1 {
+    font-size: 30px;
+    line-height: 1.5;
+    margin: 14px 0;
+  }
+  h1 br {
+    display: initial;
+  }
+  .intro > p:last-child {
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+  .garden-preview {
+    height: 220px;
+  }
+  .card-copy {
+    padding: 20px 24px;
+  }
+  h2 {
+    font-size: 23px;
+  }
+  footer {
+    padding-top: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-card {
+    transition: none;
+  }
+}
 
-.creator-link{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 16px;color:#344c48;font-size:14px;text-underline-offset:4px}
+.creator-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 16px;
+  color: #344c48;
+  font-size: 14px;
+  text-underline-offset: 4px;
+}
 
-#games{display:grid;gap:28px}.window-preview{height:260px;position:relative;overflow:hidden;background:#64c5dd}.window-preview img{width:100%;height:100%;object-fit:cover;object-position:50% 60%}.window-preview span{position:absolute;bottom:14px;right:14px;background:#e0f8ffed;padding:10px 18px;border-radius:20px;color:#16475c;font-weight:bold}
+#games {
+  display: grid;
+  gap: 28px;
+}
+.window-preview {
+  height: 260px;
+  position: relative;
+  overflow: hidden;
+  background: #64c5dd;
+}
+.window-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 60%;
+}
+.window-preview span {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: #e0f8ffed;
+  padding: 10px 18px;
+  border-radius: 20px;
+  color: #16475c;
+  font-weight: bold;
+}

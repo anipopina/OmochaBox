@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#071327" />
+    <meta
+      name="description"
+      content="指先から、やさしい光の花と道が生まれるおえかき。"
+    />
+    <title>ひかりのおえかき</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.ts"></script>
+
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="おもちゃボックス" />
+    <meta property="og:title" content="ひかりのおえかき｜おもちゃボックス" />
+    <meta
+      property="og:description"
+      content="指先から、やさしい光の花と道が生まれるおえかき。"
+    />
+    <meta
+      property="og:url"
+      content="https://omochabox-initial-20261020.ryonchibi.chatgpt.site/hikari-no-oekaki/"
+    />
+    <meta
+      property="og:image"
+      content="https://omochabox-initial-20261020.ryonchibi.chatgpt.site/assets/branding/ogp.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="黄色の背景に、おもちゃボックスの文字とカラフルな図形のなかまたち。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <canvas
+      aria-label="ひかりのおえかき。触ったり、指でなぞったりして遊べます。"
+    ></canvas>
+    <button id="mute" type="button" aria-label="音を消す" aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="M4 9h4l5-4v14l-5-4H4z" />
+        <path class="waves" d="M17 8q4 4 0 8M20 5q6 7 0 14" />
+        <path class="slash" d="m17 9 5 6m0-6-5 6" />
+      </svg>
+      <span>音あり</span>
+    </button>
+    <a id="back" href="../" aria-label="おもちゃボックスにもどる">← もどる</a>
+    <button id="reset" type="button" aria-label="おえかきをやりなおす">
+      ↻ やりなおす
+    </button>
+  </body>
+</html>
