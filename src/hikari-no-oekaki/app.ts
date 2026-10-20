@@ -726,7 +726,6 @@ type Voice = FlowerVoice | SampleVoice;
     paintGarden();
     background();
   }
-  requireElement('#reset', HTMLButtonElement).addEventListener('click', reset);
   requireElement('#back', HTMLAnchorElement).addEventListener('click', () => {
     reset();
     if (audio) audio.suspend().catch(() => {});

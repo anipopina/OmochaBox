@@ -27,10 +27,15 @@ for (const path of [
   assert.ok(html.includes('property="og:image:width" content="1200"'));
   assert.ok(html.includes('property="og:image:height" content="630"'));
   assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
-  if (path !== 'hikari-no-oekaki/index.html')
+  if (path === 'index.html')
     assert.ok(
       html.includes('href="https://anipopina.com/"'),
-      'Existing footer retained',
+      'Hub footer retained',
+    );
+  else
+    assert.ok(
+      !html.includes('href="https://anipopina.com/"'),
+      'Game pages omit creator links',
     );
 }
 for (const [path, width, height, colorType] of [

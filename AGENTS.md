@@ -11,4 +11,6 @@
 
 依頼された範囲で変更し、既存コンテンツを無断で大幅に再デザインしない。`src/` を編集し、`npm run build` と変更に応じた確認を行う。公開には `.openai/hosting.json` の既存Sitesプロジェクトを使う。
 
-Google Material Icons / Material Symbols を使う場合は必要な SVG を取得して同梱し、クライアントから Google のサーバーへ取得しない。取得元とライセンスを確認し、必要な LICENSE / NOTICE や表示を保持する。外部フォント・アイコンCDNへの依存を追加しない。フッターの anipopina.com リンクを保持する。
+Google Material Icons / Material Symbols を使う場合は必要な SVG を取得して同梱し、クライアントから Google のサーバーへ取得しない。取得元とライセンスを確認し、必要な LICENSE / NOTICE や表示を保持する。外部フォント・アイコンCDNへの依存を追加しない。
+
+入口ページのフッターの anipopina.com リンクを保持する。遊び個別のページには anipopina.com へのリンクは不要。

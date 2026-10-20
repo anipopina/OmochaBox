@@ -96,8 +96,3 @@ button {
   right: max(12px, env(safe-area-inset-right));
   top: max(12px, env(safe-area-inset-top));
 }
-#reset {
-  top: auto;
-  bottom: max(12px, env(safe-area-inset-bottom));
-  right: max(12px, env(safe-area-inset-right));
-}

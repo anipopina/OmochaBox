@@ -23,7 +23,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 - 遊びは独立したページとし、`src/<slug>/index.html` に `<script type="module" src="app.ts"></script>` を記載します。ViteがHTMLを自動検出します。
 - 一覧への登録は [src/games.ts](../src/games.ts)、カードの図案は [src/box.ts](../src/box.ts) で管理します。
 - 各遊びにREADMEを用意し、遊び方・状態の扱い・実装上の注意・素材の出典へのリンク・固有の確認項目を記載します。
-- `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・favicon、anipopina.comへのリンクを備えます。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
+- `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
 - 素材原本と出典・変換記録は `source-assets/<slug>/` に保存します。`dist/` を直接編集しません。

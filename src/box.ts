@@ -18,9 +18,6 @@ for (const game of games) {
   }
   const copy = document.createElement('div');
   copy.className = 'card-copy';
-  const sub = document.createElement('p');
-  sub.className = 'card-sub';
-  sub.textContent = game.subtitle;
   const title = document.createElement('h2');
   title.textContent = game.title;
   const desc = document.createElement('p');
@@ -28,7 +25,7 @@ for (const game of games) {
   const start = document.createElement('span');
   start.className = 'start';
   start.textContent = 'あそぶ →';
-  copy.append(sub, title, desc, start);
+  copy.append(title, desc, start);
   card.append(art, copy);
   gamesContainer.append(card);
 }

@@ -139,17 +139,6 @@ canvas {
   font-weight: bold;
   margin: 16px 0 0;
 }
-footer {
-  text-align: center;
-}
-footer a {
-  min-height: 56px;
-  display: inline-flex;
-  align-items: center;
-  color: #16475c;
-  font-size: 13px;
-  padding: 0 16px;
-}
 @media (max-width: 450px) {
   header {
     flex-wrap: wrap;
@@ -185,9 +174,6 @@ footer a {
   }
   .note {
     margin-top: 10px;
-  }
-  footer {
-    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -53,24 +53,16 @@ main {
   align-items: center;
   padding: 0 32px;
 }
-.eyebrow {
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 0.12em;
-  color: #8a7357;
-}
 h1 {
   font-size: clamp(30px, 4vw, 46px);
   line-height: 1.7;
   letter-spacing: 0.06em;
   margin: 22px 0;
+  word-break: keep-all;
 }
 p {
   font-size: 14px;
   line-height: 1.9;
-}
-.intro > p:last-child {
-  color: #78877b;
 }
 .game-card {
   display: block;
@@ -170,17 +162,11 @@ a:focus-visible {
 .card-copy {
   padding: 24px 28px 28px;
 }
-.card-sub {
-  margin: 0;
-  color: #8a7357;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-}
 h2 {
   font-size: 24px;
   margin: 6px 0;
 }
-.card-copy > p:not(.card-sub) {
+.card-copy > p {
   margin: 5px 0 20px;
   color: #78877b;
   font-size: 13px;
@@ -224,21 +210,12 @@ footer p {
   }
   .intro {
     text-align: center;
-  }
-  .eyebrow {
-    font-size: 12px;
+    margin-bottom: 24px;
   }
   h1 {
     font-size: 30px;
     line-height: 1.5;
     margin: 14px 0;
-  }
-  h1 br {
-    display: initial;
-  }
-  .intro > p:last-child {
-    font-size: 12px;
-    margin-bottom: 24px;
   }
   .garden-preview {
     height: 220px;

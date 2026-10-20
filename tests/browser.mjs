@@ -163,11 +163,17 @@ try {
     beforeDrawing,
     'Production drawing responds to input',
   );
-  await evaluate('document.querySelector("#reset").click()');
+  assert.equal(
+    await evaluate('document.querySelector("#reset")'),
+    null,
+    'Drawing page omits reset button',
+  );
+  await call('Page.reload');
+  await delay(300);
   assert.deepEqual(
     await drawingCenter(),
     beforeDrawing,
-    'Production reset restores garden',
+    'Production reload restores garden',
   );
   await evaluate('document.querySelector("#back").click()');
   await delay(200);
@@ -201,7 +207,7 @@ try {
     'Production fog responds to input',
   );
   report(
-    'Production: hub, hashed assets, drawing/reset, fog wiping, navigation, no test hooks PASS',
+    'Production: hub, hashed assets, drawing/reload, fog wiping, navigation, no test hooks PASS',
   );
   await call('Page.navigate', {
     url: `http://127.0.0.1:${server.address().port}/hikari-no-oekaki/`,
@@ -691,7 +697,7 @@ try {
     report(
       'MP3 exact bytes and audio/mpeg; single fetch/shared decode; no delayed play after first-load release; release tail bounded; HTTP503 keeps drawing functional PASS',
     );
-    // Exercise the real hub → game → hub navigation, plus reset and repeat entry.
+    // Exercise the real hub → game → hub navigation and lifecycle cleanup.
     for (const [w, h] of [
       [320, 568],
       [390, 844],
@@ -708,6 +714,16 @@ try {
       assert.equal(
         await evaluate('document.querySelectorAll(".game-card").length'),
         2,
+      );
+      assert.equal(
+        await evaluate('document.querySelector("h1").textContent'),
+        'すきなあそびを えらんでね！',
+      );
+      assert.equal(
+        await evaluate(
+          'document.querySelectorAll(".card-sub,.eyebrow,.intro p").length',
+        ),
+        0,
       );
       assert.ok(
         await evaluate('document.documentElement.scrollWidth<=innerWidth'),
@@ -737,7 +753,8 @@ try {
         await pointer('pointermove', 200, 250);
         await pointer('pointerup', 200, 250);
         assert.equal((await state()).flowers, 1);
-        await evaluate('document.querySelector("#reset").click()');
+        assert.equal(await evaluate('document.querySelector("#reset")'), null);
+        await evaluate('window.dispatchEvent(new Event("blur"))');
         const clean = await state();
         assert.equal(
           clean.points +
@@ -756,7 +773,7 @@ try {
       }
     }
     report(
-      'Hub: 320/390/1180px, two cards, 56px controls, reset, mute, return/re-entry x9, no horizontal overflow PASS',
+      'Hub: 320/390/1180px, simplified copy, two cards, 56px controls, lifecycle cleanup, mute, return/re-entry x9, no horizontal overflow PASS',
     );
   }
   // Real touch input exercises pointer capture and the fog alpha mask.
