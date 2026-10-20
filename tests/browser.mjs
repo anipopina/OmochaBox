@@ -16,6 +16,10 @@ const originalPlaySample=playSample;playSample=(...args)=>{const before=nextSamp
 window.__test = { snapshot: () => ({ points: points.length, particles: particles.length, flowers: flowers.length, fingers: fingers.size, voices: voices.size, samples:[...voices].filter(v=>v.kind==='sample').map(v=>({peak:v.peak,fading:v.fading,bufferMatch:v.osc.buffer===sampleBuffer})), sampleStatus, sampleDuration:sampleBuffer?.duration, raf, muted, audio: audio?.state, width, height, released: flowers.map(f=>f.released), radii: flowers.map(f=>f.radius), charges: [...fingers.values()].map(p=>chargeAt(p,performance.now())), peaks: [...fingers.values()].map(p=>p.peakTime), notes: audioEvents.slice(), masterGain:master?.gain.value, compressorRatio:compressor?.ratio.value, newestParticle: Math.max(0,...particles.map(p=>p.time)), pixels: canvas.width * canvas.height }), clear: reset, hold: (id, ms) => { fingers.get(id).time=performance.now()-ms; }, curve: ms => ({ charge: chargeAt({time:0},ms), radius: flowerRadius(chargeAt({time:0},ms)), sparkle:sparkleGain(chargeAt({time:0},ms)), scale: sceneScale() }), age: ms => {for(const list of [points,flowers,particles])for(const p of list)p.time-=ms;wake();} };`;
 const server = createServer(async (req, res) => {
   const url=new URL(req.url,'http://localhost').pathname;
+  if (['/favicon.ico','/favicon-16x16.png','/favicon-32x32.png','/favicon-48x48.png','/apple-touch-icon.png','/assets/branding/ogp.png'].includes(url)) {
+    res.setHeader('Content-Type',url.endsWith('.ico')?'image/vnd.microsoft.icon':'image/png');
+    res.end(await readFile(join(root,'dist',url.slice(1))));return;
+  }
   if (['/','/index.html','/box.js','/box.css','/games.js'].includes(url)) {
     const name=url==='/'?'index.html':url.slice(1);
     res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html');
