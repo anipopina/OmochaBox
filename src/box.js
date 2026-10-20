@@ -3,6 +3,7 @@ for (const game of games) {
  const card=document.createElement('a');card.className='game-card';card.href=game.href;
  const art=document.createElement('div');art.className='garden-preview';art.setAttribute('aria-hidden','true');
  art.innerHTML='<span class="flower"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></span><span class="spark one">✦</span><span class="spark two">✧</span><span class="trail"></span>';
+ if(game.id==='fukifuki-mado'){art.className='window-preview';art.innerHTML='<img src="games/fukifuki-mado/assets/garden.webp" alt="" loading="lazy"><span>ふきふき ✦</span>';}
  const copy=document.createElement('div');copy.className='card-copy';
  const sub=document.createElement('p');sub.className='card-sub';sub.textContent=game.subtitle;
  const title=document.createElement('h2');title.textContent=game.title;

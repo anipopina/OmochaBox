@@ -21,6 +21,12 @@ const server = createServer(async (req, res) => {
     res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html');
     res.end(await readFile(join(root,'dist',name)));return;
   }
+  if(url.startsWith('/games/fukifuki-mado/')) {
+    const name=url.slice('/games/fukifuki-mado/'.length)||'index.html';
+    if(!['index.html','style.css','app.js','assets/garden.webp'].includes(name)){res.writeHead(404).end();return;}
+    res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':name.endsWith('.webp')?'image/webp':'text/html');
+    res.end(await readFile(join(root,'dist/games/fukifuki-mado',name)));return;
+  }
   const path = url.replace(/^\/games\/hikari-no-oekaki\//,'') || 'index.html';
   if(path==='assets/ta_ta_hosikuzu01.mp3'){
     audioRequests++;if(audioDelay)await new Promise(r=>setTimeout(r,audioDelay));
@@ -73,6 +79,9 @@ try {
   await call('Runtime.enable'); await call('Page.enable');
   await call('Page.navigate', { url: `http://127.0.0.1:${server.address().port}/games/hikari-no-oekaki/` });
   for (let i = 0; i < 100 && !await evaluate('!!window.__test'); i++) await delay(50);
+  const origin=`http://127.0.0.1:${server.address().port}`;
+  await mkdir(join(root,'test-results'),{recursive:true});
+  if(!process.env.WINDOW_ONLY) {
   const assetResponse=await fetch(`http://127.0.0.1:${server.address().port}/games/hikari-no-oekaki/assets/ta_ta_hosikuzu01.mp3`);
   assert.equal(assetResponse.headers.get('content-type'),'audio/mpeg');assert.deepEqual(Buffer.from(await assetResponse.arrayBuffer()),await readFile(join(root,'dist/games/hikari-no-oekaki/assets/ta_ta_hosikuzu01.mp3')));
   assert.equal(await evaluate(`Promise.all(['top-left','top-right','bottom-left','bottom-right'].map(c=>new Promise(resolve=>{const i=new Image();i.onload=()=>resolve(i.naturalWidth===660);i.onerror=()=>resolve(false);i.src='assets/leaves-'+c+'.webp'}))).then(r=>r.filter(Boolean).length)`),4,'All four optimized WebPs served and decoded');
@@ -212,11 +221,10 @@ try {
   assert.equal((await state()).sampleStatus,'failed');assert.equal((await state()).flowers,1);assert.equal((await state()).samples.length,0);
   reports.push('MP3 exact bytes and audio/mpeg; single fetch/shared decode; no delayed play after first-load release; release tail bounded; HTTP503 keeps drawing functional PASS');
   // Exercise the real hub → game → hub navigation, plus reset and repeat entry.
-  const origin=`http://127.0.0.1:${server.address().port}`;
   for (const [w,h] of [[320,568],[390,844],[1180,820]]) {
     await call('Emulation.setDeviceMetricsOverride',{width:w,height:h,deviceScaleFactor:2,mobile:true});
     await call('Page.navigate',{url:origin+'/'}); await delay(300);
-    assert.equal(await evaluate('document.querySelectorAll(".game-card").length'),1);
+    assert.equal(await evaluate('document.querySelectorAll(".game-card").length'),2);
     assert.ok(await evaluate('document.documentElement.scrollWidth<=innerWidth'));
     await writeFile(join(root,`test-results/home-${w}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:true})).data,'base64'));
     for(let n=0;n<3;n++) {
@@ -232,7 +240,61 @@ try {
       assert.equal(await evaluate('document.title'),'おもちゃボックス');
     }
   }
-  reports.push('Hub: 320/390/1180px, single card, 56px controls, reset, mute, return/re-entry x9, no horizontal overflow PASS');
+  reports.push('Hub: 320/390/1180px, two cards, 56px controls, reset, mute, return/re-entry x9, no horizontal overflow PASS');
+  }
+  // Real touch input exercises pointer capture and the fog alpha mask.
+  const fogAlpha=()=>evaluate(`(()=>{const c=document.querySelector('#fog');return c.getContext('2d').getImageData(c.width/2,c.height/2,1,1).data[3]})()`);
+  const fogRect=()=>evaluate(`(()=>{const r=document.querySelector('#fog').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height}})()`);
+  for(const [w,h] of [[320,568],[390,844],[820,1180],[1180,820],[844,390]]) {
+    // Isolate each device's native input stream (Chromium CDP retains gesture state across navigations).
+    const previous=await call('Target.getTargetInfo');
+    const fresh=await call('Target.createTarget',{url:'about:blank'});
+    const pages=await(await fetch(`http://127.0.0.1:${port}/json`)).json();
+    ws.close();ws=new WebSocket(pages.find(t=>t.id===fresh.targetId).webSocketDebuggerUrl);
+    await new Promise(r=>ws.addEventListener('open',r,{once:true}));
+    ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}});
+    await call('Runtime.enable');await call('Page.enable');
+    await call('Target.closeTarget',{targetId:previous.targetInfo.targetId});
+    await call('Emulation.setDeviceMetricsOverride',{width:w,height:h,deviceScaleFactor:2,mobile:true});
+    await call('Page.navigate',{url:origin+'/'});await delay(200);
+    await evaluate(`document.querySelector('a[href="games/fukifuki-mado/"]').click()`);await delay(250);
+    assert.equal(await evaluate('document.title'),'ふきふき、まど｜おもちゃボックス');
+    assert.ok(await evaluate(`document.querySelector('.window img').complete&&document.querySelector('.window img').naturalWidth>1000`));
+    assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth&&[...document.querySelectorAll('button,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.right<=innerWidth&&r.bottom<=innerHeight})`));
+    assert.equal(await fogAlpha(),255);
+    await writeFile(join(root,`test-results/window-fog-${w}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));
+    await call('Emulation.setTouchEmulationEnabled',{enabled:false});
+    await call('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:10});
+    await call('Page.bringToFront');await delay(500);
+    let r=await fogRect();
+    await evaluate(`window.touchLog=[];for(const t of ['pointerdown','pointerup','pointercancel','pointermove','touchstart','touchend'])document.addEventListener(t,e=>touchLog.push([t,e.target.tagName,e.clientX,e.clientY]))`);
+    for(let n=0;n<5;n++) {
+      await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x,y:r.y,id:1}]});await delay(50);
+      await call('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:r.x+25,y:r.y+20,id:1}]});
+      await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+      assert.equal(await fogAlpha(),0,'Touch reveals center '+JSON.stringify({w,n,r,log:await evaluate('({events:touchLog,focus:document.hasFocus(),vv:[visualViewport.scale,visualViewport.offsetTop],el:document.elementFromPoint(195,340)?.tagName})')}));
+      if(n===4){await delay(550);await writeFile(join(root,`test-results/window-wiped-${w}.png`),Buffer.from((await call('Page.captureScreenshot',{format:'png'})).data,'base64'));}
+      await evaluate(`document.querySelector('#cloud').click()`);assert.equal(await fogAlpha(),255);
+    }
+    // Two fingers, cancellation, resize and re-entry.
+    await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x,y:r.y,id:1},{x:r.x-40,y:r.y-40,id:2}]});
+    await call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.equal(await fogAlpha(),0);
+    await call('Emulation.setDeviceMetricsOverride',{width:h,height:w,deviceScaleFactor:2,mobile:true});await delay(150);
+    assert.equal(await fogAlpha(),0,'Resize preserves wiped picture');
+    await evaluate(`document.querySelector('#cloud').click()`);assert.equal(await fogAlpha(),255);
+    await evaluate(`document.querySelector('#fog').focus()`);
+    await call('Input.dispatchKeyEvent',{type:'keyDown',key:' ',code:'Space',windowsVirtualKeyCode:32});
+    await call('Input.dispatchKeyEvent',{type:'keyUp',key:' ',code:'Space',windowsVirtualKeyCode:32});assert.equal(await fogAlpha(),0);
+    await evaluate(`document.querySelector('#back').click()`);await delay(200);
+    await evaluate(`document.querySelector('a[href="games/fukifuki-mado/"]').click()`);await delay(200);assert.equal(await fogAlpha(),255);
+  }
+  const cancelPoint=await fogRect();
+  await call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:cancelPoint.x,y:cancelPoint.y,id:1}]});
+  await call('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+  await evaluate(`for(let i=0;i<100;i++)document.querySelector('#cloud').click()`);assert.equal(await fogAlpha(),255);
+  await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#shine')).animationName`),'none');
+  reports.push('Window: 320/390/820/1180/844 widths, image decode, real CDP touch wiping/re-fog x25, multi-touch/cancel, resize preserves mask, keyboard, return/re-entry x5, reset x100, reduced motion, 56px targets PASS');
   assert.deepEqual(errors,[]); reports.push('No browser JavaScript exceptions PASS');
   await writeFile(join(root,'test-results','results.txt'), reports.join('\n')+'\n');
   console.log(reports.join('\n'));
