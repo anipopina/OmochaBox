@@ -65,5 +65,5 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 
 ## 公開
 
-公開先は [おもちゃボックス（Sites）](https://omochabox-initial-20261020.ryonchibi.chatgpt.site/) です。
+公開先は [おもちゃボックス（Sites）](https://omochabox.ryonchibi.chatgpt.site/) です。
 `npm run build` の出力 `dist/` を、[.openai/hosting.json](.openai/hosting.json) に記録された既存Sitesプロジェクトへソース同期・バージョン保存・デプロイします。
