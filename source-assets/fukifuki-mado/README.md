@@ -48,3 +48,23 @@ EXIFの向きを補正し、背景全体を覆う不透明RGB画像としてWebP
 - 曇り画像にアルファ透過は不要です。Canvasで拭いた場所を透明にし、その下の鮮明な画像を見せます。両方の切り抜き位置は中央揃えで一致させます。
 
 変換後は拭く前にも色とシルエットが見えること、拭くと表情や細部が鮮明になることを目視確認してください。画像を削除するときは `assets/fog/` の対応画像も整理します。
+
+## トップページのカード画像
+
+2026-10-21にユーザーから提供されたスクリーンショットを使用しています。原本は `card-preview-original.png`、配信用は `src/assets/previews/fukifuki-mado.webp` です。遊びの背景画像一覧には含めません。
+
+向き補正後にRGBへ変換し、縦横比を保って最大960×960px（拡大なし）、WebP quality=84 / method=6で保存します。現在は811×530px、312,144 bytes → 26,870 bytes（約91%削減）。出典・原本ハッシュ・変換条件は `provenance.json` の `card_preview` に記録しています。
+
+Pillowの環境は上記の手順で用意できます。カード画像だけの再変換は、リポジトリ直下で実行します。
+
+```sh
+/tmp/omochabox-images/bin/python - <<'PY'
+from PIL import Image, ImageOps
+with Image.open('source-assets/fukifuki-mado/card-preview-original.png') as original:
+    image = ImageOps.exif_transpose(original).convert('RGB')
+    image.thumbnail((960, 960), Image.Resampling.LANCZOS)
+    image.save('src/assets/previews/fukifuki-mado.webp', 'WEBP', quality=84, method=6)
+PY
+```
+
+差し替え時は `card_preview` の容量・ハッシュ・出典も更新し、カードの横長表示で中央のキャラクターと拭いた跡が見えることを確認します。

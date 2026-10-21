@@ -204,5 +204,23 @@
       }
     }
   ],
-  "added_images_source": "Five images supplied by the user on 2026-10-21. Generation tool and third-party license details were not supplied."
+  "added_images_source": "Five images supplied by the user on 2026-10-21. Generation tool and third-party license details were not supplied.",
+  "card_preview": {
+    "source": "Screenshot supplied by the user on 2026-10-21 for the home page card.",
+    "original": "card-preview-original.png",
+    "original_bytes": 312144,
+    "sha256": "b8ed7db5dab5b56f220ed4c9493e7b3d8109d85641ef9d143d7222f113d03dfc",
+    "output": "src/assets/previews/fukifuki-mado.webp",
+    "output_bytes": 26870,
+    "output_size": [
+      811,
+      530
+    ],
+    "webp_quality": 84,
+    "webp_method": 6,
+    "max_size": [
+      960,
+      960
+    ]
+  }
 }

@@ -1,6 +1,6 @@
 import { games } from './games';
 import { requireElement } from './shared/dom';
-import gardenUrl from './fukifuki-mado/assets/garden.webp';
+import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';
 
 const gamesContainer = requireElement('#games', HTMLDivElement);
 for (const game of games) {
@@ -14,7 +14,7 @@ for (const game of games) {
     '<span class="flower"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></span><span class="spark one">✦</span><span class="spark two">✧</span><span class="trail"></span>';
   if (game.id === 'fukifuki-mado') {
     art.className = 'window-preview';
-    art.innerHTML = `<img src="${gardenUrl}" alt="" loading="lazy"><span>ふきふき ✦</span>`;
+    art.innerHTML = `<img src="${windowPreviewUrl}" alt="" loading="lazy"><span>ふきふき ✦</span>`;
   }
   const copy = document.createElement('div');
   copy.className = 'card-copy';
