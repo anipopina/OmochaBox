@@ -725,6 +725,16 @@ try {
         ),
         0,
       );
+      assert.equal(
+        await evaluate('document.querySelectorAll(".character").length'),
+        6,
+      );
+      assert.ok(
+        await evaluate(
+          `Promise.all([...document.querySelectorAll('.character')].map(image=>image.decode())).then(()=>true)`,
+        ),
+        'All supplied character SVGs load',
+      );
       assert.ok(
         await evaluate('document.documentElement.scrollWidth<=innerWidth'),
       );

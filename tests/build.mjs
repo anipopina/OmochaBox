@@ -57,7 +57,7 @@ for (const file of await readdir(join(directory, 'assets'))) {
 
 // Media is renamed, not re-encoded; keep the approved optimized assets unchanged.
 for (const [source, entry] of Object.entries(manifest)) {
-  if (!/\.(webp|mp3)$/.test(source)) continue;
+  if (!/\.(webp|mp3|svg)$/.test(source)) continue;
   assert.deepEqual(
     await readFile(join(directory, entry.file)),
     await readFile(join('src', source)),
