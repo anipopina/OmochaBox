@@ -914,6 +914,9 @@ try {
       assert.equal(await fogAlpha(), 255);
     }
     // Two fingers, cancellation, resize and re-entry.
+    const sceneBeforeResize = await evaluate(
+      `document.querySelector('#picture').src`,
+    );
     await call('Input.dispatchTouchEvent', {
       type: 'touchStart',
       touchPoints: [
@@ -934,6 +937,11 @@ try {
     });
     await delay(150);
     assert.equal(await fogAlpha(), 0, 'Resize preserves wiped picture');
+    assert.equal(
+      await evaluate(`document.querySelector('#picture').src`),
+      sceneBeforeResize,
+      'Resize preserves scene',
+    );
     await evaluate(`document.querySelector('#cloud').click()`);
     assert.equal(await fogAlpha(), 255);
     await evaluate(`document.querySelector('#fog').focus()`);
@@ -958,6 +966,54 @@ try {
     await delay(200);
     assert.equal(await fogAlpha(), 255);
   }
+  // Force both ends of the random range to verify entry selection without flaky statistics.
+  const windowScenes = JSON.parse(
+    await readFile(join(root, 'src/fukifuki-mado/scenes.json'), 'utf8'),
+  );
+  for (const [random, initial] of [
+    [0, 0],
+    [0.999999, windowScenes.length - 1],
+  ]) {
+    const script = await call('Page.addScriptToEvaluateOnNewDocument', {
+      source: `Math.random = () => ${random}`,
+    });
+    await call('Page.reload');
+    await delay(250);
+    for (let step = 0; step <= windowScenes.length; step++) {
+      const scene = windowScenes[(initial + step) % windowScenes.length];
+      assert.equal(
+        await evaluate(
+          `document.querySelector('#picture').getAttribute('src')`,
+        ),
+        assetPath(`fukifuki-mado/assets/${scene.id}.webp`),
+      );
+      assert.equal(
+        await evaluate(`document.querySelector('#picture').alt`),
+        scene.alt,
+      );
+      await evaluate(`document.querySelector('#picture').decode()`);
+      assert.equal(
+        await fogAlpha(),
+        255,
+        'Every next scene starts fully fogged',
+      );
+      await evaluate(`document.querySelector('#fog').focus()`);
+      await call('Input.dispatchKeyEvent', {
+        type: 'keyDown',
+        key: ' ',
+        code: 'Space',
+        windowsVirtualKeyCode: 32,
+      });
+      assert.equal(await fogAlpha(), 0, 'Every scene can be wiped');
+      await evaluate(`document.querySelector('#cloud').click()`);
+    }
+    await call('Page.removeScriptToEvaluateOnNewDocument', {
+      identifier: script.identifier,
+    });
+  }
+  report(
+    'Window: random first/last selection, all six images decode and wipe, alt text, full cycle and resize preserves scene PASS',
+  );
   const cancelPoint = await fogRect();
   await call('Input.dispatchTouchEvent', {
     type: 'touchStart',

@@ -1,4 +1,19 @@
 import { requireContext2d, requireElement } from '../shared/dom';
+import scenes from './scenes.json';
+
+const sceneImages = import.meta.glob<string>('./assets/*.webp', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+const picture = requireElement('#picture', HTMLImageElement);
+let sceneIndex = Math.floor(Math.random() * scenes.length);
+function showScene() {
+  const scene = scenes[sceneIndex];
+  picture.src = sceneImages[`./assets/${scene.id}.webp`];
+  picture.alt = scene.alt;
+}
+showScene();
 
 interface Position {
   x: number;
@@ -132,7 +147,11 @@ canvas.addEventListener('keydown', (e) => {
   wipe(a, b);
   sparkle(b);
 });
-requireElement('#cloud', HTMLButtonElement).addEventListener('click', cloud);
+requireElement('#cloud', HTMLButtonElement).addEventListener('click', () => {
+  cloud();
+  sceneIndex = (sceneIndex + 1) % scenes.length;
+  showScene();
+});
 window.addEventListener('pagehide', clearInput);
 window.addEventListener('blur', clearInput);
 document.addEventListener('visibilitychange', () => {

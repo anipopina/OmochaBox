@@ -9,5 +9,86 @@
     1254
   ],
   "webp_quality": 86,
-  "third_party_assets": "None. Original generated artwork; no third-party stock or icon assets."
+  "third_party_assets": "None. Original generated artwork; no third-party stock or icon assets.",
+  "images": [
+    {
+      "id": "garden",
+      "original": "garden-original.png",
+      "sha256": "74253443a866cafa060b69b55212232bdec6ab1f0e5216199d85fae1eb6d00ab",
+      "original_bytes": 2945907,
+      "output": "garden.webp",
+      "output_bytes": 361864,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86
+    },
+    {
+      "id": "animal-train",
+      "original": "animal-train-original.jpg",
+      "sha256": "bf1e5fc1e89ba0b751ee61623093641b12e37842eb24f47355f690b58936e11f",
+      "original_bytes": 636649,
+      "output": "animal-train.webp",
+      "output_bytes": 319242,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86
+    },
+    {
+      "id": "frog-pond",
+      "original": "frog-pond-original.jpg",
+      "sha256": "fe313b82991ba6294134ccf03fdb1c66f01781abb06990d2d50c251e000a79ef",
+      "original_bytes": 400657,
+      "output": "frog-pond.webp",
+      "output_bytes": 181804,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86
+    },
+    {
+      "id": "shapes-picnic",
+      "original": "shapes-picnic-original.png",
+      "sha256": "c93519ab405628dcb0ae49215d4610943d7e9a9f024c7a2fcc369eb37e8b89a3",
+      "original_bytes": 416242,
+      "output": "shapes-picnic.webp",
+      "output_bytes": 152804,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86
+    },
+    {
+      "id": "underwater",
+      "original": "underwater-original.jpg",
+      "sha256": "d5ee9cc47b7a570834de668c172016659c69785c0542eae7149c6d90c01d2db3",
+      "original_bytes": 552599,
+      "output": "underwater.webp",
+      "output_bytes": 283930,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86
+    },
+    {
+      "id": "shapes-hello",
+      "original": "shapes-hello-original.png",
+      "sha256": "f072f7acc5c594aef411e056d410e6997102c2122eb92857e9f3831356dded12",
+      "original_bytes": 545716,
+      "output": "shapes-hello.webp",
+      "output_bytes": 87518,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86
+    }
+  ],
+  "added_images_source": "Five images supplied by the user on 2026-10-21. Generation tool and third-party license details were not supplied."
 }
