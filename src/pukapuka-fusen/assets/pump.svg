@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 180">
+<title>にっこり、きいろいポンプ</title>
+<ellipse cx="180" cy="158" rx="168" ry="18" fill="#349cbd" opacity=".22"/>
+<path d="M21 104C21 43 339 43 339 104V130C339 181 21 181 21 130Z" fill="#ffb500" stroke="#10194c" stroke-width="8"/>
+<ellipse cx="180" cy="108" rx="159" ry="49" fill="#ffcf00" stroke="#10194c" stroke-width="8"/>
+<path d="M35 72C35 3 325 3 325 72V103C325 165 35 165 35 103Z" fill="#ffcc00" stroke="#10194c" stroke-width="8"/>
+<ellipse cx="180" cy="72" rx="145" ry="57" fill="#fff12b" stroke="#10194c" stroke-width="8"/>
+<path d="M67 57Q80 44 103 39M117 36L129 34" fill="none" stroke="#fffbc3" stroke-width="12" stroke-linecap="round"/>
+<ellipse cx="150" cy="66" rx="27" ry="21" fill="white"/>
+<ellipse cx="210" cy="66" rx="27" ry="21" fill="white"/>
+<ellipse cx="156" cy="66" rx="13" ry="15" fill="#10194c"/>
+<ellipse cx="204" cy="66" rx="13" ry="15" fill="#10194c"/>
+<path d="M159 94Q180 115 201 94" fill="none" stroke="#10194c" stroke-width="8" stroke-linecap="round"/>
+</svg>

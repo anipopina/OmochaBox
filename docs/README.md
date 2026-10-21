@@ -7,6 +7,7 @@
 - [キャラクターと共有素材](branding.md)：なかまたち・favicon・OGP
 - [ひかりのおえかき](../src/hikari-no-oekaki/README.md)：現在の仕様・固有の確認項目
 - [ふきふき、まど](../src/fukifuki-mado/README.md)：現在の仕様・固有の確認項目
+- [ぷかぷか、ふうせん](../src/pukapuka-fusen/README.md)：現在の仕様・固有の確認項目
 
 素材原本・出典・変換記録は [source-assets/](../source-assets/) を参照してください。
 

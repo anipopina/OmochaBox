@@ -161,12 +161,35 @@ a:focus-visible {
   outline-offset: 6px;
 }
 .garden-preview,
-.window-preview {
+.window-preview,
+.balloon-preview {
   position: relative;
   height: 232px;
   flex: none;
   overflow: hidden;
   border-bottom: 3px solid #10194c;
+}
+.balloon-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+  background: linear-gradient(#9be4ff, #d5f6ff);
+}
+.balloon-preview img {
+  width: 27%;
+  height: 80%;
+  object-fit: contain;
+  transform: rotate(-10deg);
+}
+.balloon-preview img:nth-child(2) {
+  width: 32%;
+  height: 100%;
+  transform: rotate(6deg);
+}
+.balloon-preview img:nth-child(3) {
+  transform: rotate(12deg);
 }
 .garden-preview {
   background:
@@ -421,7 +444,8 @@ footer p {
     gap: 28px;
   }
   .garden-preview,
-  .window-preview {
+  .window-preview,
+  .balloon-preview {
     height: 212px;
   }
   .card-copy {

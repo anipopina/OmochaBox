@@ -1,6 +1,9 @@
 import { games } from './games';
 import { requireElement } from './shared/dom';
 import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';
+import balloonCyan from './pukapuka-fusen/assets/cyan.svg';
+import balloonStar from './pukapuka-fusen/assets/star.svg';
+import balloonTriangle from './pukapuka-fusen/assets/triangle.svg';
 
 const gamesContainer = requireElement('#games', HTMLDivElement);
 for (const game of games) {
@@ -15,6 +18,10 @@ for (const game of games) {
   if (game.id === 'fukifuki-mado') {
     art.className = 'window-preview';
     art.innerHTML = `<img src="${windowPreviewUrl}" alt="" loading="lazy"><span>ふきふき ✦</span>`;
+  }
+  if (game.id === 'pukapuka-fusen') {
+    art.className = 'balloon-preview';
+    art.innerHTML = `<img src="${balloonCyan}" alt="" loading="lazy"><img src="${balloonStar}" alt="" loading="lazy"><img src="${balloonTriangle}" alt="" loading="lazy">`;
   }
   const copy = document.createElement('div');
   copy.className = 'card-copy';

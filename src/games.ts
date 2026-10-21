@@ -19,4 +19,10 @@ export const games: readonly Game[] = [
     description: 'まどを ふきふき。だれが いるかな？',
     href: 'fukifuki-mado/',
   },
+  {
+    id: 'pukapuka-fusen',
+    title: 'ぷかぷか、ふうせん',
+    description: 'おすと ふくらむ。はなすと ぷかぷか。',
+    href: 'pukapuka-fusen/',
+  },
 ];

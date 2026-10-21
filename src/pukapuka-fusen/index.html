@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#fff333" />
+    <title>ぷかぷか、ふうせん｜おもちゃボックス</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="おもちゃボックス" />
+    <meta property="og:title" content="ぷかぷか、ふうせん｜おもちゃボックス" />
+    <meta
+      property="og:description"
+      content="おすと ふくらむ。はなすと ぷかぷか。なかまたちのふうせんを空へ！"
+    />
+    <meta
+      property="og:url"
+      content="https://omochabox.ryonchibi.chatgpt.site/pukapuka-fusen/"
+    />
+    <meta
+      property="og:image"
+      content="https://omochabox.ryonchibi.chatgpt.site/assets/branding/ogp.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="黄色の背景に、おもちゃボックスの文字とカラフルな図形のなかまたち。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <header>
+      <a id="back" href="../" aria-label="おもちゃボックスにもどる">← もどる</a>
+      <h1><span>ぷかぷか、</span><span>ふうせん</span></h1>
+    </header>
+    <main>
+      <div class="cloud cloud-one" aria-hidden="true"></div>
+      <div class="cloud cloud-two" aria-hidden="true"></div>
+      <div class="cloud cloud-three" aria-hidden="true"></div>
+      <div id="sky" aria-hidden="true">
+        <img class="welcome welcome-one" src="assets/cyan.svg" alt="" />
+        <img class="welcome welcome-two" src="assets/triangle.svg" alt="" />
+        <img id="held" src="assets/cyan.svg" alt="" draggable="false" />
+      </div>
+      <div class="controls">
+        <p id="hint">おして ふくらむ</p>
+        <button
+          id="pump"
+          aria-label="ポンプ。おすとふくらむ、はなすととぶ。スペースかEnterでもあそべます。"
+          aria-pressed="false"
+        >
+          <img src="assets/pump.svg" alt="" draggable="false" />
+          <svg class="hand" viewBox="0 0 100 120" aria-hidden="true">
+            <path
+              d="M35 104L18 73Q11 59 21 57Q28 54 39 69L29 26Q26 12 36 12Q43 12 46 24L53 50Q56 40 64 46Q70 38 78 48Q87 42 92 58L96 79Q98 94 80 110Z"
+              fill="white"
+              stroke="#10194c"
+              stroke-width="5"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <p class="release-hint">はなすと とぶ ↑</p>
+      </div>
+      <p id="status" class="sr-only" role="status"></p>
+    </main>
+    <script type="module" src="app.ts"></script>
+  </body>
+</html>

@@ -10,6 +10,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 | [ひかりのおえかき](src/hikari-no-oekaki/README.md) | 指先から光の花や道が生まれるおえかき         |
 | [ふきふき、まど](src/fukifuki-mado/README.md)      | 曇った窓を拭いて、庭のどうぶつを見つける遊び |
 
+| [ぷかぷか、ふうせん](src/pukapuka-fusen/README.md) | ポンプでふくらませ、空へ見送る風船遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。
