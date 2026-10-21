@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const root = new URL('../dist/', import.meta.url);
-const base = 'https://omochabox-initial-20261020.ryonchibi.chatgpt.site';
+const base = 'https://omochabox.ryonchibi.chatgpt.site';
 for (const path of [
   'index.html',
   'hikari-no-oekaki/index.html',
