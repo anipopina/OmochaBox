@@ -18,15 +18,39 @@ const report = (message) => {
 let audioFailure = false,
   audioDelay = 0,
   audioRequests = 0;
+let fogDelay = 0,
+  fogFailure = false;
 const buildDirectory = join(root, 'test-results/build');
 const manifest = JSON.parse(
   await readFile(join(buildDirectory, '.vite/manifest.json'), 'utf8'),
 );
 const assetPath = (source) => '/' + manifest[source].file;
 const samplePath = assetPath('hikari-no-oekaki/assets/ta_ta_hosikuzu01.mp3');
+const fogPaths = new Set(
+  Object.keys(manifest)
+    .filter((path) => path.startsWith('fukifuki-mado/assets/fog/'))
+    .map(assetPath),
+);
 const server = createStaticServer(
   buildDirectory,
   async (_request, response, pathname) => {
+    if (fogPaths.has(pathname)) {
+      if (fogDelay)
+        await new Promise((resolve) =>
+          setTimeout(
+            resolve,
+            fogDelay +
+              (pathname === assetPath('fukifuki-mado/assets/fog/garden.webp')
+                ? 600
+                : 0),
+          ),
+        );
+      if (fogFailure) {
+        response.writeHead(503).end();
+        return true;
+      }
+      return false;
+    }
     if (pathname !== samplePath) return false;
     audioRequests++;
     if (audioDelay)
@@ -791,6 +815,10 @@ try {
     evaluate(
       `(()=>{const c=document.querySelector('#fog');return c.getContext('2d').getImageData(c.width/2,c.height/2,1,1).data[3]})()`,
     );
+  const waitFogReady = () =>
+    evaluate(
+      `(async()=>{for(let i=0;i<300;i++){if(!document.querySelector('#fog').hasAttribute('aria-busy'))return;await new Promise(requestAnimationFrame)}throw new Error('Fog image did not become ready')})()`,
+    );
   const fogRect = () =>
     evaluate(
       `(()=>{const r=document.querySelector('#fog').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height}})()`,
@@ -911,6 +939,7 @@ try {
         );
       }
       await evaluate(`document.querySelector('#cloud').click()`);
+      await waitFogReady();
       assert.equal(await fogAlpha(), 255);
     }
     // Two fingers, cancellation, resize and re-entry.
@@ -943,6 +972,7 @@ try {
       'Resize preserves scene',
     );
     await evaluate(`document.querySelector('#cloud').click()`);
+    await waitFogReady();
     assert.equal(await fogAlpha(), 255);
     await evaluate(`document.querySelector('#fog').focus()`);
     await call('Input.dispatchKeyEvent', {
@@ -980,6 +1010,7 @@ try {
     await call('Page.reload');
     await delay(250);
     for (let step = 0; step <= windowScenes.length; step++) {
+      await waitFogReady();
       const scene = windowScenes[(initial + step) % windowScenes.length];
       assert.equal(
         await evaluate(
@@ -992,6 +1023,23 @@ try {
         scene.alt,
       );
       await evaluate(`document.querySelector('#picture').decode()`);
+      const matchesFog = await evaluate(`(async()=>{
+        const fog = new Image();
+        fog.src = ${JSON.stringify(assetPath(`fukifuki-mado/assets/fog/${scene.id}.webp`))};
+        await fog.decode();
+        const actual = document.querySelector('#fog');
+        const expected = document.createElement('canvas');
+        expected.width = actual.width; expected.height = actual.height;
+        const expectedCtx = expected.getContext('2d');
+        expectedCtx.drawImage(fog, 0, 0, expected.width, expected.height);
+        const ctx = actual.getContext('2d');
+        return [0.2,0.5,0.8].every(x => [0.2,0.5,0.8].every(y => {
+          const a = ctx.getImageData(actual.width*x,actual.height*y,1,1).data;
+          const b = expectedCtx.getImageData(expected.width*x,expected.height*y,1,1).data;
+          return [...a].every((v,i) => Math.abs(v-b[i]) <= 3);
+        }));
+      })()`);
+      assert.ok(matchesFog, `${scene.id}: correct pre-rendered fog is drawn`);
       assert.equal(
         await fogAlpha(),
         255,
@@ -1006,13 +1054,82 @@ try {
       });
       assert.equal(await fogAlpha(), 0, 'Every scene can be wiped');
       await evaluate(`document.querySelector('#cloud').click()`);
+      await waitFogReady();
     }
     await call('Page.removeScriptToEvaluateOnNewDocument', {
       identifier: script.identifier,
     });
   }
   report(
-    'Window: random first/last selection, all six images decode and wipe, alt text, full cycle and resize preserves scene PASS',
+    'Window: random first/last selection, all six sharp/fog pairs decode, fog pixels match, wiping, alt text, full cycle and resize preserves scene PASS',
+  );
+  // Deliberately finish the first fog download last to exercise stale async results.
+  await call('Network.enable');
+  await call('Network.setCacheDisabled', { cacheDisabled: true });
+  const forcedGarden = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: 'Math.random = () => 0',
+  });
+  fogDelay = 300;
+  await call('Page.reload');
+  await delay(150);
+  assert.equal(
+    await evaluate(`document.querySelector('#fog').getAttribute('aria-busy')`),
+    'true',
+  );
+  await evaluate(`document.querySelector('#fog').focus()`);
+  await call('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: ' ',
+    code: 'Space',
+    windowsVirtualKeyCode: 32,
+  });
+  assert.equal(
+    await fogAlpha(),
+    255,
+    'Loading scene cannot be wiped to reveal the previous picture',
+  );
+  await evaluate(
+    `for(let i=0;i<5;i++)document.querySelector('#cloud').click()`,
+  );
+  await waitFogReady();
+  const latestScene = assetPath('fukifuki-mado/assets/shapes-hello.webp');
+  assert.equal(
+    await evaluate(`document.querySelector('#picture').getAttribute('src')`),
+    latestScene,
+  );
+  await delay(950);
+  assert.equal(
+    await evaluate(`document.querySelector('#picture').getAttribute('src')`),
+    latestScene,
+    'Late initial decode cannot overwrite the latest scene',
+  );
+  fogDelay = 0;
+  fogFailure = true;
+  await call('Page.reload');
+  await delay(250);
+  await waitFogReady();
+  assert.ok(
+    (await fogAlpha()) > 200,
+    'Missing fog asset falls back to a milky veil',
+  );
+  await evaluate(`document.querySelector('#fog').focus()`);
+  await call('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: ' ',
+    code: 'Space',
+    windowsVirtualKeyCode: 32,
+  });
+  assert.equal(await fogAlpha(), 0, 'Fallback remains playable');
+  fogFailure = false;
+  await evaluate(`document.querySelector('#cloud').click()`);
+  await waitFogReady();
+  assert.equal(await fogAlpha(), 255, 'Next scene recovers normal fog');
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: forcedGarden.identifier,
+  });
+  await call('Network.setCacheDisabled', { cacheDisabled: false });
+  report(
+    'Window: delayed fog, loading input guard, rapid next presses, out-of-order decode, HTTP503 fallback and recovery PASS',
   );
   const cancelPoint = await fogRect();
   await call('Input.dispatchTouchEvent', {

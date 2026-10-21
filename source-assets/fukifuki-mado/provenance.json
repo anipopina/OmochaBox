@@ -22,7 +22,26 @@
         1254,
         1254
       ],
-      "webp_quality": 86
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/garden.webp",
+        "output_bytes": 5726,
+        "sha256": "aa1e64470b51a37141774391b4cd798de44523dd6c58e49fba8a9d5b69a58a56",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     },
     {
       "id": "animal-train",
@@ -35,7 +54,26 @@
         1254,
         1254
       ],
-      "webp_quality": 86
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/animal-train.webp",
+        "output_bytes": 5476,
+        "sha256": "1c4e7b9d31b5df95e02273b0d1b1b5e3488e8dededff2a64929e480fc1ee22e6",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     },
     {
       "id": "frog-pond",
@@ -48,7 +86,26 @@
         1254,
         1254
       ],
-      "webp_quality": 86
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/frog-pond.webp",
+        "output_bytes": 4830,
+        "sha256": "aba39d2b0098848733b51ea1952b29acf375427629973832a2b8ba878340ea2f",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     },
     {
       "id": "shapes-picnic",
@@ -61,7 +118,26 @@
         1254,
         1254
       ],
-      "webp_quality": 86
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/shapes-picnic.webp",
+        "output_bytes": 6324,
+        "sha256": "d289341bf8dfc23f263b92fd213a1545d6c775bcf8cad0dd7483cefb42adc34f",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     },
     {
       "id": "underwater",
@@ -74,7 +150,26 @@
         1254,
         1254
       ],
-      "webp_quality": 86
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/underwater.webp",
+        "output_bytes": 6306,
+        "sha256": "fdf25f0973c26dce714db9b75b69068c025235a697246b04ea91f6eeb9321e9b",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     },
     {
       "id": "shapes-hello",
@@ -87,7 +182,26 @@
         1254,
         1254
       ],
-      "webp_quality": 86
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/shapes-hello.webp",
+        "output_bytes": 6616,
+        "sha256": "5520cd8795ca193d1b18bef8b3d21c08ea02d0f9374c15a860da6e767ada3984",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     }
   ],
   "added_images_source": "Five images supplied by the user on 2026-10-21. Generation tool and third-party license details were not supplied."

@@ -15,15 +15,16 @@
 ## 仕様と実装上の注意
 
 - 入場時に画像をランダムに選び、「つぎのまど」で画像一覧の順に循環します。毎回の画像と代替テキストは一緒に更新します。
+- 画像の切り替えは鮮明な画像と曇り画像のデコード完了後に行います。読み込み中は一時的に乳白色で覆い、拭き取り入力を受け付けません。連打時には最後に選ばれた画像だけを反映します。曇り画像の取得に失敗した場合は、簡易な乳白色の膜で遊べる状態に戻します。
 - 無音で、点数・達成率・自動終了はありません。
 - 最大10指に対応し、非表示・画面離脱・フォーカス喪失時には入力を解除します。
 - 画面サイズ変更では画像と拭いた状態を維持し、再入場時には曇った窓に戻ります。
 - 動きを減らす設定では、拭いた際の星のアニメーションを止めます。
-- 実装は [app.ts](app.ts)、見た目は [style.css](style.css)。景色の画像の上にCanvasを重ね、不透明な消去ブラシで曇りを取り除きます。
+- 実装は [app.ts](app.ts)、見た目は [style.css](style.css)。鮮明な景色の上に、事前にぼかし・乳白色の膜・曇りむら・水滴を合成した画像をCanvasで重ねます。拭く前は色とシルエットがぼんやり見え、消去ブラシで曇りを取り除くと鮮明な景色が現れます。ブラウザーでのぼかし計算は行いません。
 
 ## 素材
 
-画像一覧・表示順・説明文は [scenes.json](scenes.json)、配信用WebPは `assets/` にあります。原本・出典・命名規則・追加手順・最適化ルールは [素材README](../../source-assets/fukifuki-mado/README.md) と [変換記録](../../source-assets/fukifuki-mado/provenance.json) に集約しています。再変換は `scripts/optimize-window-assets.py` を使います。
+画像一覧・表示順・説明文は [scenes.json](scenes.json)、鮮明な配信用WebPは `assets/`、曇り画像は `assets/fog/` にあります。原本・出典・命名規則・追加手順・最適化ルールは [素材README](../../source-assets/fukifuki-mado/README.md) と [変換記録](../../source-assets/fukifuki-mado/provenance.json) に集約しています。再変換は `scripts/optimize-window-assets.py` を使います。
 
 ## 変更時の確認
 

@@ -1,19 +1,29 @@
 import { requireContext2d, requireElement } from '../shared/dom';
 import scenes from './scenes.json';
 
-const sceneImages = import.meta.glob<string>('./assets/*.webp', {
+const sceneImages = import.meta.glob<string>('./assets/**/*.webp', {
   eager: true,
   query: '?url',
   import: 'default',
 });
 const picture = requireElement('#picture', HTMLImageElement);
 let sceneIndex = Math.floor(Math.random() * scenes.length);
-function showScene() {
-  const scene = scenes[sceneIndex];
-  picture.src = sceneImages[`./assets/${scene.id}.webp`];
-  picture.alt = scene.alt;
+let sceneRequest = 0,
+  sceneReady = false;
+let fogImage: HTMLImageElement | undefined;
+const imageCache = new Map<string, Promise<HTMLImageElement>>();
+function loadImage(url: string) {
+  let pending = imageCache.get(url);
+  if (!pending) {
+    const image = new Image();
+    image.src = url;
+    pending = image.decode().then(() => image);
+    imageCache.set(url, pending);
+    // Allow a later visit to retry a temporarily unavailable image.
+    void pending.catch(() => imageCache.delete(url));
+  }
+  return pending;
 }
-showScene();
 
 interface Position {
   x: number;
@@ -38,20 +48,47 @@ function clearInput() {
 function cloud() {
   clearInput();
   ctx.globalCompositeOperation = 'source-over';
-  const g = ctx.createLinearGradient(0, 0, width, height);
-  g.addColorStop(0, '#d6f6ff');
-  g.addColorStop(0.5, '#97d7ed');
-  g.addColorStop(1, '#bceafa');
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = '#ffffff55';
-  for (let y = 25; y < height; y += 65)
-    for (let x = 20; x < width; x += 65) {
-      ctx.beginPath();
-      ctx.ellipse(x + (y % 2) * 14, y, 8, 14, 0.35, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  ctx.clearRect(0, 0, width, height);
+  if (fogImage) {
+    // Match the sharp image's centered object-fit: cover crop.
+    const scale = Math.max(
+      width / fogImage.naturalWidth,
+      height / fogImage.naturalHeight,
+    );
+    const w = fogImage.naturalWidth * scale,
+      h = fogImage.naturalHeight * scale;
+    ctx.drawImage(fogImage, (width - w) / 2, (height - h) / 2, w, h);
+  } else {
+    // Cover the previous scene while loading; retain playable fog if its asset fails.
+    ctx.fillStyle = sceneReady ? '#f1f8f9e8' : '#f1f8f9';
+    ctx.fillRect(0, 0, width, height);
+  }
   key = { x: 0.5, y: 0.5 };
+}
+async function showScene() {
+  const request = ++sceneRequest;
+  const scene = scenes[sceneIndex];
+  const sharpUrl = sceneImages[`./assets/${scene.id}.webp`];
+  sceneReady = false;
+  fogImage = undefined;
+  canvas.setAttribute('aria-busy', 'true');
+  cloud();
+  try {
+    const [, fog] = await Promise.all([
+      loadImage(sharpUrl),
+      loadImage(sceneImages[`./assets/fog/${scene.id}.webp`]),
+    ]);
+    if (request !== sceneRequest) return;
+    picture.src = sharpUrl;
+    fogImage = fog;
+  } catch {
+    if (request !== sceneRequest) return;
+    picture.src = sharpUrl;
+  }
+  picture.alt = scene.alt;
+  sceneReady = true;
+  canvas.removeAttribute('aria-busy');
+  cloud();
 }
 function resize() {
   const rect = canvas.getBoundingClientRect();
@@ -74,6 +111,7 @@ function resize() {
   else cloud();
 }
 function wipe(a: Position, b = a) {
+  if (!sceneReady) return;
   ctx.globalCompositeOperation = 'destination-out';
   ctx.fillStyle = '#000';
   ctx.strokeStyle = '#000';
@@ -102,6 +140,7 @@ function sparkle(p: Position) {
   timer = setTimeout(() => shine.classList.remove('pop'), 500);
 }
 canvas.addEventListener('pointerdown', (e) => {
+  if (!sceneReady) return;
   if (e.pointerType === 'mouse' && e.button !== 0) return;
   if (fingers.size >= 10) return;
   e.preventDefault();
@@ -129,6 +168,7 @@ for (const event of [
       canvas.releasePointerCapture(e.pointerId);
   });
 canvas.addEventListener('keydown', (e) => {
+  if (!sceneReady) return;
   if (
     !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Enter'].includes(
       e.key,
@@ -148,9 +188,8 @@ canvas.addEventListener('keydown', (e) => {
   sparkle(b);
 });
 requireElement('#cloud', HTMLButtonElement).addEventListener('click', () => {
-  cloud();
   sceneIndex = (sceneIndex + 1) % scenes.length;
-  showScene();
+  void showScene();
 });
 window.addEventListener('pagehide', clearInput);
 window.addEventListener('blur', clearInput);
@@ -159,3 +198,4 @@ document.addEventListener('visibilitychange', () => {
 });
 new ResizeObserver(resize).observe(canvas);
 resize();
+void showScene();
