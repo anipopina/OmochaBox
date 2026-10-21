@@ -1,0 +1,35 @@
+{
+  "origin": "OpenAI image generation for OmochaBox; user-approved artwork. No third-party stock assets used. No claim of exclusive rights or third-party license.",
+  "source_library_ids": {
+    "ogp": "libfile_204b21516ec48191a2b18b0ace1511f1",
+    "favicon": "libfile_de38f750790c819188c7691da8a01619"
+  },
+  "icon_processing": {
+    "original_size": [
+      1254,
+      1254
+    ],
+    "body_crop_xyxy": [
+      75,
+      104,
+      1178,
+      1173
+    ],
+    "square_size": [
+      1119,
+      1119
+    ],
+    "padding_pixels": 8,
+    "cleanup": "Removed disconnected exterior alpha specks; preserved expression and connected antialiasing fringe. Near-solid coral, white, black and pink fields normalized to remove generation mottling. Lanczos resize; optimized lossless PNG. ICO uses embedded BMP frames at 16, 32, 48px.",
+    "apple_background_rgb": [
+      250,
+      68,
+      89
+    ]
+  },
+  "ogp": "Approved 1200x630 PNG copied byte-for-byte unchanged.",
+  "sha256": {
+    "src/public/assets/branding/ogp.png": "600be44f4c4293ed1b6f5ad4cde1da2e9b21aa26b154362845512112ef2d2065",
+    "source-assets/branding/favicon-approved.png": "090763a36723b8eb36419f98d9031c6c5f797b0bfbec5e1e0478effe5deac1f2"
+  }
+}

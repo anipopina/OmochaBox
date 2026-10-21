@@ -3,7 +3,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 import json
 root = Path(__file__).resolve().parent.parent
-out = root / 'src/games/hikari-no-oekaki/assets'
+out = root / 'src/hikari-no-oekaki/assets'
 comparison = root / 'test-results/asset-comparison'
 comparison.mkdir(parents=True, exist_ok=True)
 rows=[]
