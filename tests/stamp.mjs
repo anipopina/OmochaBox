@@ -92,8 +92,17 @@ try {
   });
   const visit = async (path = '/ponpon-stamp/') => {
     await call('Page.navigate', { url: origin + path });
-    await delay(200);
+    await waitFor(
+      `document.readyState==='complete' && document.querySelectorAll('.choice').length===6`,
+    );
     await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+  };
+  const waitFor = async (expression) => {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (await evaluate(expression)) return;
+      await delay(50);
+    }
+    assert.fail(`Timed out waiting for ${expression}`);
   };
   const shot = async (name) =>
     writeFile(
@@ -391,7 +400,7 @@ try {
   await evaluate(`window.dispatchEvent(new Event('pagehide'))`);
   assert.equal(await count(), 0);
   await click('#back');
-  await delay(200);
+  await waitFor(`document.querySelectorAll('.game-card').length===4`);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
     4,
@@ -402,7 +411,9 @@ try {
     ),
   );
   await click('a[href="ponpon-stamp/"]');
-  await delay(200);
+  await waitFor(
+    `document.readyState==='complete' && document.querySelectorAll('.choice').length===6`,
+  );
   assert.equal(await count(), 0);
   assert.ok(
     await evaluate(

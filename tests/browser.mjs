@@ -1004,7 +1004,12 @@ try {
       `document.querySelector('a[href="fukifuki-mado/"]').click()`,
     );
     for (let attempt = 0; attempt < 100; attempt++) {
-      if (await evaluate(`!!document.querySelector('#fog')`)) break;
+      if (
+        await evaluate(
+          `document.readyState==='complete' && !!document.querySelector('#fog')`,
+        )
+      )
+        break;
       await delay(50);
     }
     await waitFogReady();
