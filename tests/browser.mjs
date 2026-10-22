@@ -989,11 +989,25 @@ try {
     });
     assert.equal(await fogAlpha(), 0);
     await evaluate(`document.querySelector('#back').click()`);
-    await delay(200);
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (
+        await evaluate(`!!document.querySelector('a[href="fukifuki-mado/"]')`)
+      )
+        break;
+      await delay(50);
+    }
+    assert.ok(
+      await evaluate(`!!document.querySelector('a[href="fukifuki-mado/"]')`),
+      'Hub ready after returning from window',
+    );
     await evaluate(
       `document.querySelector('a[href="fukifuki-mado/"]').click()`,
     );
-    await delay(200);
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (await evaluate(`!!document.querySelector('#fog')`)) break;
+      await delay(50);
+    }
+    await waitFogReady();
     assert.equal(await fogAlpha(), 255);
   }
   // Force both ends of the random range to verify entry selection without flaky statistics.
