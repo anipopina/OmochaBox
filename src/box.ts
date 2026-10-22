@@ -1,3 +1,6 @@
+import stampSquare from './assets/characters/01-coral-square.svg';
+import stampCyan from './assets/characters/02-cyan-circle.svg';
+import stampStar from './assets/characters/05-coral-star.svg';
 import { games } from './games';
 import { requireElement } from './shared/dom';
 import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';
@@ -22,6 +25,10 @@ for (const game of games) {
   if (game.id === 'pukapuka-fusen') {
     art.className = 'balloon-preview';
     art.innerHTML = `<img src="${balloonCyan}" alt="" loading="lazy"><img src="${balloonStar}" alt="" loading="lazy"><img src="${balloonTriangle}" alt="" loading="lazy">`;
+  }
+  if (game.id === 'ponpon-stamp') {
+    art.className = 'stamp-preview';
+    art.innerHTML = `<img src="${stampSquare}" alt="" loading="lazy"><img src="${stampCyan}" alt="" loading="lazy"><img src="${stampStar}" alt="" loading="lazy">`;
   }
   const copy = document.createElement('div');
   copy.className = 'card-copy';

@@ -9,6 +9,8 @@
 - [ふきふき、まど](../src/fukifuki-mado/README.md)：現在の仕様・固有の確認項目
 - [ぷかぷか、ふうせん](../src/pukapuka-fusen/README.md)：現在の仕様・固有の確認項目
 
+- [ぽんぽん、スタンプ](../src/ponpon-stamp/README.md)：6体のなかまを選んで紙面に置く創作遊び
+
 素材原本・出典・変換記録は [source-assets/](../source-assets/) を参照してください。
 
 ## 過去の実装・検証記録

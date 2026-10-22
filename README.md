@@ -11,6 +11,7 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 | [ふきふき、まど](src/fukifuki-mado/README.md)      | 曇った窓を拭いて、庭のどうぶつを見つける遊び |
 
 | [ぷかぷか、ふうせん](src/pukapuka-fusen/README.md) | ポンプでふくらませ、空へ見送る風船遊び |
+| [ぽんぽん、スタンプ](src/ponpon-stamp/README.md) | 6体のなかまを選んで紙面に置く創作遊び |
 
 ## 開発を始める
 

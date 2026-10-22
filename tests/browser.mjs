@@ -146,13 +146,13 @@ try {
   for (
     let i = 0;
     i < 100 &&
-    !(await evaluate('document.querySelectorAll(".game-card").length === 3'));
+    !(await evaluate('document.querySelectorAll(".game-card").length === 4'));
     i++
   )
     await delay(50);
   assert.equal(
     await evaluate('document.querySelectorAll(".game-card").length'),
-    3,
+    4,
     'Production hub loads bundled modules',
   );
   assert.equal(await evaluate('typeof window.__test'), 'undefined');
@@ -737,7 +737,7 @@ try {
       await delay(300);
       assert.equal(
         await evaluate('document.querySelectorAll(".game-card").length'),
-        3,
+        4,
       );
       assert.equal(
         await evaluate('document.querySelector("h1").textContent'),
@@ -807,7 +807,7 @@ try {
       }
     }
     report(
-      'Hub: 320/390/1180px, simplified copy, three cards, 56px controls, lifecycle cleanup, mute, return/re-entry x9, no horizontal overflow PASS',
+      'Hub: 320/390/1180px, simplified copy, four cards, 56px controls, lifecycle cleanup, mute, return/re-entry x9, no horizontal overflow PASS',
     );
   }
   // Real touch input exercises pointer capture and the fog alpha mask.

@@ -25,4 +25,10 @@ export const games: readonly Game[] = [
     description: 'おすと ふくらむ。はなすと ぷかぷか。',
     href: 'pukapuka-fusen/',
   },
+  {
+    id: 'ponpon-stamp',
+    title: 'ぽんぽん、スタンプ',
+    description: 'えらんで、ぽん！ なかまたちで えを つくろう。',
+    href: 'ponpon-stamp/',
+  },
 ];
