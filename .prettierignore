@@ -5,3 +5,4 @@ package-lock.json
 source-assets/
 docs/
 AGENTS.md
+src/assets/characters/**/*.svg

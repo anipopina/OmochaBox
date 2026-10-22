@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 512 512"
+   width="512"
+   height="512"
+   role="img"
+   aria-labelledby="02-clownfish-title"
+   version="1.1"
+   id="svg14"
+   sodipodi:docname="02-clownfish.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.5591189"
+     inkscape:cx="195.18437"
+     inkscape:cy="206.51639"
+     inkscape:window-width="2523"
+     inkscape:window-height="2061"
+     inkscape:window-x="-8"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="fins" />
+  <title
+     id="02-clownfish-title">クマノミ</title>
+  <g
+     id="02-clownfish"
+     transform="translate(256 256) scale(1.20) translate(-668 -257)">
+    <g
+       id="tail">
+      <path
+         fill="#27374d"
+         d="M 563.34873,243.65127 C 540.34873,241.65127 522,220 503,224 c -16,4 -20,23 -18,50 0,26 7,44 24,45 20,-1 34.18592,-13.54676 54.18592,-22.54676 z"
+         id="path1"
+         sodipodi:nodetypes="cccccc" />
+      <path
+         fill="#FF952F"
+         d="M560 243 C538 240 521 224 511 233 C500 243 502 251 503 260 C498 269 503 277 503 284 C500 294 510 310 522 312 C536 314 549 302 561 298 Z"
+         id="path2" />
+    </g>
+    <g
+       id="fins">
+      <path
+         fill="#27374d"
+         d="M 589.45386,241.23691 C 569.45386,228.23691 570,211 583,197 c 20,-23 37.23691,-4.46717 65.23691,7.53283 L 656,236 Z"
+         id="path3"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         fill="#FF8425"
+         d="M591 241 C575 230 584 211 594 207 C598 198 604 204 609 198 C618 190 638 199 650 206 L653 232 Z"
+         id="path4" />
+      <path
+         fill="#27374d"
+         d="M 669.68412,196.53949 C 641.68412,181.53949 642,164 661,152 c 29,-22 51.31588,4.15129 75.31588,33.15129 L 732,212 Z"
+         id="path5"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         fill="#FF8425"
+         d="M669 198 C650 185 652 173 663 168 C667 158 674 163 681 157 C690 150 699 160 706 157 C721 162 730 177 739 187 Z"
+         id="path6" />
+      <path
+         fill="#27374d"
+         d="M 587.12988,302.56899 C 569.12988,311.56899 573,330 589,337 c 22,13 44.69743,3.64652 65.69743,-13.35348 L 650,307 Z"
+         id="path7"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         fill="#FF8425"
+         d="M590 300 C579 309 582 321 592 324 C595 332 604 330 611 335 C624 339 642 333 652 326 L651 310 Z"
+         id="path8" />
+      <path
+         fill="#27374D"
+         d="M698 326 C683 334 677 361 691 367 C709 377 735 354 744 329 Z"
+         id="path9" />
+      <path
+         fill="#FF8425"
+         d="M707 324 C694 333 690 351 698 357 C707 362 715 357 723 359 C735 352 742 338 746 327 Z"
+         id="path10" />
+    </g>
+    <g
+       id="body">
+      <path
+         id="body-base"
+         fill="#FF9633"
+         d="M559 243 C599 230 645 190 686 184 C738 173 784 192 813 215 C834 231 850 252 850 261 Q849 264 844 266 Q853 267 846 278 C827 307 791 321 752 330 C715 338 677 332 647 324 C608 315 581 300 560 298 Z" />
+      <path
+         id="tail-band"
+         fill="#fbf7ed"
+         d="m 559,242 c 10.91859,-2.54676 18.10451,-6.87239 25.10451,-9.9769 8,21 11.87239,46.51155 3.87239,73.51155 L 560,298 c 5,-18 4,-38 -1,-56 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         fill="#27374d"
+         d="m 581.51155,232.86028 5.45399,-2.57564 c 8,21 11.52291,50.49424 3.52291,76.49424 l -6.24423,-2.08141 c 7,-24 5.26733,-50.83719 -2.73267,-71.83719 z"
+         id="path11"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="middle-band"
+         fill="#FBF7ED"
+         d="M648 197 C654 193 663 190 672 188 C675 210 683 226 691 240 C697 250 699 256 693 266 C681 284 680 311 692 333 C677 332 665 330 655 326 C658 285 653 241 648 197 Z" />
+      <path
+         fill="#27374D"
+         d="M645 199 L650 196 C657 239 661 288 657 328 L652 326 C656 283 651 240 645 199 Z"
+         id="path12" />
+      <path
+         fill="#27374D"
+         d="M670 188 L675 187 C676 209 685 227 693 240 C698 248 701 255 696 264 L690 267 C694 256 692 251 688 243 C677 224 671 207 670 188 Z"
+         id="path13" />
+      <path
+         id="head-band"
+         fill="#fbf7ed"
+         d="m 760,187 c 14,3 28,10 37,16 -17,24 -27,47 -17,74 5,14 16.17269,28.15129 27.17269,34.15129 -12,7 -22.88487,10.36679 -33.88487,13.36679 C 751.28782,300.51808 741,280 742,253 c 1,-25 7,-46 18,-66 z"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         fill="#27374d"
+         d="m 758,187 7,2 c -15,21 -20,44 -19,66 0,27 12.34539,49.63321 33.34539,67.63321 L 773,325 c -23,-20 -34,-43 -34,-70 -1,-23 7,-51 19,-68 z"
+         id="path14"
+         sodipodi:nodetypes="ccccccc" />
+    </g>
+    <g
+       id="details">
+      <path
+         id="pectoral-fin"
+         fill="#27374D"
+         d="M718 258 C702 248 686 254 682 271 C677 288 687 304 708 302 C691 299 690 286 692 277 C695 263 706 256 718 258 Z" />
+      <circle
+         id="eye"
+         fill="#27374D"
+         cx="806"
+         cy="245"
+         r="7.5" />
+    </g>
+  </g>
+</svg>

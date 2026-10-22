@@ -1,6 +1,6 @@
-import stampSquare from './assets/characters/01-coral-square.svg';
-import stampCyan from './assets/characters/02-cyan-circle.svg';
-import stampStar from './assets/characters/05-coral-star.svg';
+import stampSquare from './assets/characters/shapes/01-coral-square.svg';
+import stampCyan from './assets/characters/shapes/02-cyan-circle.svg';
+import stampStar from './assets/characters/shapes/05-coral-star.svg';
 import { games } from './games';
 import { requireElement } from './shared/dom';
 import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';

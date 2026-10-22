@@ -1,10 +1,10 @@
 import { requireElement } from '../shared/dom';
-import square from '../assets/characters/01-coral-square.svg';
-import cyan from '../assets/characters/02-cyan-circle.svg';
-import purple from '../assets/characters/03-purple-circle.svg';
-import triangle from '../assets/characters/04-yellow-triangle.svg';
-import star from '../assets/characters/05-coral-star.svg';
-import mint from '../assets/characters/06-mint-rectangle.svg';
+import square from '../assets/characters/shapes/01-coral-square.svg';
+import cyan from '../assets/characters/shapes/02-cyan-circle.svg';
+import purple from '../assets/characters/shapes/03-purple-circle.svg';
+import triangle from '../assets/characters/shapes/04-yellow-triangle.svg';
+import star from '../assets/characters/shapes/05-coral-star.svg';
+import mint from '../assets/characters/shapes/06-mint-rectangle.svg';
 
 const artwork = [square, cyan, purple, triangle, star, mint];
 const names = [

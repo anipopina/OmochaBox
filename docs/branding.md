@@ -30,6 +30,10 @@
 
 ## トップページのキャラクターSVG
 
-[src/assets/characters/](../src/assets/characters/) の6点はユーザー提供のSVGです。画像生成で制作した上記の共有画像とは別に、提供されたファイルをそのまま保持します。元資料にない作者・ライセンスは推定しません。
+[src/assets/characters/shapes/](../src/assets/characters/shapes/) の6点はユーザー提供のSVGです。画像生成で制作した上記の共有画像とは別に、提供されたファイルをそのまま保持します。元資料にない作者・ライセンスは推定しません。
 
 SVGは合計約10KBで、背景透過とベクターの輪郭を維持して配信します。HTMLに表示寸法を指定し、Viteでハッシュ付きの独立ファイルとして出力します。装飾画像として扱い、読み上げや操作を妨げないようにしています。
+
+## シリーズ別の素材管理
+
+図形6点は `src/assets/characters/shapes/`、水族館のユーザー手動修正版8点は `src/assets/characters/aquarium/` に保存します。[素材一覧](../src/assets/characters/README.md) と [出典・一致検証](../source-assets/characters/README.md) を参照してください。上記「なかまたち」の図形の方針は図形シリーズの説明であり、水族館の原本を変更する規則ではありません。素材追加はゲームへの自動採用を意味せず、各おもちゃの画風統一やキャラクター使用を必須にしません。

@@ -26,6 +26,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 - `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
+- 共有キャラクターSVGは `src/assets/characters/<series>/` に置き、出典とSHA-256は `source-assets/characters/` に記録します。原本SVGを整形・最適化せず、ゲームへの採用は別途判断します。
 - 素材原本と出典・変換記録は `source-assets/<slug>/` に保存します。`dist/` を直接編集しません。
 
 ## ブラウザーテスト
@@ -36,7 +37,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 CHROME_PATH=/path/to/chromium npm test
 ```
 
-`npm test` はビルド、[出力検査](../tests/build.mjs)、[ブランド素材検査](../tests/branding.mjs)、[ブラウザーテスト](../tests/browser.mjs) を実行します。結果とスクリーンショットは `test-results/` に保存します。
+`npm test` はビルド、[出力検査](../tests/build.mjs)、[ブランド素材検査](../tests/branding.mjs)、[シリーズ別SVGの原本一致検査](../tests/characters.mjs)、[ブラウザーテスト](../tests/browser.mjs) を実行します。結果とスクリーンショットは `test-results/` に保存します。
 
 専用一時プロファイルと自動選択ポートを使い、終了時にブラウザーとHTTPサーバーを停止します。ヘッドレス検証では `--no-sandbox` を指定するため、対象はこのローカルコードだけにしてください。エミュレーションとは別に、実機iPhone/iPadのSafari、OSジェスチャー、音の聴感も確認します。
 

@@ -15,7 +15,7 @@
 
 ## 素材
 
-`src/assets/characters/` のユーザー提供6SVGを変更せず参照します。顔・手足・輪郭は原本のまま。企画画像は構図参照専用で配信せず、[素材記録](../../source-assets/ponpon-stamp/README.md) に保存します。
+`src/assets/characters/shapes/` のユーザー提供6SVGを変更せず参照します。顔・手足・輪郭は原本のまま。企画画像は構図参照専用で配信せず、[素材記録](../../source-assets/ponpon-stamp/README.md) に保存します。
 
 ## 検証
 

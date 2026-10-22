@@ -43,6 +43,7 @@ src/
   index.html, box.ts, box.css  遊びを選ぶ入口
   games.ts                    遊びの一覧
   <slug>/                     遊びごとの実装・素材・README
+  assets/characters/          シリーズ別SVG（shapes・aquarium）
   shared/                     共通処理
   public/                     固定URLで配信するアイコン・共有画像
 source-assets/                素材原本・出典・変換記録
@@ -61,6 +62,7 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 ## 方針と資料
 
 - [AGENTS.md](AGENTS.md)：幼児向けの視認性・操作・演出、素材利用の共通方針
+- [シリーズ別SVG素材](src/assets/characters/README.md)：図形6点・水族館手動修正版8点と出典
 - [キャラクターと共有素材](docs/branding.md)：なかまたち・favicon・OGPの仕様と出典
 - [資料一覧](docs/README.md)：開発資料と過去の検証記録
 
