@@ -4,6 +4,7 @@ import stampStar from './assets/characters/shapes/05-coral-star.svg';
 import { games } from './games';
 import { requireElement } from './shared/dom';
 import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';
+import slidePreviewUrl from './assets/previews/korokoro-suberidai.svg';
 import balloonCyan from './pukapuka-fusen/assets/cyan.svg';
 import balloonStar from './pukapuka-fusen/assets/star.svg';
 import balloonTriangle from './pukapuka-fusen/assets/triangle.svg';
@@ -29,6 +30,10 @@ for (const game of games) {
   if (game.id === 'ponpon-stamp') {
     art.className = 'stamp-preview';
     art.innerHTML = `<img src="${stampSquare}" alt="" loading="lazy"><img src="${stampCyan}" alt="" loading="lazy"><img src="${stampStar}" alt="" loading="lazy">`;
+  }
+  if (game.id === 'korokoro-suberidai') {
+    art.className = 'slide-preview';
+    art.innerHTML = `<img src="${slidePreviewUrl}" width="480" height="550" alt="" loading="lazy">`;
   }
   const copy = document.createElement('div');
   copy.className = 'card-copy';

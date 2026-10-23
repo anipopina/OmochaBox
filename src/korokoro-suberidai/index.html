@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#e9f8ff" />
+    <title>ころころ、すべりだい｜おもちゃボックス</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="おもちゃボックス" />
+    <meta
+      property="og:title"
+      content="ころころ、すべりだい｜おもちゃボックス"
+    />
+    <meta
+      property="og:description"
+      content="さわると ころころ。いろんな たまを すべらせよう！"
+    />
+    <meta
+      property="og:url"
+      content="https://omochabox.ryonchibi.chatgpt.site/korokoro-suberidai/"
+    />
+    <meta
+      property="og:image"
+      content="https://omochabox.ryonchibi.chatgpt.site/assets/branding/ogp.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="黄色の背景に、おもちゃボックスの文字とカラフルな図形のなかまたち。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <header>
+      <a id="back" href="../" aria-label="おもちゃボックスにもどる"
+        >←<small>もどる</small></a
+      >
+      <h1><span>ころころ、</span><span>すべりだい</span></h1>
+    </header>
+    <main>
+      <div class="supplies" aria-label="ころがす たま">
+        <button class="supply red" aria-label="あかい たまを ころがす">
+          <span class="orb"></span><span class="cup"></span>
+        </button>
+        <button class="supply yellow" aria-label="きいろい たまを ころがす">
+          <span class="orb"></span><span class="cup"></span>
+        </button>
+        <button class="supply blue" aria-label="あおい たまを ころがす">
+          <span class="orb"></span><span class="cup"></span>
+        </button>
+      </div>
+      <div class="playfield">
+        <svg
+          id="toy"
+          viewBox="0 0 480 610"
+          role="img"
+          aria-label="赤、黄、青のすべりだい。たまは交互にころがって、下の受け皿へ。"
+        >
+          <defs>
+            <linearGradient id="post">
+              <stop stop-color="#e3cba1" />
+              <stop offset=".4" stop-color="#fff6dd" />
+              <stop offset="1" stop-color="#edd8b2" />
+            </linearGradient>
+            <linearGradient id="red" x2="0" y2="1">
+              <stop stop-color="#ff9c8c" />
+              <stop offset=".4" stop-color="#ff5345" />
+              <stop offset="1" stop-color="#e82e2c" />
+            </linearGradient>
+            <linearGradient id="yellow" x2="0" y2="1">
+              <stop stop-color="#fff38a" />
+              <stop offset=".4" stop-color="#ffda1b" />
+              <stop offset="1" stop-color="#efaa00" />
+            </linearGradient>
+            <linearGradient id="blue" x2="0" y2="1">
+              <stop stop-color="#85efff" />
+              <stop offset=".4" stop-color="#21c8e8" />
+              <stop offset="1" stop-color="#0799c5" />
+            </linearGradient>
+            <radialGradient id="ball-red" cx=".3" cy=".23" r=".78">
+              <stop stop-color="#ffb3a5" />
+              <stop offset=".3" stop-color="#ff5b48" />
+              <stop offset=".8" stop-color="#f33121" />
+              <stop offset="1" stop-color="#ce1f20" />
+            </radialGradient>
+            <radialGradient id="ball-yellow" cx=".3" cy=".23" r=".78">
+              <stop stop-color="#fff9b6" />
+              <stop offset=".3" stop-color="#ffe139" />
+              <stop offset=".8" stop-color="#ffc600" />
+              <stop offset="1" stop-color="#e8a000" />
+            </radialGradient>
+            <radialGradient id="ball-blue" cx=".3" cy=".23" r=".78">
+              <stop stop-color="#a1edff" />
+              <stop offset=".3" stop-color="#2dc8ff" />
+              <stop offset=".8" stop-color="#009eea" />
+              <stop offset="1" stop-color="#007dc8" />
+            </radialGradient>
+            <linearGradient id="tray" x2="0" y2="1">
+              <stop stop-color="#fffdf3" />
+              <stop offset="1" stop-color="#e5cfab" />
+            </linearGradient>
+          </defs>
+          <ellipse
+            cx="240"
+            cy="585"
+            rx="211"
+            ry="15"
+            fill="#6396a5"
+            opacity=".12"
+          />
+          <path
+            d="M80 106V541 M400 178V541"
+            stroke="url(#post)"
+            stroke-width="40"
+            stroke-linecap="round"
+          />
+          <ellipse cx="240" cy="551" rx="218" ry="49" fill="url(#tray)" />
+          <ellipse
+            cx="240"
+            cy="543"
+            rx="198"
+            ry="32"
+            fill="#69d8f1"
+            stroke="#e5d4b6"
+            stroke-width="8"
+          />
+          <g class="tracks" fill="none" stroke-linecap="round">
+            <path
+              d="M70 108 C140 142 300 184 408 197"
+              stroke="#d92d2b"
+              stroke-width="48"
+            />
+            <path
+              d="M408 250 C330 291 172 330 72 338"
+              stroke="#dda600"
+              stroke-width="48"
+            />
+            <path
+              d="M72 390 C150 430 300 468 406 473"
+              stroke="#008db6"
+              stroke-width="48"
+            />
+            <path
+              d="M70 108 C140 142 300 184 408 197"
+              stroke="url(#red)"
+              stroke-width="40"
+            />
+            <path
+              d="M408 250 C330 291 172 330 72 338"
+              stroke="url(#yellow)"
+              stroke-width="40"
+            />
+            <path
+              d="M72 390 C150 430 300 468 406 473"
+              stroke="url(#blue)"
+              stroke-width="40"
+            />
+            <g
+              stroke="#ffffff"
+              stroke-width="3"
+              opacity=".55"
+              transform="translate(0,-16)"
+            >
+              <path d="M70 108 C140 142 300 184 408 197" />
+              <path d="M408 250 C330 291 172 330 72 338" />
+              <path d="M72 390 C150 430 300 468 406 473" />
+            </g>
+          </g>
+          <g id="balls" aria-hidden="true"></g>
+          <g
+            fill="none"
+            stroke-width="19"
+            stroke-linecap="round"
+            transform="translate(0,18)"
+          >
+            <path d="M58 108 C140 142 300 184 408 197" stroke="url(#red)" />
+            <path d="M418 250 C330 291 172 330 72 338" stroke="url(#yellow)" />
+            <path d="M62 390 C150 430 300 468 406 473" stroke="url(#blue)" />
+          </g>
+          <path
+            d="M22 550 C30 612 450 612 458 550 L457 565 C440 627 38 627 23 565Z"
+            fill="url(#tray)"
+          />
+          <path
+            d="M25 553 C65 602 415 602 455 553"
+            fill="none"
+            stroke="#fff8e9"
+            stroke-width="12"
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
+      <p class="hint">たまを さわると、ころころ！</p>
+      <p id="status" class="sr-only" role="status"></p>
+    </main>
+    <script type="module" src="app.ts"></script>
+  </body>
+</html>

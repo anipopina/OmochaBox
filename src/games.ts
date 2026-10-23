@@ -31,4 +31,10 @@ export const games: readonly Game[] = [
     description: 'えらんで、ぽん！ なかまたちで えを つくろう。',
     href: 'ponpon-stamp/',
   },
+  {
+    id: 'korokoro-suberidai',
+    title: 'ころころ、すべりだい',
+    description: 'たまを さわると、ころころ！',
+    href: 'korokoro-suberidai/',
+  },
 ];

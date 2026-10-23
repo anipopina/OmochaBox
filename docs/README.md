@@ -11,6 +11,8 @@
 
 - [ぽんぽん、スタンプ](../src/ponpon-stamp/README.md)：6体のなかまを選んで紙面に置く創作遊び
 
+- [ころころ、すべりだい](../src/korokoro-suberidai/README.md)：3段の斜面をころがるたまの遊び
+
 素材原本・出典・変換記録は [source-assets/](../source-assets/) を参照してください。
 
 ## 過去の実装・検証記録

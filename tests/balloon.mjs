@@ -348,7 +348,7 @@ try {
   await visit('/');
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    4,
+    5,
   );
   await evaluate(`document.querySelector('a[href="pukapuka-fusen/"]').click()`);
   await delay(200);
@@ -362,7 +362,7 @@ try {
   await delay(200);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    4,
+    5,
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

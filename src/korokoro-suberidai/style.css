@@ -1,0 +1,239 @@
+:root {
+  font-family: 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+  color: #17334b;
+  background: #f4fcff;
+  font-synthesis: weight;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: max(8px, env(safe-area-inset-top))
+    max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
+  background: radial-gradient(ellipse at 50% 60%, #d8f6ff, #f8fcff 75%);
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 64px;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+#back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  flex: none;
+  background: #d6eeff;
+  color: #235875;
+  text-decoration: none;
+  border-radius: 50%;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  touch-action: manipulation;
+}
+small {
+  font-size: 11px;
+  line-height: 1.3;
+}
+h1 {
+  margin: 0;
+  flex: 1;
+  font-size: clamp(23px, 5.6vw, 38px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+h1 span {
+  display: inline-block;
+  color: #e44334;
+}
+h1 span + span {
+  color: #0083ce;
+}
+main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 760px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.supplies {
+  display: flex;
+  justify-content: center;
+  gap: clamp(14px, 5vw, 36px);
+  flex: none;
+  padding: 6px 0 0;
+}
+.supply {
+  --light: #ffb6a6;
+  --color: #ff503e;
+  --dark: #d82722;
+  position: relative;
+  border: 0;
+  padding: 0;
+  width: clamp(68px, 20vw, 106px);
+  height: clamp(74px, 21vw, 112px);
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.yellow {
+  --light: #fff8a2;
+  --color: #ffdc18;
+  --dark: #e9a100;
+}
+.blue {
+  --light: #a4ecff;
+  --color: #0ab8f4;
+  --dark: #0079c6;
+}
+.orb {
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  left: 11%;
+  top: 1%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 28% 23%,
+    var(--light),
+    var(--color) 38%,
+    var(--dark) 95%
+  );
+  box-shadow:
+    inset 2px 3px 3px #ffffff80,
+    0 5px 5px #0b37551c;
+}
+.orb::before {
+  content: '';
+  position: absolute;
+  width: 16%;
+  height: 26%;
+  top: 16%;
+  left: 18%;
+  background: #ffffff88;
+  border-radius: 50%;
+  transform: rotate(35deg);
+  filter: blur(1px);
+}
+.cup {
+  position: absolute;
+  width: 94%;
+  height: 32%;
+  bottom: 4%;
+  left: 3%;
+  border-radius: 12% 12% 45% 45% / 20% 20% 80% 80%;
+  background: linear-gradient(
+    100deg,
+    var(--light),
+    var(--color) 45%,
+    var(--dark)
+  );
+  border-top: 5px solid var(--light);
+  box-shadow: 0 3px 4px #25445816;
+}
+.supply:active .orb {
+  transform: translateY(5px) scale(0.94);
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 4px solid #7243b5;
+  outline-offset: 3px;
+  border-radius: 20px;
+}
+.playfield {
+  min-height: 0;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#toy {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hint {
+  margin: 0;
+  padding-top: 2px;
+  flex: none;
+  color: #17618c;
+  font-size: clamp(14px, 3.7vw, 20px);
+  font-weight: 900;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  header {
+    flex-basis: 56px;
+  }
+  #back {
+    width: 56px;
+    height: 56px;
+  }
+  h1 {
+    font-size: 27px;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 20px;
+    gap: 0 12px;
+  }
+  .supplies {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+    align-items: center;
+  }
+  .supply {
+    width: 68px;
+    height: 68px;
+  }
+  .playfield {
+    height: 100%;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .hint {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: center;
+    font-size: 14px;
+    padding: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .supply:active .orb {
+    transform: none;
+  }
+}
