@@ -1,3 +1,4 @@
+import pinwheelRotor from './kurukuru-kazaguruma/assets/rotor.svg';
 import stampSquare from './assets/characters/shapes/01-coral-square.svg';
 import stampCyan from './assets/characters/shapes/02-cyan-circle.svg';
 import stampStar from './assets/characters/shapes/05-coral-star.svg';
@@ -34,6 +35,10 @@ for (const game of games) {
   if (game.id === 'korokoro-suberidai') {
     art.className = 'slide-preview';
     art.innerHTML = `<img src="${slidePreviewUrl}" width="480" height="550" alt="" loading="lazy">`;
+  }
+  if (game.id === 'kurukuru-kazaguruma') {
+    art.className = 'pinwheel-preview';
+    art.innerHTML = `<span></span><img src="${pinwheelRotor}" width="640" height="640" alt="" loading="lazy">`;
   }
   const copy = document.createElement('div');
   copy.className = 'card-copy';

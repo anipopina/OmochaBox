@@ -37,4 +37,10 @@ export const games: readonly Game[] = [
     description: 'たまを さわると、ころころ！',
     href: 'korokoro-suberidai/',
   },
+  {
+    id: 'kurukuru-kazaguruma',
+    title: 'くるくる、かざぐるま',
+    description: 'さわって、はらって。かぜを おくろう！',
+    href: 'kurukuru-kazaguruma/',
+  },
 ];

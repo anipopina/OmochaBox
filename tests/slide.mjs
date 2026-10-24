@@ -106,16 +106,28 @@ try {
 
   const waitFor = async (expression) => {
     for (let i = 0; i < 100; i++) {
-      if (await evaluate(expression)) return;
+      try {
+        if (await evaluate(expression)) return;
+      } catch (error) {
+        if (
+          error.code !== -32000 ||
+          !/context|navigat|closed/i.test(error.message)
+        )
+          throw error;
+      }
       await delay(50);
     }
     assert.fail(`Timed out: ${expression}`);
   };
   const visit = async (path = '/korokoro-suberidai/') => {
+    const previousDocument = await evaluate('performance.timeOrigin');
     await call('Page.navigate', { url: origin + path });
     await waitFor(
+      `performance.timeOrigin !== ${previousDocument} && document.readyState === 'complete'`,
+    );
+    await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===5"
+        ? "document.querySelectorAll('.game-card').length===6"
         : "document.querySelectorAll('.supply').length===3",
     );
   };
@@ -281,7 +293,7 @@ try {
   await shot('slide-reduced');
   await waitFor("document.querySelectorAll('.ball').length===0");
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===5");
+  await waitFor("document.querySelectorAll('.game-card').length===6");
   await evaluate(
     'document.querySelector(\'a[href="korokoro-suberidai/"]\').click()',
   );

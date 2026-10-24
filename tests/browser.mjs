@@ -138,6 +138,13 @@ try {
     if (r.exceptionDetails) throw new Error(JSON.stringify(r.exceptionDetails));
     return r.result.value;
   };
+  const waitFor = async (expression) => {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (await evaluate(expression)) return;
+      await delay(50);
+    }
+    assert.fail(`Timed out waiting for ${expression}`);
+  };
   await call('Runtime.enable');
   await call('Page.enable');
   await mkdir(join(root, 'test-results'), { recursive: true });
@@ -146,13 +153,13 @@ try {
   for (
     let i = 0;
     i < 100 &&
-    !(await evaluate('document.querySelectorAll(".game-card").length === 5'));
+    !(await evaluate('document.querySelectorAll(".game-card").length === 6'));
     i++
   )
     await delay(50);
   assert.equal(
     await evaluate('document.querySelectorAll(".game-card").length'),
-    5,
+    6,
     'Production hub loads bundled modules',
   );
   assert.equal(await evaluate('typeof window.__test'), 'undefined');
@@ -737,7 +744,7 @@ try {
       await delay(300);
       assert.equal(
         await evaluate('document.querySelectorAll(".game-card").length'),
-        5,
+        6,
       );
       assert.equal(
         await evaluate('document.querySelector("h1").textContent'),
@@ -807,7 +814,7 @@ try {
       }
     }
     report(
-      'Hub: 320/390/1180px, simplified copy, five cards, 56px controls, lifecycle cleanup, mute, return/re-entry x9, no horizontal overflow PASS',
+      'Hub: 320/390/1180px, simplified copy, six cards, 56px controls, lifecycle cleanup, mute, return/re-entry x9, no horizontal overflow PASS',
     );
   }
   // Real touch input exercises pointer capture and the fog alpha mask.
@@ -863,11 +870,14 @@ try {
       mobile: true,
     });
     await call('Page.navigate', { url: origin + '/' });
-    await delay(200);
+    await waitFor(`!!document.querySelector('a[href="fukifuki-mado/"]')`);
     await evaluate(
       `document.querySelector('a[href="fukifuki-mado/"]').click()`,
     );
-    await delay(250);
+    await waitFor(
+      `document.readyState==='complete' && !!document.querySelector('#fog')`,
+    );
+    await waitFogReady();
     assert.equal(
       await evaluate('document.title'),
       'ふきふき、まど｜おもちゃボックス',

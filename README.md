@@ -13,6 +13,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 | [ぽんぽん、スタンプ](src/ponpon-stamp/README.md)         | 6体のなかまを選んで紙面に置く創作遊び           |
 | [ころころ、すべりだい](src/korokoro-suberidai/README.md) | たまが3段の曲線斜面をころがり、受け皿で弾む遊び |
 
+| [くるくる、かざぐるま](src/kurukuru-kazaguruma/README.md) | 指で払うと方向と速さが変わる折り紙風の風車 |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。
