@@ -40,6 +40,10 @@ for (const game of games) {
     art.className = 'pinwheel-preview';
     art.innerHTML = `<span></span><img src="${pinwheelRotor}" width="640" height="640" alt="" loading="lazy">`;
   }
+  if (game.id === 'kasanete-iroglass') {
+    art.className = 'glass-preview';
+    art.innerHTML = '<i></i><i></i><i></i>';
+  }
   const copy = document.createElement('div');
   copy.className = 'card-copy';
   const title = document.createElement('h2');

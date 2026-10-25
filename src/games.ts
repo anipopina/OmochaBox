@@ -43,4 +43,10 @@ export const games: readonly Game[] = [
     description: 'さわって、はらって。かぜを おくろう！',
     href: 'kurukuru-kazaguruma/',
   },
+  {
+    id: 'kasanete-iroglass',
+    title: 'かさねて、いろガラス',
+    description: 'うごかして、かさねて。いろが かわるよ！',
+    href: 'kasanete-iroglass/',
+  },
 ];

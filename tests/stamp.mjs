@@ -400,10 +400,10 @@ try {
   await evaluate(`window.dispatchEvent(new Event('pagehide'))`);
   assert.equal(await count(), 0);
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===6`);
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    6,
+    7,
   );
   assert.ok(
     await evaluate(

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#fffbed" />
+    <title>かさねて、いろガラス｜おもちゃボックス</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="おもちゃボックス" />
+    <meta
+      property="og:title"
+      content="かさねて、いろガラス｜おもちゃボックス"
+    />
+    <meta
+      property="og:description"
+      content="うごかして、かさねて。いろが かわるよ！"
+    />
+    <meta
+      property="og:url"
+      content="https://omochabox.ryonchibi.chatgpt.site/kasanete-iroglass/"
+    />
+    <meta
+      property="og:image"
+      content="https://omochabox.ryonchibi.chatgpt.site/assets/branding/ogp.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="黄色の背景に、おもちゃボックスの文字とカラフルな図形のなかまたち。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <header>
+      <a id="back" href="../" aria-label="おもちゃボックスにもどる">⌂</a>
+      <h1>かさねて、<span>いろガラス</span></h1>
+    </header>
+    <main>
+      <div id="lightbox">
+        <canvas
+          id="glass"
+          tabindex="0"
+          role="application"
+          aria-label="いろガラスの光台。色板を指で動かせます。下の形ボタンで選び、矢印キーで動かせます。"
+          aria-describedby="hint"
+        ></canvas>
+      </div>
+      <aside>
+        <p id="hint">うごかして、<br class="wide-break" />かさねてみよう</p>
+        <div class="tools" aria-label="いろガラスをえらぶ">
+          <button data-shape="0" aria-label="まるをえらぶ" aria-pressed="true">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <circle
+                cx="32"
+                cy="32"
+                r="24"
+                fill="#00d6f6"
+                stroke="#009abb"
+                stroke-width="3"
+              /></svg
+            ><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button
+            data-shape="1"
+            aria-label="しかくをえらぶ"
+            aria-pressed="false"
+          >
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <rect
+                x="10"
+                y="10"
+                width="44"
+                height="44"
+                rx="9"
+                fill="#ffe600"
+                stroke="#d6a700"
+                stroke-width="3"
+              /></svg
+            ><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button
+            data-shape="2"
+            aria-label="さんかくをえらぶ"
+            aria-pressed="false"
+          >
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path
+                d="M32 7 58 55H6Z"
+                stroke-linejoin="round"
+                fill="#ff24bc"
+                stroke="#d1008c"
+                stroke-width="3"
+              /></svg
+            ><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button id="reset" aria-label="はじめのならびにもどす">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path
+                d="M17 19a22 22 0 1 1-5 25M17 7v17H3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </aside>
+      <p id="status" class="sr-only" role="status"></p>
+    </main>
+    <script type="module" src="app.ts"></script>
+  </body>
+</html>
