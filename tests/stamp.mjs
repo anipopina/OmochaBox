@@ -104,14 +104,14 @@ try {
     }
     assert.fail(`Timed out waiting for ${expression}`);
   };
-  const shot = async (name) =>
+  const shot = async (name, fullPage = true) =>
     writeFile(
       join(output, name + '.png'),
       Buffer.from(
         (
           await call('Page.captureScreenshot', {
             format: 'png',
-            captureBeyondViewport: true,
+            captureBeyondViewport: fullPage,
           })
         ).data,
         'base64',
@@ -135,6 +135,10 @@ try {
   const count = () => evaluate(`document.querySelectorAll('.stamp').length`);
   const click = (selector) =>
     evaluate(`document.querySelector('${selector}').click()`);
+  const setFeedback = (sound, vibration) =>
+    evaluate(
+      `localStorage.setItem('omochabox-play-settings-v1',JSON.stringify({sound:${sound},vibration:${vibration}}));window.dispatchEvent(new StorageEvent('storage',{key:'omochabox-play-settings-v1'}))`,
+    );
   for (const [width, height] of [
     [320, 568],
     [390, 844],
@@ -158,7 +162,7 @@ try {
     );
     assert.ok(
       await evaluate(
-        `[...document.querySelectorAll('.choice,#undo,#new,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
+        `[...document.querySelectorAll('.choice,.set-choice,#undo,#new,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
       ),
       '56px controls visible',
     );
@@ -198,13 +202,131 @@ try {
       ),
     );
     await shot(`stamp-art-${width}`);
+    await click('[data-set="aquarium"]');
+    await waitFor(
+      `document.querySelector('#paper').getAttribute('aria-busy')==='false'`,
+    );
+    assert.equal(
+      await evaluate(`document.querySelectorAll('.choice').length`),
+      8,
+    );
+    assert.ok(
+      await evaluate(
+        `[...document.querySelectorAll('.choice,.set-choice,#undo,#new')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
+      ),
+      'Aquarium controls fit',
+    );
+    assert.ok(
+      await evaluate(
+        `document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight`,
+      ),
+      'Aquarium no overflow',
+    );
+    for (let i = 0; i < 8; i++) {
+      await click(`.choice:nth-child(${i + 1})`);
+      await waitFor(
+        `document.querySelector('#paper').getAttribute('aria-busy')==='false'`,
+      );
+      await tap(
+        await point(
+          '#paper',
+          0.18 + (i % 4) * 0.21,
+          0.3 + Math.floor(i / 4) * 0.4,
+        ),
+      );
+    }
+    await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+    await delay(400);
+    assert.equal(await count(), 14, 'All 14 mixed stamps remain');
+    assert.equal(
+      await evaluate(
+        `new Set([...document.querySelectorAll('.stamp')].map(i=>i.dataset.item)).size`,
+      ),
+      14,
+    );
+    await shot(`stamp-aquarium-${width}`);
+    await click('[data-set="shapes"]');
+    assert.equal(
+      await evaluate(
+        `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
+      ),
+      'shapes/mint-rectangle',
+    );
+    await click('[data-set="aquarium"]');
+    assert.equal(
+      await evaluate(
+        `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
+      ),
+      'aquarium/sea-star',
+    );
+    for (let i = 0; i < 9; i++) await click('#undo');
+    assert.equal(
+      await count(),
+      5,
+      'Undo crosses set boundary in placement order',
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('.stamp:last-child').dataset.item`,
+      ),
+      'shapes/coral-star',
+    );
+    for (let i = 0; i < 20; i++)
+      await click(`[data-set="${i % 2 ? 'aquarium' : 'shapes'}"]`);
+    assert.equal(await count(), 5, 'Rapid switching retains art');
   }
   report(
     'Stamp: 320/390/820/844/568/1280, visible 56px controls, usable paper, six original SVGs, tap placement and screenshots PASS',
   );
+  // Hold image decoding to exercise immediate input and switching before readiness.
+  const gate = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `window.releaseImages=[];const decode=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(){return new Promise(resolve=>window.releaseImages.push(()=>resolve(decode.call(this))))}`,
+  });
+  await call('Page.navigate', { url: origin + '/ponpon-stamp/' });
+  await waitFor(`document.querySelectorAll('.choice').length===6`);
+  await click('#paper');
+  await click('[data-set="aquarium"]');
+  await click('.choice:nth-child(8)');
+  await tap(await point('#paper'));
+  assert.equal(await count(), 0, 'Loading taps do not create invisible stamps');
+  assert.equal(
+    await evaluate(
+      `document.querySelector('#paper').getAttribute('aria-busy')`,
+    ),
+    'true',
+  );
+  await evaluate(`window.releaseImages.forEach(release=>release())`);
+  await waitFor(
+    `document.querySelector('#paper').getAttribute('aria-busy')==='false'`,
+  );
+  assert.equal(await count(), 0, 'Loading taps are not replayed');
+  await tap(await point('#paper'));
+  assert.equal(await count(), 1);
+  await click('#new');
+  await click('#clear');
+  await delay(50);
+  assert.equal(await count(), 0);
+  assert.equal(
+    await evaluate(
+      `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
+    ),
+    'aquarium/sea-star',
+    'New paper retains chosen item',
+  );
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: gate.identifier,
+  });
+  report(
+    'Stamp sets: 14 originals, all 8 aquarium selections, mixed art, common undo, per-set restoration, rapid switching, loading input and new paper PASS',
+  );
   await visit();
   const p = await point('#paper', 0.3, 0.35),
     q = await point('#paper', 0.7, 0.6);
+  await mouse('mousePressed', p);
+  await click('[data-set="aquarium"]');
+  await mouse('mouseReleased', p);
+  assert.equal(await count(), 0, 'Set switch cancels pending placement');
+  await click('[data-set="shapes"]');
   await call('Input.dispatchTouchEvent', {
     type: 'touchStart',
     touchPoints: [
@@ -213,7 +335,7 @@ try {
     ],
   });
   await call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  assert.equal(await count(), 2, 'Two real CDP touches');
+  assert.equal(await count(), 2, 'Two CDP synthetic touches');
   await call('Input.dispatchTouchEvent', {
     type: 'touchStart',
     touchPoints: [{ ...p, id: 3 }],
@@ -325,7 +447,7 @@ try {
   await click('#paper');
   assert.equal(await count(), 2, 'Assistive activation');
   report(
-    'Stamp: trusted two-finger touch, cancel, drag/outside release, blur/hidden, resume, undo, clear confirmation/cancel, keyboard and assistive click PASS',
+    'Stamp: CDP synthetic two-finger touch, cancel, drag/outside release, blur/hidden, resume, undo, clear confirmation/cancel, keyboard and assistive click PASS',
   );
   await evaluate(
     `for(let i=0;i<200;i++)document.querySelector('#paper').click()`,
@@ -345,7 +467,7 @@ try {
   assert.equal(await count(), 59);
   await tap(await point('#paper'));
   assert.equal(await count(), 60);
-  await delay(400);
+  await delay(850);
   assert.equal(
     await evaluate(
       `document.querySelector('#paper').getAnimations({subtree:true}).length`,
@@ -391,7 +513,7 @@ try {
   assert.equal(await count(), 1);
   assert.equal(
     await evaluate(
-      `document.querySelector('#paper').getAnimations({subtree:true}).length`,
+      `document.querySelector('#stamps').getAnimations({subtree:true}).length`,
     ),
     0,
     'Reduced motion has no bounce',
@@ -419,6 +541,237 @@ try {
     await evaluate(
       `!document.querySelector('a[href="https://anipopina.com/"]')`,
     ),
+  );
+  // Native Web Audio instrumentation and a Vibration API spy: no hardware claim.
+  const feedbackProbe = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `window.feedbackProbe={contexts:[],active:0,max:0,gains:[],pulses:[]};const NativeAudio=AudioContext;window.AudioContext=class extends NativeAudio{constructor(...args){super(...args);feedbackProbe.contexts.push(this);const osc=this.createOscillator.bind(this);this.createOscillator=()=>{const n=osc();const start=n.start.bind(n);n.start=(...a)=>{feedbackProbe.active++;feedbackProbe.max=Math.max(feedbackProbe.max,feedbackProbe.active);n.addEventListener('ended',()=>feedbackProbe.active--,{once:true});return start(...a)};return n};const gain=this.createGain.bind(this);this.createGain=()=>{const g=gain();const ramp=g.gain.linearRampToValueAtTime.bind(g.gain);g.gain.linearRampToValueAtTime=(v,t)=>{feedbackProbe.gains.push(v);return ramp(v,t)};return g}}};Object.defineProperty(navigator,'vibrate',{configurable:true,value:(value)=>{feedbackProbe.pulses.push({value,time:performance.now()});return true}});`,
+  });
+  await call('Emulation.setEmulatedMedia', { features: [] });
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  await visit();
+  assert.equal(
+    await evaluate('feedbackProbe.contexts.length'),
+    0,
+    'No audio context before interaction',
+  );
+  await click('#paper');
+  assert.equal(
+    await evaluate('feedbackProbe.contexts.length'),
+    0,
+    'Programmatic activation without user gesture is silent',
+  );
+  await tap(await point('#paper', 0.45, 0.4));
+  await waitFor('feedbackProbe.max>0');
+  assert.ok(
+    await evaluate(`document.querySelectorAll('.stamp-particle').length>0`),
+  );
+  await shot('stamp-feedback-390');
+  for (let i = 0; i < 12; i++) await tap(await point('#paper', 0.55, 0.6));
+  assert.ok(
+    await evaluate(`document.querySelectorAll('.stamp-particle').length<=72`),
+  );
+  assert.ok(
+    await evaluate(
+      'feedbackProbe.max<=3 && feedbackProbe.gains.every(g=>g<=0.075)',
+    ),
+    'Bounded native audio gain and voices',
+  );
+  assert.ok(
+    await evaluate(
+      `feedbackProbe.pulses.filter(p=>p.value>0).every((p,i,a)=>p.value===12&&(i===0||p.time-a[i-1].time>=159))`,
+    ),
+    'Short rate-limited vibration requests',
+  );
+  await setFeedback(false, false);
+  await delay(100);
+  assert.equal(
+    await evaluate('feedbackProbe.contexts[0].state'),
+    'suspended',
+    'Mute suspends native audio output',
+  );
+  const pulseCount = await evaluate(
+    'feedbackProbe.pulses.filter(p=>p.value>0).length',
+  );
+  await tap(await point('#paper'));
+  assert.equal(await evaluate('feedbackProbe.contexts[0].state'), 'suspended');
+  assert.equal(
+    await evaluate('feedbackProbe.pulses.filter(p=>p.value>0).length'),
+    pulseCount,
+  );
+  await visit();
+  assert.deepEqual(
+    await evaluate(
+      `JSON.parse(localStorage.getItem('omochabox-play-settings-v1'))`,
+    ),
+    { sound: false, vibration: false },
+  );
+  await tap(await point('#paper'));
+  assert.equal(
+    await evaluate('feedbackProbe.contexts.length'),
+    0,
+    'Direct/reloaded entry inherits mute',
+  );
+  await setFeedback(true, true);
+  await tap(await point('#paper'));
+  await waitFor('feedbackProbe.max>0');
+  await evaluate(
+    `Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`,
+  );
+  await delay(80);
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.stamp-particle').length`),
+    0,
+  );
+  assert.equal(await evaluate('feedbackProbe.contexts[0].state'), 'suspended');
+  await evaluate('delete document.hidden');
+  await tap(await point('#paper'));
+  await waitFor('feedbackProbe.active>0');
+  await delay(850);
+  assert.equal(await evaluate('feedbackProbe.active'), 0);
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.stamp-particle').length`),
+    0,
+  );
+  await call('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+  });
+  await tap(await point('#paper'));
+  assert.ok(
+    await evaluate(`document.querySelectorAll('.stamp-particle').length<=4`),
+  );
+  await delay(220);
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.stamp-particle').length`),
+    0,
+  );
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: feedbackProbe.identifier,
+  });
+  const noVibration = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `Object.defineProperty(navigator,'vibrate',{value:undefined,configurable:true})`,
+  });
+  await visit();
+  assert.equal(
+    await evaluate(
+      `document.querySelectorAll('#sound,#vibration,.feedback-controls').length`,
+    ),
+    0,
+    'No settings UI on game',
+  );
+  await tap(await point('#paper'));
+  assert.equal(await count(), 1, 'Unsupported vibration still stamps');
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: noVibration.identifier,
+  });
+  report(
+    'Feedback: native AudioContext starts only after user input, <=3 sine voices / 0.075 gain, mute and stored preferences, background suspend/resume; <=72 particles and expiry, reduced <=4; Vibration API spy 12ms / >=160ms and unsupported fallback PASS (no physical audio/haptic verification)',
+  );
+  // Actual hub buttons, persisted values, invalid data, and storage failures.
+  await click('#back');
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  assert.ok(
+    await evaluate(
+      `[...document.querySelectorAll('.setting-buttons button')].every(b=>{const r=b.getBoundingClientRect();return r.width>=56&&r.height>=56})`,
+    ),
+  );
+  await click('#sound-setting');
+  await click('#vibration-setting');
+  await shot('stamp-settings-hub-390', false);
+  await click('a[href="ponpon-stamp/"]');
+  await waitFor(`document.querySelectorAll('.choice').length===6`);
+  assert.deepEqual(
+    await evaluate(
+      `JSON.parse(localStorage.getItem('omochabox-play-settings-v1'))`,
+    ),
+    { sound: false, vibration: false },
+  );
+  await click('#back');
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  assert.equal(
+    await evaluate(
+      `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
+    ),
+    'false',
+  );
+  const drawingProbe = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `window.contextsCreated=0;const NativeAudio=AudioContext;window.AudioContext=class extends NativeAudio{constructor(...args){super(...args);window.contextsCreated++}}`,
+  });
+  await click('a[href="hikari-no-oekaki/"]');
+  await waitFor(
+    `document.readyState==='complete'&&!!document.querySelector('canvas')`,
+  );
+  await tap(await point('canvas'));
+  assert.equal(
+    await evaluate('contextsCreated'),
+    0,
+    'Drawing direct entry inherits shared mute',
+  );
+  assert.equal(
+    await evaluate(`document.querySelectorAll('button').length`),
+    0,
+    'Drawing has no individual settings buttons',
+  );
+  await click('#back');
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await click('#sound-setting');
+  await click('a[href="hikari-no-oekaki/"]');
+  await waitFor(
+    `document.readyState==='complete'&&!!document.querySelector('canvas')`,
+  );
+  await tap(await point('canvas'));
+  assert.equal(
+    await evaluate('contextsCreated'),
+    1,
+    'Drawing enabled sound starts on next gesture',
+  );
+  await click('#back');
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: drawingProbe.identifier,
+  });
+  await evaluate(
+    `localStorage.setItem('omochabox-play-settings-v1','invalid json')`,
+  );
+  await call('Page.reload');
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  assert.equal(
+    await evaluate(
+      `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
+    ),
+    'true',
+  );
+  const blockedStorage = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `Storage.prototype.getItem=Storage.prototype.setItem=()=>{throw new DOMException('blocked','SecurityError')}`,
+  });
+  await call('Page.reload');
+  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await click('#sound-setting');
+  assert.equal(
+    await evaluate(
+      `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
+    ),
+    'false',
+  );
+  assert.ok(
+    await evaluate(
+      `document.querySelector('#settings-note').textContent.includes('ほぞんできない')`,
+    ),
+  );
+  await click('a[href="ponpon-stamp/"]');
+  await waitFor(`document.querySelectorAll('.choice').length===6`);
+  await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+  await tap(await point('#paper'));
+  assert.equal(await count(), 1, 'Blocked storage still plays');
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: blockedStorage.identifier,
+  });
+  report(
+    'Common settings: hub-only 56px buttons, browser persistence, hub/game round trip, direct/reloaded entry, storage event update, invalid JSON and blocked storage fallback PASS',
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

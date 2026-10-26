@@ -1,3 +1,4 @@
+import { getPlaySettings, onPlaySettings } from '../shared/settings';
 import { requireContext2d, requireElement } from '../shared/dom';
 import topLeftUrl from './assets/leaves-top-left.webp';
 import topRightUrl from './assets/leaves-top-right.webp';
@@ -57,7 +58,6 @@ type Voice = FlowerVoice | SampleVoice;
 (() => {
   const canvas = requireElement('canvas', HTMLCanvasElement);
   const ctx = requireContext2d(canvas, { alpha: false });
-  const muteButton = requireElement('#mute', HTMLButtonElement);
   const palette = ['#76ddff', '#ffe276', '#ffb7d6', '#b4aaff'];
   const LIMIT = 480,
     FLOWERS = 24,
@@ -89,7 +89,7 @@ type Voice = FlowerVoice | SampleVoice;
     height = 0,
     raf = 0,
     colorIndex = 0,
-    muted = false,
+    muted = !getPlaySettings().sound,
     generation = 0;
   let audio: AudioContext | null = null,
     master: GainNode | null = null,
@@ -730,16 +730,14 @@ type Voice = FlowerVoice | SampleVoice;
     reset();
     if (audio) audio.suspend().catch(() => {});
   });
-  muteButton.addEventListener('click', () => {
-    muted = !muted;
+  onPlaySettings((settings) => {
+    const nextMuted = !settings.sound;
+    if (muted === nextMuted) return;
+    muted = nextMuted;
     generation++;
     silence();
-    muteButton.setAttribute('aria-pressed', String(muted));
-    muteButton.setAttribute('aria-label', muted ? '音を出す' : '音を消す');
-    requireElement('span', HTMLSpanElement, muteButton).textContent = muted
-      ? '消音'
-      : '音あり';
-    if (!muted) unlock();
+    if (muted && audio) void audio.suspend().catch(() => {});
+    // Enabling sound waits for the next play gesture; never replay an old hold.
   });
   document.addEventListener('visibilitychange', () => {
     reset();

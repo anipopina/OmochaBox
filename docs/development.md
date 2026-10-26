@@ -46,3 +46,9 @@ CHROME_PATH=/path/to/chromium npm test
 公開用の `dist/` では、入口・各ゲームの基本操作と素材参照を検証します。内部状態を確認する詳細な回帰テストには、`npm run build:test` で作る `test-results/build/` を使います。
 
 テストモードに限り、[Vite設定](../vite.config.ts) が [hikari-hook.js](../tests/fixtures/hikari-hook.js) を描画ゲームのクロージャー内へ挿入してからコンパイルします。挿入箇所が変わるとビルドを失敗させます。公開用への混入は出力検査で検出します。`test-results/` は公開対象に含めません。
+
+## 共通の音・振動設定
+
+`src/shared/settings.ts` に集約します。UIはトップページのみで、遊び側は `getPlaySettings()` と `onPlaySettings()` を使用します。キーは `omochabox-play-settings-v1`、値は `{sound: boolean, vibration: boolean}`。初期値は両方true。直リンクでも保存値を読み、storageイベント、pageshow、focus、表示復帰で再確認します。無効な項目は既定値へ戻し、保存が拒否される環境ではページ内メモリで継続し、トップに保存できない旨を表示します。音声再開は各ゲームの次の操作から行います。
+
+スタンプの粒子・音・触覚の上限と対応状況は [スタンプREADME](../src/ponpon-stamp/README.md#配置フィードバック) を参照してください。

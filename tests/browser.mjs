@@ -145,6 +145,10 @@ try {
     }
     assert.fail(`Timed out waiting for ${expression}`);
   };
+  const toggleSound = () =>
+    evaluate(
+      `(()=>{const key='omochabox-play-settings-v1';const value=JSON.parse(localStorage.getItem(key)||'{"sound":true,"vibration":true}');value.sound=!value.sound;localStorage.setItem(key,JSON.stringify(value));window.dispatchEvent(new StorageEvent('storage',{key}));})()`,
+    );
   await call('Runtime.enable');
   await call('Page.enable');
   await mkdir(join(root, 'test-results'), { recursive: true });
@@ -207,7 +211,7 @@ try {
     'Production reload restores garden',
   );
   await evaluate('document.querySelector("#back").click()');
-  await delay(200);
+  await waitFor(`!!document.querySelector('a[href="fukifuki-mado/"]')`);
   await evaluate(`document.querySelector('a[href="fukifuki-mado/"]').click()`);
   await delay(300);
   assert.equal(await evaluate('typeof window.__test'), 'undefined');
@@ -297,7 +301,7 @@ try {
       ]);
       assert.ok((await state()).pixels <= 4005000);
       const layout = await evaluate(
-        `(()=>{const r=document.querySelector('button').getBoundingClientRect();return {inside:r.right<=innerWidth&&r.bottom<=innerHeight,scroll:document.documentElement.scrollWidth>innerWidth}})()`,
+        `(()=>{const r=document.querySelector('#back').getBoundingClientRect();return {inside:r.right<=innerWidth&&r.bottom<=innerHeight,scroll:document.documentElement.scrollWidth>innerWidth}})()`,
       );
       assert.ok(layout.inside && !layout.scroll);
       const gardenShot = await call('Page.captureScreenshot', {
@@ -488,12 +492,12 @@ try {
       multi.peaks,
       'No repeated 10-finger bursts',
     );
-    await evaluate(`document.querySelector('button').click()`);
+    await toggleSound();
     const mutedNotes = (await state()).notes.length;
     assert.equal((await state()).voices, 0);
     await delay(650);
     assert.equal((await state()).notes.length, mutedNotes);
-    await evaluate(`document.querySelector('button').click()`);
+    await toggleSound();
     await delay(600);
     assert.ok(
       (await state()).notes.length - mutedNotes <= 5,
@@ -554,10 +558,10 @@ try {
     assert.equal((await state()).fingers, 0);
     await delay(20);
     assert.ok((await state()).voices > 0, 'Release plays a short sound');
-    await evaluate(`document.querySelector('button').click()`);
+    await toggleSound();
     assert.equal((await state()).muted, true);
     assert.equal((await state()).voices, 0);
-    await evaluate(`document.querySelector('button').click()`);
+    await toggleSound();
     await evaluate(
       `(async()=>{const c=document.querySelector('canvas');for(let i=0;i<2000;i++){c.dispatchEvent(new PointerEvent('pointerdown',{pointerId:42,pointerType:'touch',clientX:100,clientY:100}));c.dispatchEvent(new PointerEvent('pointermove',{pointerId:42,pointerType:'touch',clientX:1000,clientY:600}));c.dispatchEvent(new PointerEvent('pointerup',{pointerId:42}));}await Promise.resolve()})()`,
     );
@@ -806,11 +810,12 @@ try {
             clean.raf,
           0,
         );
-        await evaluate('document.querySelector("#mute").click()');
+        await toggleSound();
         assert.equal((await state()).muted, true);
         await evaluate('document.querySelector("#back").click()');
         await delay(300);
         assert.equal(await evaluate('document.title'), 'おもちゃボックス');
+        await evaluate(`document.querySelector('#sound-setting').click()`);
       }
     }
     report(

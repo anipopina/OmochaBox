@@ -54,6 +54,7 @@
           aria-label="スタンプのかみ。タップしておす。矢印キーで場所を選び、スペースかEnterでおす。"
           aria-describedby="status"
         >
+          <div id="effects" aria-hidden="true"></div>
           <div id="stamps" aria-hidden="true"></div>
           <div id="guide" aria-hidden="true">
             <span class="touch">☝</span><span class="guide-ring"></span
@@ -66,7 +67,8 @@
         </p>
       </div>
       <aside aria-label="スタンプをえらぶ">
-        <div id="palette" aria-label="6にんの なかま"></div>
+        <div id="sets" role="group" aria-label="スタンプの セット"></div>
+        <div id="palette" role="group" aria-label="スタンプ"></div>
         <div class="actions">
           <button id="undo" disabled aria-label="ひとつもどす">
             <span aria-hidden="true">↶</span><small>もどす</small></button

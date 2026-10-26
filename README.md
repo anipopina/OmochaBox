@@ -10,7 +10,7 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 | [ひかりのおえかき](src/hikari-no-oekaki/README.md)        | 指先から光の花や道が生まれるおえかき            |
 | [ふきふき、まど](src/fukifuki-mado/README.md)             | 曇った窓を拭いて、庭のどうぶつを見つける遊び    |
 | [ぷかぷか、ふうせん](src/pukapuka-fusen/README.md)        | ポンプでふくらませ、空へ見送る風船遊び          |
-| [ぽんぽん、スタンプ](src/ponpon-stamp/README.md)          | 6体のなかまを選んで紙面に置く創作遊び           |
+| [ぽんぽん、スタンプ](src/ponpon-stamp/README.md)          | 図形・水族館のスタンプを紙面に置く創作遊び      |
 | [ころころ、すべりだい](src/korokoro-suberidai/README.md)  | たまが3段の曲線斜面をころがり、受け皿で弾む遊び |
 | [くるくる、かざぐるま](src/kurukuru-kazaguruma/README.md) | 指で払うと方向と速さが変わる折り紙風の風車      |
 

@@ -27,50 +27,6 @@ canvas {
   height: 100%;
   touch-action: none;
 }
-button {
-  position: fixed;
-  right: max(16px, env(safe-area-inset-right));
-  top: max(16px, env(safe-area-inset-top));
-  min-height: 48px;
-  padding: 11px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid #52647d;
-  border-radius: 26px;
-  background: #112039e8;
-  color: #dfebf4;
-  font:
-    500 14px/1.5 -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
-  touch-action: manipulation;
-  cursor: pointer;
-}
-button:focus-visible {
-  outline: 3px solid #a4edf3;
-  outline-offset: 4px;
-}
-button svg {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.65;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.slash,
-[aria-pressed='true'] .waves {
-  display: none;
-}
-[aria-pressed='true'] .slash {
-  display: block;
-}
-
-button {
-  min-height: 56px;
-  min-width: 96px;
-  font-size: 15px;
-}
 #back {
   position: fixed;
   left: max(12px, env(safe-area-inset-left));
@@ -91,8 +47,4 @@ button {
 #back:focus-visible {
   outline: 3px solid #a4edf3;
   outline-offset: 4px;
-}
-#mute {
-  right: max(12px, env(safe-area-inset-right));
-  top: max(12px, env(safe-area-inset-top));
 }

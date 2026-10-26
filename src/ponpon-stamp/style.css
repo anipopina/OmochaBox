@@ -163,7 +163,7 @@ aside {
 }
 #palette {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 .choice {
@@ -173,13 +173,15 @@ aside {
   border-color: #514641;
   background: #fff;
 }
-.choice img {
+.choice img,
+.set-choice img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   pointer-events: none;
 }
-.choice[aria-pressed='true'] {
+.choice[aria-pressed='true'],
+.set-choice[aria-pressed='true'] {
   border-color: #007cdb;
   background: #dff3ff;
   box-shadow:
@@ -317,7 +319,7 @@ dialog button span {
 }
 @media (min-width: 650px) and (min-height: 600px) {
   #palette {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
   .actions {
     max-width: 440px;
@@ -339,7 +341,7 @@ dialog button span {
     font-size: 27px;
   }
   main {
-    grid-template-columns: minmax(180px, 1fr) 204px;
+    grid-template-columns: minmax(180px, 1fr) 264px;
     grid-template-rows: minmax(0, 1fr);
     gap: 10px;
   }
@@ -374,4 +376,93 @@ dialog button span {
   .actions small {
     font-size: 10px;
   }
+}
+
+#sets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.set-choice {
+  position: relative;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 8px;
+}
+.set-choice img {
+  width: 56px;
+  height: 56px;
+}
+@media (min-width: 650px) and (min-height: 600px) {
+  #sets {
+    width: 400px;
+    margin: auto;
+  }
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  aside {
+    gap: 4px;
+  }
+  #sets {
+    gap: 8px;
+  }
+  .set-choice {
+    height: 60px;
+    padding: 0 3px;
+    gap: 2px;
+    border-radius: 15px;
+  }
+  .set-choice img {
+    width: 44px;
+    height: 50px;
+  }
+  .set-choice small {
+    font-size: 10px;
+  }
+  #palette {
+    gap: 6px;
+  }
+  .choice {
+    height: 56px;
+  }
+  .actions button {
+    height: 56px;
+  }
+}
+
+#effects {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.stamp-particle {
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  pointer-events: none;
+}
+.particle-0 {
+  border-radius: 50%;
+}
+.particle-1 {
+  clip-path: polygon(
+    50% 0%,
+    62% 35%,
+    100% 50%,
+    62% 65%,
+    50% 100%,
+    38% 65%,
+    0% 50%,
+    38% 35%
+  );
+  width: 24px;
+  height: 24px;
+}
+.particle-2 {
+  border-radius: 3px;
+  width: 12px;
+  height: 20px;
 }

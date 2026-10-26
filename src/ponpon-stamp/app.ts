@@ -1,20 +1,7 @@
+import { stampFeedback, suspendFeedback, clearParticles } from './feedback';
 import { requireElement } from '../shared/dom';
-import square from '../assets/characters/shapes/01-coral-square.svg';
-import cyan from '../assets/characters/shapes/02-cyan-circle.svg';
-import purple from '../assets/characters/shapes/03-purple-circle.svg';
-import triangle from '../assets/characters/shapes/04-yellow-triangle.svg';
-import star from '../assets/characters/shapes/05-coral-star.svg';
-import mint from '../assets/characters/shapes/06-mint-rectangle.svg';
+import { stampSets, type StampItem } from './sets';
 
-const artwork = [square, cyan, purple, triangle, star, mint];
-const names = [
-  'あかい しかく',
-  'あおい まる',
-  'むらさきの まる',
-  'きいろい さんかく',
-  'あかい ほし',
-  'みどりの しかく',
-];
 const paper = requireElement('#paper', HTMLDivElement);
 const layer = requireElement('#stamps', HTMLDivElement);
 const palette = requireElement('#palette', HTMLDivElement);
@@ -31,12 +18,44 @@ type Stamp = {
   y: number;
   size: number;
   angle: number;
-  character: number;
+  character: StampItem;
   element: HTMLSpanElement;
 };
 const stamps: Stamp[] = [];
-const pending = new Map<number, { x: number; y: number; character: number }>();
-let selected = 0;
+const pending = new Map<
+  number,
+  { x: number; y: number; character: StampItem }
+>();
+let activeSet = stampSets[0];
+const remembered = new Map(stampSets.map((set) => [set.id, set.items[0]]));
+let selected = activeSet.items[0];
+const ready = new Set<string>();
+const setPalette = requireElement('#sets', HTMLDivElement);
+// Decode before enabling placement; taps while loading never become delayed stamps.
+for (const set of stampSets)
+  for (const item of set.items) {
+    const image = new Image();
+    image.src = item.src;
+    void image
+      .decode()
+      .then(() => {
+        ready.add(item.id);
+        updateLoading();
+      })
+      .catch(() => {
+        if (selected.id === item.id)
+          status.textContent =
+            'えを よみこめなかったよ。ほかの えを えらんでね。';
+      });
+  }
+function updateLoading() {
+  const loaded = ready.has(selected.id);
+  paper.setAttribute('aria-busy', String(!loaded));
+  paper.setAttribute('aria-disabled', String(!loaded));
+  guide.querySelector('strong')!.textContent = loaded
+    ? 'ここに ぽん！'
+    : 'えを よみこみちゅう…';
+}
 let keyboardX = 0.5;
 let keyboardY = 0.5;
 const clamp = (n: number, min: number, max: number) =>
@@ -70,7 +89,7 @@ function layout() {
   cursor.style.top = `${keyboardY * 100}%`;
 }
 function place(x: number, y: number, character = selected) {
-  if (document.hidden || dialog.open) return;
+  if (document.hidden || dialog.open || !ready.has(character.id)) return;
   if (stamps.length >= 60) {
     status.textContent =
       'かみが いっぱい。もどすか、あたらしい かみで あそべるよ。';
@@ -79,7 +98,8 @@ function place(x: number, y: number, character = selected) {
   const element = document.createElement('span');
   element.className = 'stamp';
   const img = document.createElement('img');
-  img.src = artwork[character];
+  img.src = character.src;
+  element.dataset.item = character.id;
   img.alt = '';
   img.draggable = false;
   const stamp: Stamp = {
@@ -104,14 +124,14 @@ function place(x: number, y: number, character = selected) {
       ],
       { duration: 320, easing: 'ease-out' },
     );
+  stampFeedback(element);
   update();
-  status.textContent = `${names[character]}、ぽん！ ${stamps.length}こ`;
+  status.textContent = `${character.name}、ぽん！ ${stamps.length}こ`;
 }
-artwork.forEach((src, index) => {
+function makeChoice(src: string, name: string, className: string) {
   const button = document.createElement('button');
-  button.className = 'choice';
-  button.setAttribute('aria-label', names[index]);
-  button.setAttribute('aria-pressed', String(index === 0));
+  button.className = className;
+  button.setAttribute('aria-label', name);
   const img = document.createElement('img');
   img.src = src;
   img.alt = '';
@@ -121,19 +141,58 @@ artwork.forEach((src, index) => {
   check.textContent = '✓';
   check.setAttribute('aria-hidden', 'true');
   button.append(img, check);
+  return button;
+}
+function renderItems() {
+  palette.replaceChildren();
+  palette.setAttribute('aria-label', activeSet.name + 'の スタンプ');
+  for (const item of activeSet.items) {
+    const button = makeChoice(item.src, item.name, 'choice');
+    button.dataset.item = item.id;
+    button.setAttribute('aria-pressed', String(item.id === selected.id));
+    button.addEventListener('click', () => {
+      cancelInput();
+      selected = item;
+      remembered.set(activeSet.id, item);
+      for (const child of palette.children)
+        child.setAttribute(
+          'aria-pressed',
+          String((child as HTMLElement).dataset.item === item.id),
+        );
+      updateLoading();
+      status.textContent = `${item.name}。かみに ぽん！`;
+    });
+    palette.append(button);
+  }
+  updateLoading();
+}
+for (const set of stampSets) {
+  const button = makeChoice(set.icon, set.name, 'set-choice');
+  button.dataset.set = set.id;
+  button.setAttribute('aria-pressed', String(set.id === activeSet.id));
+  const label = document.createElement('small');
+  label.textContent = set.name;
+  button.append(label);
   button.addEventListener('click', () => {
-    selected = index;
-    [...palette.children].forEach((child, i) =>
-      child.setAttribute('aria-pressed', String(i === index)),
-    );
-    status.textContent = `${names[index]}。かみに ぽん！`;
+    cancelInput();
+    activeSet = set;
+    selected = remembered.get(set.id)!;
+    for (const child of setPalette.children)
+      child.setAttribute(
+        'aria-pressed',
+        String((child as HTMLElement).dataset.set === set.id),
+      );
+    renderItems();
+    status.textContent = `${set.name}。${selected.name}で ぽん！`;
   });
-  palette.append(button);
-});
+  setPalette.append(button);
+}
+renderItems();
 paper.addEventListener('pointerdown', (event) => {
   if (
     event.button !== 0 ||
     pending.size >= 10 ||
+    !ready.has(selected.id) ||
     dialog.open ||
     document.hidden
   )
@@ -221,12 +280,14 @@ paper.addEventListener('click', (event) => {
 paper.addEventListener('blur', cancelInput);
 undo.addEventListener('click', () => {
   cancelInput();
+  clearParticles();
   stamps.pop()?.element.remove();
   update();
   status.textContent = 'ひとつ もどしたよ';
 });
 newPaper.addEventListener('click', () => {
   cancelInput();
+  suspendFeedback();
   dialog.showModal();
 });
 dialog.addEventListener('close', () => {
@@ -242,12 +303,16 @@ dialog.addEventListener('close', () => {
 });
 function suspend() {
   cancelInput();
+  suspendFeedback();
   paper
     .getAnimations({ subtree: true })
     .forEach((animation) => animation.cancel());
   if (dialog.open) dialog.close('cancel');
 }
-window.addEventListener('blur', cancelInput);
+window.addEventListener('blur', () => {
+  cancelInput();
+  suspendFeedback();
+});
 window.addEventListener('pagehide', () => {
   suspend();
   stamps.splice(0).forEach((stamp) => stamp.element.remove());
@@ -264,6 +329,7 @@ reduced.addEventListener('change', () => {
 });
 new ResizeObserver(() => {
   cancelInput();
+  clearParticles();
   layout();
 }).observe(paper);
 update();

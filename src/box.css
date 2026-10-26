@@ -589,3 +589,53 @@ footer p {
   border-radius: 0;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
+
+.play-settings {
+  margin: 0 auto 24px;
+  max-width: 520px;
+  padding: 16px;
+  border: 3px solid #007cdb;
+  border-radius: 22px;
+  background: #fff;
+}
+.play-settings h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.setting-buttons {
+  display: flex;
+  gap: 12px;
+}
+.setting-buttons button {
+  flex: 1;
+  min-width: 56px;
+  min-height: 64px;
+  border: 3px solid #172339;
+  border-radius: 18px;
+  background: #fff;
+  color: #172339;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  touch-action: manipulation;
+}
+.setting-buttons button > span:first-child {
+  font-size: 30px;
+}
+.setting-buttons [aria-pressed='true'] {
+  background: #dff3ff;
+  border-color: #007cdb;
+}
+.setting-buttons button:focus-visible {
+  outline: 4px solid #007cdb;
+  outline-offset: 3px;
+}
+#settings-note {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 10px 0 0;
+}
