@@ -26,11 +26,15 @@ const pending = new Map<
   number,
   { x: number; y: number; character: StampItem }
 >();
-let activeSet = stampSets[0];
-const remembered = new Map(stampSets.map((set) => [set.id, set.items[0]]));
-let selected = activeSet.items[0];
+const items = stampSets.flatMap((set) => set.items);
+const pageSize = 6;
+const pageCount = Math.ceil(items.length / pageSize);
+let page = 0;
+let selected = items[0];
 const ready = new Set<string>();
-const setPalette = requireElement('#sets', HTMLDivElement);
+const previousPage = requireElement('#previous-page', HTMLButtonElement);
+const nextPage = requireElement('#next-page', HTMLButtonElement);
+const pageStatus = requireElement('#page-status', HTMLParagraphElement);
 // Decode before enabling placement; taps while loading never become delayed stamps.
 for (const set of stampSets)
   for (const item of set.items) {
@@ -145,15 +149,19 @@ function makeChoice(src: string, name: string, className: string) {
 }
 function renderItems() {
   palette.replaceChildren();
-  palette.setAttribute('aria-label', activeSet.name + 'の スタンプ');
-  for (const item of activeSet.items) {
+  palette.dataset.page = String(page + 1);
+  palette.setAttribute(
+    'aria-label',
+    `スタンプ ${page + 1} / ${pageCount} ページ`,
+  );
+  pageStatus.textContent = `${page + 1} / ${pageCount} ページ`;
+  for (const item of items.slice(page * pageSize, (page + 1) * pageSize)) {
     const button = makeChoice(item.src, item.name, 'choice');
     button.dataset.item = item.id;
     button.setAttribute('aria-pressed', String(item.id === selected.id));
     button.addEventListener('click', () => {
       cancelInput();
       selected = item;
-      remembered.set(activeSet.id, item);
       for (const child of palette.children)
         child.setAttribute(
           'aria-pressed',
@@ -166,27 +174,16 @@ function renderItems() {
   }
   updateLoading();
 }
-for (const set of stampSets) {
-  const button = makeChoice(set.icon, set.name, 'set-choice');
-  button.dataset.set = set.id;
-  button.setAttribute('aria-pressed', String(set.id === activeSet.id));
-  const label = document.createElement('small');
-  label.textContent = set.name;
-  button.append(label);
-  button.addEventListener('click', () => {
-    cancelInput();
-    activeSet = set;
-    selected = remembered.get(set.id)!;
-    for (const child of setPalette.children)
-      child.setAttribute(
-        'aria-pressed',
-        String((child as HTMLElement).dataset.set === set.id),
-      );
-    renderItems();
-    status.textContent = `${set.name}。${selected.name}で ぽん！`;
-  });
-  setPalette.append(button);
+function changePage(direction: number) {
+  cancelInput();
+  page = (page + direction + pageCount) % pageCount;
+  selected = items[page * pageSize];
+  renderItems();
+  status.textContent = `${page + 1} / ${pageCount} ページ。${selected.name}で ぽん！`;
 }
+previousPage.addEventListener('click', () => changePage(-1));
+nextPage.addEventListener('click', () => changePage(1));
+previousPage.disabled = nextPage.disabled = pageCount <= 1;
 renderItems();
 paper.addEventListener('pointerdown', (event) => {
   if (

@@ -7,9 +7,12 @@ import { createStaticServer } from './static-server.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'stamp-browser-'));
-const output = join(root, 'test-results');
+const output =
+  process.env.STAMP_RESULTS_DIRECTORY || join(root, 'test-results');
 await mkdir(output, { recursive: true });
-const server = createStaticServer(join(root, 'dist'));
+const server = createStaticServer(
+  process.env.STAMP_BUILD_DIRECTORY || join(root, 'dist'),
+);
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const chrome = spawn(
@@ -162,7 +165,7 @@ try {
     );
     assert.ok(
       await evaluate(
-        `[...document.querySelectorAll('.choice,.set-choice,#undo,#new,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
+        `[...document.querySelectorAll('.choice,.page-arrow,#undo,#new,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
       ),
       '56px controls visible',
     );
@@ -172,6 +175,20 @@ try {
       ),
       'Paper remains usable',
     );
+    if (process.env.STAMP_EXPECT_BOUNDARIES) {
+      const groups = await evaluate('window.__stampFixtureGroups');
+      assert.deepEqual(
+        groups.map((group) => group.length),
+        [2, 5, 7],
+      );
+      assert.deepEqual(
+        await evaluate(
+          `[...document.querySelectorAll('.choice')].map(button=>button.dataset.item)`,
+        ),
+        groups.flat().slice(0, 6),
+        'First page crosses A -> B without a set break',
+      );
+    }
     await shot(`stamp-initial-${width}`);
     for (let i = 0; i < 6; i++) {
       await click(`.choice:nth-child(${i + 1})`);
@@ -202,78 +219,113 @@ try {
       ),
     );
     await shot(`stamp-art-${width}`);
-    await click('[data-set="aquarium"]');
-    await waitFor(
-      `document.querySelector('#paper').getAttribute('aria-busy')==='false'`,
-    );
-    assert.equal(
-      await evaluate(`document.querySelectorAll('.choice').length`),
-      8,
-    );
-    assert.ok(
-      await evaluate(
-        `[...document.querySelectorAll('.choice,.set-choice,#undo,#new')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
-      ),
-      'Aquarium controls fit',
-    );
-    assert.ok(
-      await evaluate(
-        `document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight`,
-      ),
-      'Aquarium no overflow',
-    );
-    for (let i = 0; i < 8; i++) {
-      await click(`.choice:nth-child(${i + 1})`);
-      await waitFor(
-        `document.querySelector('#paper').getAttribute('aria-busy')==='false'`,
+    for (const [pageNumber, length] of [
+      [2, 6],
+      [3, 2],
+    ]) {
+      await tap(await point('#next-page'));
+      assert.equal(
+        await evaluate(`document.querySelector('#palette').dataset.page`),
+        String(pageNumber),
       );
-      await tap(
-        await point(
-          '#paper',
-          0.18 + (i % 4) * 0.21,
-          0.3 + Math.floor(i / 4) * 0.4,
+      assert.equal(
+        await evaluate(`document.querySelectorAll('.choice').length`),
+        length,
+      );
+      if (process.env.STAMP_EXPECT_BOUNDARIES) {
+        const groups = await evaluate('window.__stampFixtureGroups');
+        assert.deepEqual(
+          await evaluate(
+            `[...document.querySelectorAll('.choice')].map(button=>button.dataset.item)`,
+          ),
+          groups.flat().slice((pageNumber - 1) * 6, pageNumber * 6),
+          'Pages preserve flat order across B -> C and final remainder',
+        );
+      }
+
+      assert.ok(
+        await evaluate(
+          `[...document.querySelectorAll('.choice,.page-arrow,#undo,#new')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
         ),
+        'Paged controls fit',
       );
+      assert.ok(
+        await evaluate(
+          `document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight`,
+        ),
+        'Pages have no overflow',
+      );
+      for (let i = 0; i < length; i++) {
+        await click(`.choice:nth-child(${i + 1})`);
+        await waitFor(
+          `document.querySelector('#paper').getAttribute('aria-busy')==='false'`,
+        );
+        await tap(
+          await point(
+            '#paper',
+            0.18 + (i % 3) * 0.3,
+            0.3 + Math.floor(i / 3) * 0.4,
+          ),
+        );
+      }
+      await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+      await delay(800);
+      await shot(`stamp-page-${pageNumber}-${width}`);
     }
-    await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
-    await delay(400);
-    assert.equal(await count(), 14, 'All 14 mixed stamps remain');
+    assert.equal(await count(), 14, 'All 14 originals mix across pages');
     assert.equal(
       await evaluate(
         `new Set([...document.querySelectorAll('.stamp')].map(i=>i.dataset.item)).size`,
       ),
       14,
     );
-    await shot(`stamp-aquarium-${width}`);
-    await click('[data-set="shapes"]');
+    await click('#next-page');
     assert.equal(
-      await evaluate(
-        `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
-      ),
-      'shapes/mint-rectangle',
+      await evaluate(`document.querySelector('#palette').dataset.page`),
+      '1',
+      'Last -> first',
     );
-    await click('[data-set="aquarium"]');
     assert.equal(
       await evaluate(
         `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
       ),
-      'aquarium/sea-star',
+      'shapes/coral-square',
+    );
+    await click('#previous-page');
+    assert.equal(
+      await evaluate(`document.querySelector('#palette').dataset.page`),
+      '3',
+      'First -> last',
+    );
+    assert.equal(
+      await evaluate(
+        `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
+      ),
+      'aquarium/dolphin',
+      'Visible first item selected on page change',
+    );
+    await click('#previous-page');
+    assert.equal(
+      await evaluate(`document.querySelector('#palette').dataset.page`),
+      '2',
     );
     for (let i = 0; i < 9; i++) await click('#undo');
-    assert.equal(
-      await count(),
-      5,
-      'Undo crosses set boundary in placement order',
-    );
+    assert.equal(await count(), 5, 'Undo crosses page and set boundaries');
     assert.equal(
       await evaluate(
         `document.querySelector('.stamp:last-child').dataset.item`,
       ),
       'shapes/coral-star',
     );
-    for (let i = 0; i < 20; i++)
-      await click(`[data-set="${i % 2 ? 'aquarium' : 'shapes'}"]`);
-    assert.equal(await count(), 5, 'Rapid switching retains art');
+    for (let i = 0; i < 20; i++) await click('#next-page');
+    assert.equal(await count(), 5, 'Rapid paging retains art');
+    assert.equal(
+      await evaluate(
+        `document.querySelectorAll('.choice[aria-pressed="true"]').length`,
+      ),
+      1,
+      'Selection always visible',
+    );
   }
   report(
     'Stamp: 320/390/820/844/568/1280, visible 56px controls, usable paper, six original SVGs, tap placement and screenshots PASS',
@@ -285,8 +337,9 @@ try {
   await call('Page.navigate', { url: origin + '/ponpon-stamp/' });
   await waitFor(`document.querySelectorAll('.choice').length===6`);
   await click('#paper');
-  await click('[data-set="aquarium"]');
-  await click('.choice:nth-child(8)');
+  await click('#next-page');
+  await click('#next-page');
+  await click('.choice:nth-child(2)');
   await tap(await point('#paper'));
   assert.equal(await count(), 0, 'Loading taps do not create invisible stamps');
   assert.equal(
@@ -317,16 +370,59 @@ try {
     identifier: gate.identifier,
   });
   report(
-    'Stamp sets: 14 originals, all 8 aquarium selections, mixed art, common undo, per-set restoration, rapid switching, loading input and new paper PASS',
+    'Stamp paging: 14 originals, all 8 aquarium selections, mixed art, common undo, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS',
   );
   await visit();
+  await evaluate(`document.querySelector('#next-page').focus()`);
+  await call('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: 'Enter',
+    code: 'Enter',
+    windowsVirtualKeyCode: 13,
+    text: '\r',
+  });
+  await call('Input.dispatchKeyEvent', {
+    type: 'keyUp',
+    key: 'Enter',
+    code: 'Enter',
+    windowsVirtualKeyCode: 13,
+  });
+  assert.equal(
+    await evaluate(`document.querySelector('#palette').dataset.page`),
+    '2',
+    'Keyboard pages forward',
+  );
+  assert.equal(
+    await evaluate('document.activeElement.id'),
+    'next-page',
+    'Paging keeps button focus',
+  );
+  await evaluate(`document.querySelector('#previous-page').focus()`);
+  await call('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: ' ',
+    code: 'Space',
+    windowsVirtualKeyCode: 32,
+    text: ' ',
+  });
+  await call('Input.dispatchKeyEvent', {
+    type: 'keyUp',
+    key: ' ',
+    code: 'Space',
+    windowsVirtualKeyCode: 32,
+  });
+  assert.equal(
+    await evaluate(`document.querySelector('#palette').dataset.page`),
+    '1',
+    'Keyboard pages backward',
+  );
   const p = await point('#paper', 0.3, 0.35),
     q = await point('#paper', 0.7, 0.6);
   await mouse('mousePressed', p);
-  await click('[data-set="aquarium"]');
+  await click('#next-page');
   await mouse('mouseReleased', p);
-  assert.equal(await count(), 0, 'Set switch cancels pending placement');
-  await click('[data-set="shapes"]');
+  assert.equal(await count(), 0, 'Page change cancels pending placement');
+  await click('#previous-page');
   await call('Input.dispatchTouchEvent', {
     type: 'touchStart',
     touchPoints: [
@@ -521,6 +617,11 @@ try {
   await shot('stamp-reduced-844');
   await evaluate(`window.dispatchEvent(new Event('pagehide'))`);
   assert.equal(await count(), 0);
+  await click('#previous-page');
+  assert.equal(
+    await evaluate(`document.querySelector('#palette').dataset.page`),
+    '3',
+  );
   await click('#back');
   await waitFor(`document.querySelectorAll('.game-card').length===7`);
   assert.equal(
@@ -537,6 +638,11 @@ try {
     `document.readyState==='complete' && document.querySelectorAll('.choice').length===6`,
   );
   assert.equal(await count(), 0);
+  assert.equal(
+    await evaluate(`document.querySelector('#palette').dataset.page`),
+    '1',
+    'Fresh entry returns to first page',
+  );
   assert.ok(
     await evaluate(
       `!document.querySelector('a[href="https://anipopina.com/"]')`,
@@ -773,6 +879,10 @@ try {
   report(
     'Common settings: hub-only 56px buttons, browser persistence, hub/game round trip, direct/reloaded entry, storage event update, invalid JSON and blocked storage fallback PASS',
   );
+  if (process.env.STAMP_EXPECT_BOUNDARIES)
+    report(
+      'General catalogue PASS: 2/5/7-item sets become 6/6/2-item pages; first and second pages cross set boundaries; all six viewports and full stamp regressions pass',
+    );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
     'Stamp: 200 placements / 60 cap, no automatic deletion, undo recovery, idle animations/RAF stop, resize, reduced motion, pagehide/re-entry, hub/footer, no JS errors PASS',

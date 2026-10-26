@@ -67,8 +67,26 @@
         </p>
       </div>
       <aside aria-label="スタンプをえらぶ">
-        <div id="sets" role="group" aria-label="スタンプの セット"></div>
-        <div id="palette" role="group" aria-label="スタンプ"></div>
+        <div class="palette-pager">
+          <button
+            id="previous-page"
+            class="page-arrow"
+            aria-label="まえの スタンプ"
+            aria-controls="palette"
+          >
+            <span aria-hidden="true">◀</span>
+          </button>
+          <div id="palette" role="group" aria-label="スタンプ"></div>
+          <button
+            id="next-page"
+            class="page-arrow"
+            aria-label="つぎの スタンプ"
+            aria-controls="palette"
+          >
+            <span aria-hidden="true">▶</span>
+          </button>
+        </div>
+        <p id="page-status" class="sr-only" role="status"></p>
         <div class="actions">
           <button id="undo" disabled aria-label="ひとつもどす">
             <span aria-hidden="true">↶</span><small>もどす</small></button

@@ -362,10 +362,12 @@ try {
         join(root, 'test-results', name + '.png'),
         Buffer.from(shot.data, 'base64'),
       );
+      // Isolate cancellation from flowers expiring during screenshot capture.
+      await evaluate('__test.clear()');
       await pointer('pointerdown', 100, 100, 4);
       await pointer('pointercancel', 100, 100, 4);
       await pointer('pointerup', 100, 100, 4);
-      assert.equal((await state()).flowers, 3, 'Cancel never blooms');
+      assert.equal((await state()).flowers, 0, 'Cancel never blooms');
       assert.equal((await state()).fingers, 0);
       report(
         `${name}: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS`,
@@ -710,7 +712,9 @@ try {
     audioDelay = 0;
     audioFailure = true;
     await call('Page.reload');
-    await delay(250);
+    await waitFor(
+      `document.readyState==='complete' && window.__test?.snapshot().sampleStatus==='idle'`,
+    );
     await call('Input.dispatchMouseEvent', {
       type: 'mousePressed',
       x: 300,
@@ -718,7 +722,9 @@ try {
       button: 'left',
       clickCount: 1,
     });
-    await delay(250);
+    await waitFor(
+      `__test.snapshot().sampleStatus==='failed' && __test.snapshot().fingers===1`,
+    );
     await call('Input.dispatchMouseEvent', {
       type: 'mouseReleased',
       x: 300,
