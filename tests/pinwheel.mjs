@@ -107,7 +107,7 @@ try {
   await call('Runtime.enable');
   await call('Page.enable');
   await call('Page.addScriptToEvaluateOnNewDocument', {
-    source: `window.rafCalls=0;const raf=requestAnimationFrame;window.requestAnimationFrame=(f)=>raf(t=>{window.rafCalls++;f(t)});`,
+    source: `window.cancelEvents=0;document.addEventListener('pointercancel',()=>window.cancelEvents++);window.rafCalls=0;const raf=requestAnimationFrame;window.requestAnimationFrame=(f)=>raf(t=>{window.rafCalls++;f(t)});`,
   });
 
   const waitFor = async (expression) => {
@@ -133,7 +133,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===7"
+        ? "document.querySelectorAll('.game-card').length===8"
         : "document.querySelector('#wheel')?.dataset.active !== undefined",
     );
   };
@@ -162,7 +162,11 @@ try {
   const moving = () =>
     evaluate("document.querySelector('#wheel').dataset.active === 'true'");
   async function touch(type, points = []) {
+    const canceled =
+      type === 'touchCancel' ? await evaluate('window.cancelEvents') : 0;
     await call('Input.dispatchTouchEvent', { type, touchPoints: points });
+    if (type === 'touchCancel')
+      await waitFor(`window.cancelEvents > ${canceled}`);
   }
   async function tap() {
     const p = await point();
@@ -390,7 +394,7 @@ try {
   );
   await shot('pinwheel-reduced');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===7");
+  await waitFor("document.querySelectorAll('.game-card').length===8");
   await evaluate(
     'document.querySelector(\'a[href="kurukuru-kazaguruma/"]\').scrollIntoView()',
   );

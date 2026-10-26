@@ -1,0 +1,79 @@
+ぽちゃん、みずたまり / 2026-10-26 夜 / 一時公開前検証
+
+作業環境: 保存済み OmochaBox Codex Web /workspace/OmochaBox のみ。
+開始時・公開前確認の origin/main は983676c30780df4c2598b24a0efd0a87e01d48c6。
+開始時ユーザーの未コミット変更、stash、別worktreeなし。
+
+実装:
+/pochan-mizutamari/、入口8番目に追加。全画面水面、生成された透過葉2種を3枚表示。
+タップ即時・ドラッグ90ms/36px間引き、10指上限、波紋32/2.2秒上限。
+葉の減衰移動と回転、収束後RAF停止、DPR2/約300万px上限。
+キャンセル・非表示・resize・ページ離脱で入力を後始末、再入場は静止。
+キーボード、reduced-motion、共通favicon/OGP、作者リンクと戻る導線を維持。
+今回は無音・振動なし。個別設定UIなし。依存追加なし。
+
+素材:
+親のDriveコンセプト画像と葉ZIPを公式ツールで取得し実ピクセルを確認。
+PNG原本・受領メモ・企画参照をsource-assets/pochan-mizutamari/に保存。
+配信WebP2枚は各256px RGBA、alpha0〜255、合計32,914bytes、受領物とバイト一致。
+出典、Drive ID、SHA-256を同ディレクトリREADME/provenance.jsonに記録。
+
+検証（ヘッドレスChromium/CDP合成入力。実機ではない）:
+PASS npm run check （typecheck / lint / format:check）。
+PASS npm run build / build:test、build.mjs / branding.mjs / characters.mjs。
+PASS browser.mjs: 入口8カード、作者リンク、共有音設定、往復、光/窓の全既存回帰。
+PASS balloon.mjs: 6画面、全風船挙動、上限、cancel、消滅、idle、軽減、入口往復。
+PASS stamp.mjs: ページング、全素材、音起動/消音、保存設定、多指/上限/入力取消。
+PASS slide.mjs / pinwheel.mjs / glass.mjs: 既存専用回帰と縦横スクリーンショット。
+PASS pond.mjs: 1000回モデル入力上限/収束、320×568/390×844/568×320/844×390/
+820×1180/1280×800、56px戻る、画像ロード、実レンダー変化、多指/drag/cancel、
+キャンセル後の古いpointermove無効、blur/pagehide、合成hidden、キーボード、
+resize/DPR、軽減動作、葉と波紋収束後idle、入口・再入場、JS例外なし。
+PASS npm run test:stamp-boundaries: 2/5/7個セットを6/6/2表示し全回帰。
+390px縦・568px横・多指重なりの実画像を目視確認。
+実機Safari、OSジェスチャーは未検証。新作は音を生成しない。
+
+独立した既存テストの品質修正（アプリ本体の既存挙動は変更なし）:
+1. tests/balloon.mjs: 固定200msナビゲーション待ちを新document/complete/対象DOMの
+   明示的な準備待ちへ変更。従来0!==7となる競合を実際に再現。
+2. 同テストで入口の全document.images.decodeが応答待ちに陥る問題を特定。
+   タイムアウト診断で式を記録し、画面外lazy画像の未ロードが原因と確認。
+   テスト内だけloading=eagerにして全画像のdecode検証を維持。画像検査の省略なし。
+3. tests/pinwheel.mjs: CDP touchCancel直後の判定がpointercancel配達前になる
+   競合を再現。キャンセルイベント到達をテスト注入リスナーで待ってから、従来の
+   停止/角度assertを実行。自然減速を待って合格させる変更ではない。
+4. 新作追加に伴う入口カード数7→8、ブランド対象8→9ページの期待値更新。
+
+実行履歴を区別:
+npm test一括の初期実行は上記風船/風車のテスト競合で停止。
+最終ビルドのbrowserまで通過後、修正対象と未完了の各専用スクリプトを再実行し
+全て成功。失敗のあった一括コマンド自体を成功とは記録しない。
+最終checkとスタンプ境界コマンドもexit 0。
+証跡はtest-results/*-results.txt、results.txt、pond-*.pngおよびこの報告。
+
+公開:
+既存Sites appgprj_6ad7020cf85c81919ee1984743405a06 のみ。
+Sitesソース専用ミラー /workspace/OmochaBox-sites は同じ保存済み環境内。
+取得時Sites source v25相当の全trackedファイルとGitHub初期HEADのバイト一致確認済み。
+親レビュー前のGitHub pushは禁止として未実行。Sites一時版を準備。
+
+親の独立レビュー・最終化:
+Sites v26（source ff5e1c4fb4174c041337abde22d1d67072790709）を一般公開し成功。
+親が独立クラウドブラウザで水面・透明葉3枚・空き領域・大きなタップ波紋・
+ドラッグの複数波紋・近くの葉の揺れ・入口への戻り・新カードからの再入場と
+読み込み後のタップを確認。静かな遊びとして成立、大きなレイアウト不具合なし。
+レビューhold解除、通常GitHub commit/pushとSites最終一致の明示指示を受領。
+実機タッチ/Safariは親も未検証。
+最終化開始時にgit fetchでorigin/main=983676cを再確認。
+ローカル全ソースとレビュー対象Sitesソースのバイト一致を確認し、ユーザーの
+追加変更が混在していないことを確認した。公開動作は変更せず確認記録を追記。
+最終npm run check / npm run build / build.mjs / branding.mjs / characters.mjsは全てexit 0。
+最終distの69ファイルを、レビュー済みビルドおよびv26公開時に渡したtar内の
+distとSHA-256で比較し全件一致。製品コードの変更なし、記録のみを更新。
+公開URLの全ファイル直接取得比較は環境からHTTP403となり未完了。
+これを製品不具合や成功扱いにせず、親の独立ブラウザレビュー・Sitesの公開成功・
+送信アーカイブとの全件一致を公開確認の根拠とした。
+Sitesの公開範囲publicと既存URLを再確認、権限・設定は変更しない。
+通常pushの初回はGitHub GH007（ローカル既定の作者メールの非公開保護）で拒否。
+GitHubの保護設定は変更せず、未公開の今回のローカルコミットだけを
+Codex <codex@openai.com>名義で再作成して通常pushする。強制pushは使用しない。

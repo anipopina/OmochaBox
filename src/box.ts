@@ -8,6 +8,8 @@ import stampSquare from './assets/characters/shapes/01-coral-square.svg';
 import stampCyan from './assets/characters/shapes/02-cyan-circle.svg';
 import stampStar from './assets/characters/shapes/05-coral-star.svg';
 import { games } from './games';
+import pondGreen from './pochan-mizutamari/assets/leaf-green.webp';
+import pondTeal from './pochan-mizutamari/assets/leaf-teal.webp';
 import { requireElement } from './shared/dom';
 import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';
 import slidePreviewUrl from './assets/previews/korokoro-suberidai.svg';
@@ -25,6 +27,10 @@ for (const game of games) {
   art.setAttribute('aria-hidden', 'true');
   art.innerHTML =
     '<span class="flower"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></span><span class="spark one">✦</span><span class="spark two">✧</span><span class="trail"></span>';
+  if (game.id === 'pochan-mizutamari') {
+    art.className = 'pond-preview';
+    art.innerHTML = `<i></i><img src="${pondGreen}" alt="" loading="lazy"><img src="${pondTeal}" alt="" loading="lazy">`;
+  }
   if (game.id === 'fukifuki-mado') {
     art.className = 'window-preview';
     art.innerHTML = `<img src="${windowPreviewUrl}" alt="" loading="lazy"><span>ふきふき ✦</span>`;

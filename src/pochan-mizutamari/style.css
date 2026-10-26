@@ -1,0 +1,71 @@
+:root {
+  font-family:
+    'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  color: #275b67;
+  background: #b2e6e8;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  height: 100svh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+#pond {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 45% 40%,
+    #d8f5ec 0%,
+    #b8e9e9 48%,
+    #84cbd5 100%
+  );
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  outline-offset: -5px;
+}
+canvas:focus-visible {
+  outline: 4px solid #226c83;
+}
+#back {
+  position: absolute;
+  z-index: 2;
+  top: max(16px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #fffdf0;
+  box-shadow: 0 3px 0 #4d9ba455;
+  color: #326d7b;
+  text-decoration: none;
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+}
+#back:focus-visible {
+  outline: 4px solid #226c83;
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -14,7 +14,7 @@
     "check": "npm run typecheck && npm run lint && npm run format:check",
     "build:test": "vite build --mode test",
     "test:stamp-boundaries": "node tests/stamp-pagination-boundaries.mjs",
-    "test": "npm run build && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs"
+    "test": "npm run build && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs && node tests/pond.mjs"
   },
   "engines": {
     "node": "^22.13.0 || >=24.0.0"

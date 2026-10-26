@@ -70,7 +70,7 @@ try {
       const key = ++id;
       const timer = setTimeout(() => {
         pending.delete(key);
-        reject(new Error(`${method} timed out`));
+        reject(new Error(`${method} timed out: ${params.expression ?? ''}`));
       }, 15000);
       pending.set(key, { resolve, reject, timer });
       ws.send(JSON.stringify({ id: key, method, params }));
@@ -90,10 +90,37 @@ try {
   await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `window.rafCalls=0;const raf=requestAnimationFrame;window.requestAnimationFrame=(f)=>raf(t=>{window.rafCalls++;f(t)});`,
   });
+  const waitFor = async (expression) => {
+    for (let i = 0; i < 100; i++) {
+      try {
+        if (await evaluate(expression)) return;
+      } catch (error) {
+        if (
+          error.code !== -32000 ||
+          !/context|navigat|closed/i.test(error.message)
+        )
+          throw error;
+      }
+      await delay(50);
+    }
+    assert.fail(`Timed out: ${expression}`);
+  };
   const visit = async (path = '/pukapuka-fusen/') => {
+    const previousDocument = await evaluate('performance.timeOrigin');
     await call('Page.navigate', { url: origin + path });
-    await delay(200);
-    await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+    await waitFor(
+      `performance.timeOrigin !== ${previousDocument} && document.readyState === 'complete'`,
+    );
+    await waitFor(
+      path === '/'
+        ? "document.querySelectorAll('.game-card').length===8"
+        : "!!document.querySelector('#pump')",
+    );
+    // Offscreen lazy hub images may never start loading until scrolled into view.
+    // Force their request in this test, retaining full decode validation.
+    await evaluate(
+      `Promise.all([...document.images].map(i=>{i.loading='eager';return i.decode()}))`,
+    );
   };
   const shot = async (name) =>
     writeFile(
@@ -348,10 +375,12 @@ try {
   await visit('/');
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    7,
+    8,
   );
   await evaluate(`document.querySelector('a[href="pukapuka-fusen/"]').click()`);
-  await delay(200);
+  await waitFor(
+    `document.readyState === 'complete' && !!document.querySelector('#pump')`,
+  );
   assert.equal(
     await evaluate('document.title'),
     'ぷかぷか、ふうせん｜おもちゃボックス',
@@ -359,10 +388,10 @@ try {
   await evaluate(
     `document.querySelector('#pump').click();document.querySelector('#back').click()`,
   );
-  await delay(200);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    7,
+    8,
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

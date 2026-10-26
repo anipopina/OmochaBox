@@ -1,0 +1,36 @@
+[
+  {
+    "file": "leaf-teal.webp",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 16740,
+    "sha256": "c06d59fdeea4c5192259b011e813e253122e69ac52068cbe0bba0280d28b5b63",
+    "source": "OpenAI image_gen / 2026-10-26 / original generated leaf art",
+    "drive_zip_id": "1mFzfKqQuL_TrHtW9zp_opTOsbmg3rHin",
+    "local_changes": "none; supplied optimized WebP copied byte-for-byte"
+  },
+  {
+    "file": "leaf-green.webp",
+    "size": [
+      256,
+      256
+    ],
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 16174,
+    "sha256": "66990a02610102e76fe5b9e0e7a9b6d0787d8fb97fd213184c618dfd8ca9cac2",
+    "source": "OpenAI image_gen / 2026-10-26 / original generated leaf art",
+    "drive_zip_id": "1mFzfKqQuL_TrHtW9zp_opTOsbmg3rHin",
+    "local_changes": "none; supplied optimized WebP copied byte-for-byte"
+  }
+]

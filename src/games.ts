@@ -49,4 +49,10 @@ export const games: readonly Game[] = [
     description: 'うごかして、かさねて。いろが かわるよ！',
     href: 'kasanete-iroglass/',
   },
+  {
+    id: 'pochan-mizutamari',
+    title: 'ぽちゃん、みずたまり',
+    description: 'さわって、なぞって。みずの わが ひろがるよ。',
+    href: 'pochan-mizutamari/',
+  },
 ];

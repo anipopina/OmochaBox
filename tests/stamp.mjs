@@ -623,10 +623,10 @@ try {
     '3',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    7,
+    8,
   );
   assert.ok(
     await evaluate(
@@ -779,7 +779,7 @@ try {
   );
   // Actual hub buttons, persisted values, invalid data, and storage failures.
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   assert.ok(
     await evaluate(
       `[...document.querySelectorAll('.setting-buttons button')].every(b=>{const r=b.getBoundingClientRect();return r.width>=56&&r.height>=56})`,
@@ -797,7 +797,7 @@ try {
     { sound: false, vibration: false },
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   assert.equal(
     await evaluate(
       `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
@@ -823,7 +823,7 @@ try {
     'Drawing has no individual settings buttons',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   await click('#sound-setting');
   await click('a[href="hikari-no-oekaki/"]');
   await waitFor(
@@ -836,7 +836,7 @@ try {
     'Drawing enabled sound starts on next gesture',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   await call('Page.removeScriptToEvaluateOnNewDocument', {
     identifier: drawingProbe.identifier,
   });
@@ -844,7 +844,7 @@ try {
     `localStorage.setItem('omochabox-play-settings-v1','invalid json')`,
   );
   await call('Page.reload');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   assert.equal(
     await evaluate(
       `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
@@ -855,7 +855,7 @@ try {
     source: `Storage.prototype.getItem=Storage.prototype.setItem=()=>{throw new DOMException('blocked','SecurityError')}`,
   });
   await call('Page.reload');
-  await waitFor(`document.querySelectorAll('.game-card').length===7`);
+  await waitFor(`document.querySelectorAll('.game-card').length===8`);
   await click('#sound-setting');
   assert.equal(
     await evaluate(
