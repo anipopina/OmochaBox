@@ -7,7 +7,7 @@ import {
   Pond,
   MAX_RIPPLES,
   RIPPLE_LIFE,
-} from '../src/pochan-mizutamari/model.ts';
+} from '../src/mizutamari/model.ts';
 import { createStaticServer } from './static-server.mjs';
 
 const model = new Pond();
@@ -134,7 +134,7 @@ try {
     }
     assert.fail(`Timed out: ${expression}`);
   };
-  const visit = async (path = '/pochan-mizutamari/') => {
+  const visit = async (path = '/mizutamari/') => {
     const previousDocument = await evaluate('performance.timeOrigin');
     await call('Page.navigate', { url: origin + path });
     await waitFor(
@@ -291,7 +291,7 @@ try {
     ),
   );
   await evaluate(
-    `document.querySelector('a[href="pochan-mizutamari/"]').click()`,
+    `document.querySelector('a[href="mizutamari/"]').click()`,
   );
   await waitFor(`document.querySelector('#water')?.dataset.ready==='true'`);
   const fresh = await data();

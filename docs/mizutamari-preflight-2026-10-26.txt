@@ -1,4 +1,4 @@
-2026-10-26 夜 / ぽちゃん、みずたまり / 素材共有前の調査・設計
+2026-10-26 夜 / みずたまり / 素材共有前の調査・設計
 
 環境: 保存済み OmochaBox Codex Web /workspace/OmochaBox のみ。
 開始時 HEAD と fetch 後 origin/main: 983676c30780df4c2598b24a0efd0a87e01d48c6。
@@ -22,11 +22,11 @@ README.md / AGENTS.md / docs/development.md / docs/branding.md /
 3. 必要なら水面の静的な質感素材（中央が空いていて波紋を妨げないもの）。
 既存 hikari の葉群WebPは四隅の額縁形状。実画像も確認済み。
 単独の浮き葉としてそのまま転用するには不適切なので新素材を推奨。
-原本を source-assets/pochan-mizutamari に保存し、透過WebPへ最適化して
-src/pochan-mizutamari/assets からVite import。原本・出典・変換値・容量を記録。
+原本を source-assets/mizutamari に保存し、透過WebPへ最適化して
+src/mizutamari/assets からVite import。原本・出典・変換値・容量を記録。
 
 実装案（素材受領後に確定）:
-URL /pochan-mizutamari/、TypeScript + Canvas 2D、追加依存なし。
+URL /mizutamari/、TypeScript + Canvas 2D、追加依存なし。
 波紋/葉の状態を描画処理から分離。動的な水面はCanvas、戻る導線はDOM。
 pointerdownで即時波紋、dragは距離と時間の両方で間引き（初期案36px/90ms）。
 最大10指、波紋最大32個、葉5枚程度、DPR上限2、経過時間の上限を設定。
@@ -55,7 +55,7 @@ AudioContextはユーザー操作から開始、同時発音/間隔上限、消�
 
 追記:
 親よりコンセプト画像を受領。Drive公式ツール→認証済みファイル参照で取得し、
-source-assets/pochan-mizutamari/concept.png に保存して実画像を確認済み。
+source-assets/mizutamari/concept.png に保存して実画像を確認済み。
 透過葉素材は引き続き共有待ち。構図は葉3枚を基本に調整する。
 既存Sites get_siteで source latest v25/public/既存URLを確認、変更なし。
 最初のnpm ciは既定cache /home/agent/.npm 書込不可で失敗。
@@ -66,5 +66,5 @@ waitFor方式へ修正し、visit時は新document/complete/対象DOMも確認�
 アプリ本体は変更していない。修正後全回帰を再実行中。
 
 最終追記: 透過葉ZIPを受領して実画像/alpha確認済み。3枚の葉で新作実装完了。
-既存検査の競合修正、新作の全検査・素材来歴はpochan-verification-2026-10-26.txt参照。
+既存検査の競合修正、新作の全検査・素材来歴はmizutamari-verification-2026-10-26.txt参照。
 素材待ちは解消。親レビュー用Sites一時公開へ進行、GitHub pushは未実行。

@@ -1,11 +1,11 @@
-ぽちゃん、みずたまり / 2026-10-26 夜 / 一時公開前検証
+みずたまり / 2026-10-26 夜 / 一時公開前検証
 
 作業環境: 保存済み OmochaBox Codex Web /workspace/OmochaBox のみ。
 開始時・公開前確認の origin/main は983676c30780df4c2598b24a0efd0a87e01d48c6。
 開始時ユーザーの未コミット変更、stash、別worktreeなし。
 
 実装:
-/pochan-mizutamari/、入口8番目に追加。全画面水面、生成された透過葉2種を3枚表示。
+/mizutamari/、入口8番目に追加。全画面水面、生成された透過葉2種を3枚表示。
 タップ即時・ドラッグ90ms/36px間引き、10指上限、波紋32/2.2秒上限。
 葉の減衰移動と回転、収束後RAF停止、DPR2/約300万px上限。
 キャンセル・非表示・resize・ページ離脱で入力を後始末、再入場は静止。
@@ -14,7 +14,7 @@
 
 素材:
 親のDriveコンセプト画像と葉ZIPを公式ツールで取得し実ピクセルを確認。
-PNG原本・受領メモ・企画参照をsource-assets/pochan-mizutamari/に保存。
+PNG原本・受領メモ・企画参照をsource-assets/mizutamari/に保存。
 配信WebP2枚は各256px RGBA、alpha0〜255、合計32,914bytes、受領物とバイト一致。
 出典、Drive ID、SHA-256を同ディレクトリREADME/provenance.jsonに記録。
 

@@ -27,7 +27,7 @@ export const games: readonly Game[] = [
   },
   {
     id: 'ponpon-stamp',
-    title: 'ぽんぽん、スタンプ',
+    title: 'ぽんぽんスタンプ',
     description: 'えらんで、ぽん！ なかまたちで えを つくろう。',
     href: 'ponpon-stamp/',
   },
@@ -50,9 +50,9 @@ export const games: readonly Game[] = [
     href: 'kasanete-iroglass/',
   },
   {
-    id: 'pochan-mizutamari',
-    title: 'ぽちゃん、みずたまり',
+    id: 'mizutamari',
+    title: 'みずたまり',
     description: 'さわって、なぞって。みずの わが ひろがるよ。',
-    href: 'pochan-mizutamari/',
+    href: 'mizutamari/',
   },
 ];

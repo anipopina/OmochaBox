@@ -16,7 +16,7 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [かさねて、いろガラス](src/kasanete-iroglass/README.md) | 3枚の色板を動かして重なる色を楽しむ遊び |
 
-| [ぽちゃん、みずたまり](src/pochan-mizutamari/README.md) | 水面を触って波紋を重ね、浮き葉を揺らす遊び |
+| [みずたまり](src/mizutamari/README.md) | 水面を触って波紋を重ね、浮き葉を揺らす遊び |
 
 ## 開発を始める
 
