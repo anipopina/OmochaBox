@@ -823,6 +823,22 @@ try {
     evaluate(
       `(()=>{const r=document.querySelector('#fog').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:r.width,height:r.height}})()`,
     );
+  const assertWindowClip = async () => {
+    assert.ok(
+      await evaluate(`(() => {
+        const pane = document.querySelector('.window-pane');
+        const frame = document.querySelector('.window');
+        const r = pane.getBoundingClientRect();
+        const corners = [[r.left+1,r.top+1],[r.right-1,r.top+1],
+          [r.left+1,r.bottom-1],[r.right-1,r.bottom-1]];
+        return corners.every(([x,y]) => document.elementFromPoint(x,y) === frame)
+          && getComputedStyle(frame).backgroundColor === 'rgb(255, 146, 47)'
+          && getComputedStyle(pane).backgroundColor === 'rgb(241, 248, 249)'
+          && Math.abs(r.width-r.height) < 1;
+      })()`),
+      'All four inner corners exclude image/fog layers and retain the orange frame',
+    );
+  };
   for (const [w, h] of [
     [320, 568],
     [390, 844],
@@ -871,6 +887,7 @@ try {
       `document.readyState==='complete' && !!document.querySelector('#fog')`,
     );
     await waitFogReady();
+    await assertWindowClip();
     assert.equal(
       await evaluate('document.title'),
       'ふきふき、まど｜おもちゃボックス',
@@ -1089,7 +1106,12 @@ try {
   await call('Network.enable');
   await call('Network.setCacheDisabled', { cacheDisabled: true });
   const forcedGarden = await call('Page.addScriptToEvaluateOnNewDocument', {
-    source: 'Math.random = () => 0',
+    source: `Math.random = () => 0;
+      const decode = HTMLImageElement.prototype.decode;
+      HTMLImageElement.prototype.decode = async function() {
+        await decode.call(this);
+        await new Promise(resolve => setTimeout(resolve, 350));
+      };`,
   });
   fogDelay = 300;
   await call('Page.reload');
@@ -1110,10 +1132,19 @@ try {
     255,
     'Loading scene cannot be wiped to reveal the previous picture',
   );
+  await assertWindowClip();
+  await writeFile(
+    join(root, 'test-results/window-corners-loading.png'),
+    Buffer.from(
+      (await call('Page.captureScreenshot', { format: 'png' })).data,
+      'base64',
+    ),
+  );
   await evaluate(
     `for(let i=0;i<5;i++)document.querySelector('#cloud').click()`,
   );
   await waitFogReady();
+  await assertWindowClip();
   const latestScene = assetPath('fukifuki-mado/assets/shapes-hello.webp');
   assert.equal(
     await evaluate(`document.querySelector('#picture').getAttribute('src')`),

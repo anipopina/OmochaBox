@@ -106,6 +106,8 @@ main {
   box-shadow: 0 4px 0 #79ccd2;
 }
 .window {
+  --frame-width: 12px;
+  --frame-radius: 32px;
   position: relative;
   width: min(
     100%,
@@ -117,14 +119,25 @@ main {
   );
   aspect-ratio: 1;
   margin: auto;
-  border: 12px solid #ff922f;
-  border-radius: 32px;
+  border: var(--frame-width) solid #ff922f;
+  border-radius: var(--frame-radius);
   box-shadow:
     0 0 0 5px #fff9df,
     0 9px 0 #bb4f27,
     0 15px 24px #9f6f312b;
   overflow: hidden;
-  background: #55c6d8;
+  background: #ff922f;
+}
+.window-pane {
+  position: absolute;
+  inset: 0;
+  /* Keep the backing, image, fog and sparkle in the same borderless clip.
+     The frame stays orange even while WebKit repaints decoded image layers. */
+  border-radius: calc(var(--frame-radius) - var(--frame-width));
+  overflow: hidden;
+  clip-path: inset(0 round calc(var(--frame-radius) - var(--frame-width)));
+  isolation: isolate;
+  background: #f1f8f9;
 }
 .window img,
 canvas {
@@ -220,8 +233,8 @@ canvas {
     padding: 5px 14px;
   }
   .window {
-    border-width: 9px;
-    border-radius: 25px;
+    --frame-width: 9px;
+    --frame-radius: 25px;
   }
   #cloud {
     width: min(100%, 240px);

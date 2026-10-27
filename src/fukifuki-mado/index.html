@@ -64,18 +64,20 @@
     <main>
       <p id="hint">ゆびで ふきふき。だれが いるかな？</p>
       <div class="window">
-        <img
-          id="picture"
-          src="assets/garden.webp"
-          alt="お花いっぱいの庭に、ねことうさぎといぬ。木の枝には小鳥。"
-          draggable="false"
-        /><canvas
-          id="fog"
-          tabindex="0"
-          role="img"
-          aria-label="くもったまど。指でなぞると景色が見えます。キーボードでは矢印で移動、スペースで拭けます。"
-        ></canvas
-        ><span id="shine" aria-hidden="true">✦</span>
+        <div class="window-pane">
+          <img
+            id="picture"
+            src="assets/garden.webp"
+            alt="お花いっぱいの庭に、ねことうさぎといぬ。木の枝には小鳥。"
+            draggable="false"
+          /><canvas
+            id="fog"
+            tabindex="0"
+            role="img"
+            aria-label="くもったまど。指でなぞると景色が見えます。キーボードでは矢印で移動、スペースで拭けます。"
+          ></canvas
+          ><span id="shine" aria-hidden="true">✦</span>
+        </div>
       </div>
       <button id="cloud" aria-label="つぎのまど">
         <span aria-hidden="true">➜</span> つぎのまど
