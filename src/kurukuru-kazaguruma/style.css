@@ -23,23 +23,6 @@ body {
     linear-gradient(#aee5fa, #e4f8fe);
 }
 
-#back {
-  width: 60px;
-  height: 60px;
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  background: #fffdf6;
-  color: #34627a;
-  text-decoration: none;
-  font-size: 32px;
-  font-weight: 900;
-  line-height: 1;
-  touch-action: manipulation;
-}
 small {
   font-size: 11px;
   line-height: 1.3;
@@ -145,11 +128,6 @@ button:focus-visible {
   white-space: nowrap;
 }
 @media (max-height: 500px) and (min-width: 480px) {
-  #back {
-    width: 56px;
-    height: 56px;
-  }
-
   .toy {
     width: min(100%, 700px);
   }
@@ -177,10 +155,10 @@ button:focus-visible {
   }
 }
 
-/* Keep navigation above the field without reserving a header row. */
-#back {
-  position: fixed;
-  z-index: 10;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
+[data-home-button] {
+  --home-button-background: #fffdf3;
+  --home-button-color: #34627a;
+  --home-button-border: #3397d7;
+  --home-button-focus: #6352af;
+  --home-button-shadow: 0 3px 0 #8ecbe3;
 }

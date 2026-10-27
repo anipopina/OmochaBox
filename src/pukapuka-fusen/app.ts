@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { requireElement } from '../shared/dom';
 import cyan from './assets/cyan.svg';
 import purple from './assets/purple.svg';

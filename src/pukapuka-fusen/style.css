@@ -19,23 +19,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-#back {
-  display: grid;
-  place-items: center;
-  flex: none;
-  min-width: 112px;
-  min-height: 60px;
-  padding: 8px 15px;
-  background: #fff;
-  border: 3px solid #10194c;
-  border-radius: 40px;
-  box-shadow: 0 4px #10194c;
-  color: inherit;
-  font-size: 21px;
-  font-weight: 900;
-  text-decoration: none;
-}
-
 main {
   flex: 1;
   min-height: 0;
@@ -190,8 +173,7 @@ main {
 .release-hint {
   font-size: 17px;
 }
-#pump:focus-visible,
-#back:focus-visible {
+#pump:focus-visible {
   outline: 5px solid #8523bf;
   outline-offset: 4px;
   border-radius: 28px;
@@ -218,13 +200,6 @@ main {
   }
 }
 @media (max-width: 600px) {
-  #back {
-    min-width: 90px;
-    min-height: 56px;
-    padding: 7px;
-    font-size: 18px;
-  }
-
   .welcome-one {
     left: 7%;
   }
@@ -244,10 +219,6 @@ main {
   }
 }
 @media (max-height: 500px) and (orientation: landscape) {
-  #back {
-    min-height: 56px;
-  }
-
   #sky {
     right: 230px;
     bottom: 12px;
@@ -284,10 +255,10 @@ main {
   }
 }
 
-/* Keep navigation above the field without reserving a header row. */
-#back {
-  position: fixed;
-  z-index: 10;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
+[data-home-button] {
+  --home-button-background: #fff333;
+  --home-button-color: #10194c;
+  --home-button-border: #10194c;
+  --home-button-focus: #8523bf;
+  --home-button-shadow: 0 4px 0 #10194c;
 }

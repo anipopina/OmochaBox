@@ -35,29 +35,7 @@ canvas {
 canvas:focus-visible {
   outline: 4px solid #226c83;
 }
-#back {
-  position: absolute;
-  z-index: 2;
-  top: max(16px, env(safe-area-inset-top));
-  left: max(16px, env(safe-area-inset-left));
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  background: #fffdf0;
-  box-shadow: 0 3px 0 #4d9ba455;
-  color: #326d7b;
-  text-decoration: none;
-  font-size: 48px;
-  font-weight: 900;
-  line-height: 1;
-}
-#back:focus-visible {
-  outline: 4px solid #226c83;
-  outline-offset: 3px;
-}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -68,4 +46,12 @@ canvas:focus-visible {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+[data-home-button] {
+  --home-button-background: #e6fff5;
+  --home-button-color: #22636a;
+  --home-button-border: #337f85;
+  --home-button-focus: #7147c5;
+  --home-button-shadow: 0 3px 0 #4d9ba455;
 }

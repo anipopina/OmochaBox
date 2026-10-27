@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { requireElement } from '../shared/dom';
 import { LIFE_MS, MAX_BALLS, REDUCED_LIFE_MS, positionAt } from './model';
 const layer = requireElement('#balls', SVGGElement);

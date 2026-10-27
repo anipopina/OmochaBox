@@ -6,3 +6,4 @@ source-assets/
 docs/
 AGENTS.md
 src/assets/characters/**/*.svg
+src/shared/icons/*.svg

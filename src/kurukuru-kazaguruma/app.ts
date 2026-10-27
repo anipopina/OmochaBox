@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { requireElement } from '../shared/dom';
 import { advance, clampSpeed, swipeSpeed } from './model';
 const wheel = requireElement('#wheel', HTMLButtonElement);

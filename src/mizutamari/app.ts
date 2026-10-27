@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { requireElement } from '../shared/dom';
 import { Pond, RIPPLE_LIFE } from './model';
 import greenLeaf from './assets/leaf-green.webp';

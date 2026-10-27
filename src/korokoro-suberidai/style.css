@@ -19,23 +19,6 @@ body {
   background: radial-gradient(ellipse at 50% 60%, #d8f6ff, #f8fcff 75%);
 }
 
-#back {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  flex: none;
-  background: #d6eeff;
-  color: #235875;
-  text-decoration: none;
-  border-radius: 50%;
-  font-size: 32px;
-  font-weight: 900;
-  line-height: 1;
-  touch-action: manipulation;
-}
 small {
   font-size: 11px;
   line-height: 1.3;
@@ -169,11 +152,6 @@ button:focus-visible {
   border: 0;
 }
 @media (max-height: 500px) and (min-width: 480px) {
-  #back {
-    width: 56px;
-    height: 56px;
-  }
-
   main {
     display: grid;
     grid-template-columns: 110px minmax(0, 1fr);
@@ -211,16 +189,16 @@ button:focus-visible {
   }
 }
 
-/* Keep navigation above the field without reserving a header row. */
-#back {
-  position: fixed;
-  z-index: 10;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
-}
-
 /* Leave room for the floating home control beside the ball choices. */
 .supplies {
   padding-left: 72px;
   gap: clamp(8px, 2vw, 24px);
+}
+
+[data-home-button] {
+  --home-button-background: #d6eeff;
+  --home-button-color: #235875;
+  --home-button-border: #2582b5;
+  --home-button-focus: #8c2ac5;
+  --home-button-shadow: 0 3px 0 #9bcde5;
 }

@@ -52,11 +52,8 @@ h1 img:first-child {
 h1 img:last-child {
   transform: rotate(12deg);
 }
-#back {
-  justify-self: start;
-}
-button,
-#back {
+
+button {
   min-width: 56px;
   min-height: 64px;
   padding: 8px 16px;
@@ -218,8 +215,7 @@ canvas {
   h1 img {
     display: none;
   }
-  button,
-  #back {
+  button {
     min-height: 56px;
     padding: 5px 14px;
   }
@@ -245,8 +241,7 @@ canvas {
   header {
     padding-top: 6px;
   }
-  button,
-  #back {
+  button {
     min-height: 56px;
   }
   #hint {
@@ -274,4 +269,12 @@ canvas {
   #cloud:active {
     transform: none;
   }
+}
+
+[data-home-button] {
+  --home-button-background: #fff9d9;
+  --home-button-color: #16475c;
+  --home-button-border: #126eab;
+  --home-button-focus: #d73a71;
+  --home-button-shadow: 0 4px 0 #e8b849;
 }

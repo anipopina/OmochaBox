@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { requireElement } from '../shared/dom';
 
 const canvas = requireElement('#glass', HTMLCanvasElement);

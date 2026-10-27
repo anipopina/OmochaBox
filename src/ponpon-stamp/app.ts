@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { stampFeedback, suspendFeedback, clearParticles } from './feedback';
 import { requireElement } from '../shared/dom';
 import { stampSets, type StampItem } from './sets';

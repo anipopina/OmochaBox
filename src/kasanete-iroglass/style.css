@@ -19,23 +19,6 @@ body {
   overscroll-behavior: none;
 }
 
-#back {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 64px;
-  height: 64px;
-  border: 2px solid #d9d5c6;
-  border-radius: 50%;
-  background: #fffef7;
-  color: inherit;
-  text-decoration: none;
-  font-size: 48px;
-  font-weight: 900;
-  line-height: 1;
-  box-shadow: 0 4px 0 #e5dfcf;
-}
-
 main {
   flex: 1;
   min-height: 0;
@@ -151,22 +134,11 @@ button:active {
   border: 0;
 }
 @media (max-width: 360px) {
-  #back {
-    width: 56px;
-    height: 56px;
-    font-size: 40px;
-  }
   main {
     padding: 4px 10px 12px;
   }
 }
 @media (orientation: landscape) and (max-height: 600px) {
-  #back {
-    width: 56px;
-    height: 56px;
-    font-size: 40px;
-  }
-
   main {
     grid-template-columns: minmax(0, 1fr) 150px;
     grid-template-rows: minmax(0, 1fr);
@@ -198,14 +170,6 @@ button:active {
   button:active {
     transform: none;
   }
-}
-
-/* Keep navigation above the field without reserving a header row. */
-#back {
-  position: fixed;
-  z-index: 10;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
 }
 
 body {
@@ -252,4 +216,12 @@ aside {
     width: 264px;
     max-height: calc(100dvh - 24px);
   }
+}
+
+[data-home-button] {
+  --home-button-background: #fffdf4;
+  --home-button-color: #173968;
+  --home-button-border: #526987;
+  --home-button-focus: #7147c5;
+  --home-button-shadow: 0 4px 0 #e4dcc8;
 }

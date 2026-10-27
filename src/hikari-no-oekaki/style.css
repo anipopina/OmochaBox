@@ -27,24 +27,11 @@ canvas {
   height: 100%;
   touch-action: none;
 }
-#back {
-  position: fixed;
-  left: max(12px, env(safe-area-inset-left));
-  top: max(12px, env(safe-area-inset-top));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 56px;
-  padding: 10px 18px;
-  border: 1px solid #52647d;
-  border-radius: 28px;
-  background: #112039e8;
-  color: #dfebf4;
-  text-decoration: none;
-  font-size: 15px;
-  touch-action: manipulation;
-}
-#back:focus-visible {
-  outline: 3px solid #a4edf3;
-  outline-offset: 4px;
+
+[data-home-button] {
+  --home-button-background: #112039;
+  --home-button-color: #dfebf4;
+  --home-button-border: #8fa9cc;
+  --home-button-focus: #a4edf3;
+  --home-button-shadow: 0 3px 0 #030c1b99;
 }

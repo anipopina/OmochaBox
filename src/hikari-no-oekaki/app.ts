@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { getPlaySettings, onPlaySettings } from '../shared/settings';
 import { requireContext2d, requireElement } from '../shared/dom';
 import topLeftUrl from './assets/leaves-top-left.webp';

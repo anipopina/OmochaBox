@@ -1,3 +1,4 @@
+import '../shared/home-button';
 import { requireContext2d, requireElement } from '../shared/dom';
 import scenes from './scenes.json';
 
