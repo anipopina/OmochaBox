@@ -72,10 +72,13 @@ main {
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
   overflow: hidden;
   cursor: crosshair;
+  isolation: isolate;
 }
 #stamps {
+  z-index: 0;
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -164,14 +167,14 @@ aside button {
   pointer-events: auto;
 }
 
-#new svg path,
-dialog svg path {
+#new svg path {
   fill: white;
   stroke: #172339;
   stroke-width: 3;
   stroke-linejoin: round;
 }
 #cursor {
+  z-index: 3;
   display: none;
   position: absolute;
   width: 56px;
@@ -186,59 +189,46 @@ dialog svg path {
 }
 #full {
   position: absolute;
-  top: max(90px, calc(env(safe-area-inset-top) + 78px));
-  bottom: auto;
-  left: 50%;
-  transform: translateX(-50%);
+  z-index: 4;
+  top: max(108px, calc(env(safe-area-inset-top) + 96px));
+  right: max(12px, env(safe-area-inset-right));
+  width: min(
+    430px,
+    calc(
+      100% - max(12px, env(safe-area-inset-left)) -
+        max(12px, env(safe-area-inset-right))
+    )
+  );
   margin: 0;
-  padding: 6px 10px;
-  white-space: nowrap;
-  background: #fff9eb;
-  border: 2px solid #172339;
-  border-radius: 14px;
-  font-size: 12px;
+  padding: 16px 8px;
+  border: 4px solid #17334b;
+  border-radius: 24px;
+  background: #ffdf38;
+  color: #17334b;
+  box-shadow: 0 5px 0 #17334b40;
+  text-align: center;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  line-height: 1.5;
   pointer-events: none;
 }
-dialog {
-  width: min(94vw, 380px);
-  max-width: min(94vw, 420px);
-  border: 3px solid #172339;
-  border-radius: 24px;
-  background: #fff9eb;
-  padding: 18px;
-  text-align: center;
+#full span {
+  display: block;
 }
-dialog::backdrop {
-  background: #17233980;
+#full-arrow {
+  position: absolute;
+  top: -52px;
+  right: 24px;
+  width: 64px;
+  height: 56px;
+  fill: none;
+  stroke: #17334b;
+  stroke-width: 8px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 0 #fff);
 }
-dialog p {
-  font-weight: 900;
-  margin: 8px 0 18px;
-}
-.sheet-icon {
-  width: 48px;
-  height: 48px;
-}
-dialog form > div {
-  display: flex;
-  gap: 16px;
-}
-dialog button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  padding: 8px;
-  min-height: 72px;
-  background: #9bdeff;
-}
-dialog button span {
-  font-size: 28px;
-}
-#clear {
-  background: #6bea9c;
-}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -318,6 +308,7 @@ dialog button span {
 }
 
 #effects {
+  z-index: 1;
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -403,4 +394,48 @@ aside {
   --home-button-border: #0063b0;
   --home-button-focus: #8c2ac5;
   --home-button-shadow: 0 3px 0 #004e8c;
+}
+
+#charges {
+  z-index: 2;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.charge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 5px solid #ffb000;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7a822 35%, #ffd43d44 75%, #ffb00066);
+  box-shadow:
+    inset 0 0 18px #ffcf40,
+    0 0 16px #ffca4180;
+}
+.charge img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.28;
+}
+.charge-sparks {
+  position: absolute;
+  inset: -12px;
+  border: 6px dashed #ff7d24;
+  border-radius: 50%;
+  animation: charge-orbit 5s linear infinite;
+}
+.charge[data-full='true'] .charge-sparks {
+  animation-play-state: paused;
+}
+@keyframes charge-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .charge-sparks {
+    animation: none;
+  }
 }

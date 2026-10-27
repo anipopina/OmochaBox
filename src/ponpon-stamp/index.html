@@ -51,14 +51,20 @@
           id="paper"
           tabindex="0"
           role="button"
-          aria-label="スタンプのかみ。タップしておす。矢印キーで場所を選び、スペースかEnterでおす。"
+          aria-label="スタンプのかみ。タップしておす。長押しで大きくなり、指を離した場所におせます。矢印キーで場所を選び、スペースかEnterでおす。"
           aria-describedby="status"
         >
           <div id="effects" aria-hidden="true"></div>
           <div id="stamps" aria-hidden="true"></div>
+          <div id="charges" aria-hidden="true"></div>
           <span id="cursor" aria-hidden="true"></span>
         </div>
-        <p id="full" hidden>かみが いっぱい。あたらしい かみで あそぼう</p>
+        <p id="full" hidden aria-hidden="true">
+          <svg id="full-arrow" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 58V10M12 30L32 10L52 30" />
+          </svg>
+          <span>かみがいっぱい！</span><span>あたらしいかみにしてね！</span>
+        </p>
       </div>
       <aside aria-label="スタンプをえらぶ">
         <div class="palette-pager">
@@ -90,21 +96,6 @@
       </button>
     </main>
     <p id="status" class="sr-only" role="status" aria-live="polite"></p>
-    <dialog id="confirm">
-      <form method="dialog">
-        <svg class="sheet-icon" viewBox="0 0 48 48" aria-hidden="true">
-          <path d="M10 4h18l12 12v28H10Z M28 4v12h12" />
-        </svg>
-        <p>あたらしい かみに する？</p>
-        <div>
-          <button value="cancel" autofocus aria-label="いまのかみでつづける">
-            <span aria-hidden="true">↩</span><small>つづける</small></button
-          ><button id="clear" value="clear" aria-label="あたらしいかみにする">
-            <span aria-hidden="true">✓</span><small>あたらしい かみ</small>
-          </button>
-        </div>
-      </form>
-    </dialog>
     <script type="module" src="app.ts"></script>
   </body>
 </html>

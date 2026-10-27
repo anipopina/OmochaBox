@@ -476,6 +476,7 @@ footer p {
 }
 
 .stamp-preview {
+  container-type: inline-size;
   position: relative;
   height: 238px;
   background: #fff9eb;
@@ -491,28 +492,39 @@ footer p {
 }
 .stamp-preview img {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: clamp(64px, 25cqw, 100px);
+  height: clamp(64px, 25cqw, 100px);
   object-fit: contain;
 }
 .stamp-preview img:nth-child(1) {
-  left: 14%;
-  top: 28px;
-  transform: rotate(-8deg);
+  left: 6%;
+  top: 24px;
+  transform: rotate(-10deg);
 }
 .stamp-preview img:nth-child(2) {
-  right: 13%;
-  top: 60px;
-  width: 110px;
-  height: 110px;
-  transform: rotate(6deg);
+  left: 36%;
+  top: 18px;
+  transform: rotate(8deg);
 }
 .stamp-preview img:nth-child(3) {
-  left: 29%;
-  bottom: 22px;
-  width: 80px;
-  height: 80px;
-  transform: rotate(-5deg);
+  left: 67%;
+  top: 30px;
+  transform: rotate(-6deg);
+}
+.stamp-preview img:nth-child(4) {
+  left: 8%;
+  top: 126px;
+  transform: rotate(7deg);
+}
+.stamp-preview img:nth-child(5) {
+  left: 38%;
+  top: 119px;
+  transform: rotate(-9deg);
+}
+.stamp-preview img:nth-child(6) {
+  left: 66%;
+  top: 128px;
+  transform: rotate(9deg);
 }
 
 .slide-preview {

@@ -117,7 +117,14 @@ export function suspendFeedback() {
 export function stampFeedback(element: HTMLSpanElement) {
   const count = reduced.matches ? 4 : 18;
   const colors = ['#ff3864', '#008be8', '#ffbf00', '#00b87a', '#a34dff'];
-  const radius = element.offsetWidth * 0.44;
+  const particleScale = Math.max(
+    1,
+    Math.min(4, Math.sqrt(element.offsetWidth / 128)),
+  );
+  const radius = Math.min(
+    element.offsetWidth * 0.44,
+    Math.min(effects.clientWidth, effects.clientHeight) * 0.38,
+  );
   for (let i = 0; i < count; i++) {
     while (particles.size >= 72) removeParticle(particles.keys().next().value!);
     const particle = document.createElement('span');
@@ -126,9 +133,11 @@ export function stampFeedback(element: HTMLSpanElement) {
     particle.style.left = `${element.offsetLeft}px`;
     particle.style.top = `${element.offsetTop}px`;
     const angle = (i / count) * Math.PI * 2 + Math.random() * 0.2;
-    const reach = radius + (reduced.matches ? 8 : 55 + Math.random() * 70);
+    const reach =
+      radius +
+      (reduced.matches ? 8 : (55 + Math.random() * 70) * particleScale);
     const position = (distance: number, scale: number) =>
-      `translate(-50%, -50%) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${i * 47}deg) scale(${scale})`;
+      `translate(-50%, -50%) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${i * 47}deg) scale(${scale * particleScale})`;
     effects.append(particle);
     const animation = particle.animate(
       [

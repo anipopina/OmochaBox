@@ -1,3 +1,4 @@
+import { heldSize } from '../src/ponpon-stamp/sizing.ts';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -201,7 +202,6 @@ try {
     await tap({ x: gap.x, y: gap.y });
     assert.equal(await count(), 1, 'Palette gap taps stamp on the paper');
     await click('#new');
-    await click('#clear');
     await delay(50);
     assert.equal(await count(), 0);
 
@@ -337,6 +337,228 @@ try {
   report(
     'Stamp: 320/390/820/844/568/1280, visible 56px controls, usable paper, six original SVGs, tap placement and screenshots PASS',
   );
+  // Resize the same artwork so random size differences cannot hide scaling errors.
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 400,
+    height: 1000,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  await visit();
+  await tap(await point('#paper', 0.99, 0.25));
+  const stampWidth = () =>
+    evaluate(`document.querySelector('.stamp').clientWidth`);
+  const phoneSize = await stampWidth();
+  assert.ok(
+    phoneSize >= 72 && phoneSize <= 128,
+    'Phone retains original size range',
+  );
+  for (const [width, height, scale] of [
+    [800, 1000, 1.4],
+    [1000, 1200, 1.6],
+    [1200, 1400, 1.6],
+    [844, 390, 1],
+    [400, 1000, 1],
+  ]) {
+    await call('Emulation.setDeviceMetricsOverride', {
+      width,
+      height,
+      deviceScaleFactor: 1,
+      mobile: true,
+    });
+    await delay(150);
+    assert.ok(
+      Math.abs((await stampWidth()) - phoneSize * scale) <= 2,
+      `Existing stamp scales to ${scale} at ${width}x${height}`,
+    );
+    assert.equal(await count(), 1, 'Resize retains artwork');
+    assert.ok(
+      await evaluate(`(() => {
+      const s=document.querySelector('.stamp'), r=s.getBoundingClientRect();
+      return Math.abs(parseFloat(s.style.left)-innerWidth*0.99)<0.1 && r.right>innerWidth;
+    })()`),
+      'Small stamp remains centered at the edge and is clipped',
+    );
+    if (width === 1000) await shot('stamp-size-1000');
+  }
+  report(
+    'Stamp size: original phone range, gradual tablet/desktop enlargement, 1.6x cap, landscape phone and resize recovery PASS',
+  );
+  assert.equal(heldSize(999), null);
+  assert.equal(heldSize(1000), 128);
+  assert.equal(heldSize(5500), 576);
+  assert.equal(heldSize(10000), 1024);
+  assert.equal(heldSize(60000), 1024);
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  await visit();
+  const particleWidth = () =>
+    evaluate(`(() => {
+    const p=document.querySelector('.stamp-particle');
+    for(const a of p.getAnimations()){a.pause();a.currentTime=0;}
+    return p.getBoundingClientRect().width;
+  })()`);
+  await tap(await point('#paper'));
+  const smallParticleWidth = await particleWidth();
+  await tap({ x: 2, y: 500 });
+  assert.ok(
+    await evaluate(
+      `(() => {const s=document.querySelector('.stamp:last-child'),r=s.getBoundingClientRect();return parseFloat(s.style.left)===2&&parseFloat(s.style.top)===500&&r.left<0})()`,
+    ),
+    'Small stamp clips at the exact tapped edge',
+  );
+  await click('#new');
+  const holdPoint = await point('#paper', 0.4, 0.35);
+  const releasePoint = await point('#paper', 0.65, 0.5);
+  await mouse('mousePressed', holdPoint);
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.charge').length`),
+    1,
+  );
+  assert.equal(await count(), 0, 'Holding never places a stamp early');
+  await delay(1050);
+  const earlySize = await evaluate(
+    `parseFloat(document.querySelector('.charge').style.width)`,
+  );
+  assert.ok(
+    earlySize >= 128 && earlySize < 160,
+    'At one second charging starts near random maximum',
+  );
+  await delay(4000);
+  await mouse('mouseMoved', releasePoint);
+  const midSize = await evaluate(
+    `parseFloat(document.querySelector('.charge').style.width)`,
+  );
+  assert.ok(
+    midSize > earlySize * 3 && midSize < 1024,
+    'Power ring grows during hold',
+  );
+  await shot('stamp-charge-growing-390', false);
+  await delay(5100);
+  await waitFor(`document.querySelector('.charge')?.dataset.full==='true'`);
+  assert.equal(
+    await evaluate(`parseFloat(document.querySelector('.charge').style.width)`),
+    1024,
+  );
+  const cappedFrames = await evaluate('window.rafCalls');
+  await delay(250);
+  assert.equal(
+    await evaluate('window.rafCalls'),
+    cappedFrames,
+    'Charge RAF stops at maximum',
+  );
+  await shot('stamp-charge-full-390', false);
+  await mouse('mouseReleased', releasePoint);
+  assert.equal(
+    await count(),
+    1,
+    'Moving a held finger still stamps on release',
+  );
+  const chargedStamp = await evaluate(
+    `(() => {const s=document.querySelector('.stamp');return {size:parseFloat(s.style.width),x:parseFloat(s.style.left),y:parseFloat(s.style.top)}})()`,
+  );
+  assert.equal(chargedStamp.size, 1024, 'Full power keeps 8x size');
+  assert.ok(
+    Math.abs(chargedStamp.x - releasePoint.x) < 0.01 &&
+      Math.abs(chargedStamp.y - releasePoint.y) < 0.01,
+    'Charged stamp follows release position',
+  );
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.charge').length`),
+    0,
+  );
+  assert.ok(
+    (await particleWidth()) > smallParticleWidth * 2,
+    'Large stamps produce visibly larger particles',
+  );
+  assert.ok(
+    await evaluate(`(() => {
+    const effects=document.querySelector('#effects'), stamps=document.querySelector('#stamps');
+    const p=effects.querySelectorAll('.stamp-particle')[9];
+    for(const a of p.getAnimations()){a.pause();a.currentTime=0;}
+    effects.style.pointerEvents=stamps.style.pointerEvents=p.style.pointerEvents='auto';
+    const r=p.getBoundingClientRect();
+    const top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+    effects.style.pointerEvents=stamps.style.pointerEvents=p.style.pointerEvents='';
+    return top===p;
+  })()`),
+    'Particle paints above the large stamp beneath it',
+  );
+  await shot('stamp-particles-front-390', false);
+  await delay(850);
+  await shot('stamp-charged-390', false);
+  await mouse('mousePressed', holdPoint);
+  await click('#next-page');
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.charge').length`),
+    0,
+    'Page change clears charge',
+  );
+  await mouse('mouseReleased', holdPoint);
+  assert.equal(await count(), 1, 'Cancelled charge is never replayed');
+  await call('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+  });
+  await mouse('mousePressed', holdPoint);
+  assert.equal(
+    await evaluate(
+      `getComputedStyle(document.querySelector('.charge-sparks')).animationName`,
+    ),
+    'none',
+  );
+  await evaluate(`window.dispatchEvent(new Event('blur'))`);
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.charge').length`),
+    0,
+    'Blur removes charge effects',
+  );
+  await mouse('mouseReleased', holdPoint);
+  await call('Emulation.setEmulatedMedia', { features: [] });
+  await visit();
+  const touchA = await point('#paper', 0.3, 0.3),
+    touchB = await point('#paper', 0.7, 0.45);
+  await call('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [
+      { ...touchA, id: 1 },
+      { ...touchB, id: 2 },
+    ],
+  });
+  await delay(1200);
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.charge').length`),
+    2,
+    'Two fingers charge independently',
+  );
+  await call('Input.dispatchTouchEvent', {
+    type: 'touchMove',
+    touchPoints: [
+      { x: touchA.x + 30, y: touchA.y + 20, id: 1 },
+      { x: touchB.x - 30, y: touchB.y + 20, id: 2 },
+    ],
+  });
+  await call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  assert.equal(
+    await count(),
+    2,
+    'Moving real touch input places each charged stamp once',
+  );
+  assert.ok(
+    await evaluate(
+      `[...document.querySelectorAll('.stamp')].every(e=>parseFloat(e.style.width)>128)`,
+    ),
+  );
+  assert.equal(
+    await evaluate(`document.querySelectorAll('.charge').length`),
+    0,
+  );
+  report(
+    'Charge PASS: 1s threshold, gradual power preview, 10s/8x cap and idle, moved release, clipped giant stamp, cancellation and reduced motion',
+  );
   // Hold image decoding to exercise immediate input and switching before readiness.
   const gate = await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `window.releaseImages=[];const decode=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(){return new Promise(resolve=>window.releaseImages.push(()=>resolve(decode.call(this))))}`,
@@ -363,7 +585,6 @@ try {
   await tap(await point('#paper'));
   assert.equal(await count(), 1);
   await click('#new');
-  await click('#clear');
   await delay(50);
   assert.equal(await count(), 0);
   assert.equal(
@@ -379,6 +600,12 @@ try {
   report(
     'Stamp paging: 14 originals, all 8 aquarium selections, mixed art, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS',
   );
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 400,
+    height: 1000,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
   await visit();
   await evaluate(`document.querySelector('#next-page').focus()`);
   await call('Input.dispatchKeyEvent', {
@@ -451,9 +678,13 @@ try {
   await mouse('mousePressed', p);
   await mouse('mouseMoved', q);
   await mouse('mouseReleased', q);
-  assert.equal(await count(), 2, 'Drag does not paint');
+  assert.equal(await count(), 3, 'Move stamps once at release');
+  await click('#new');
+  await delay(50);
+  await tap(p);
+  await tap(q);
   await mouse('mousePressed', p);
-  await mouse('mouseReleased', { x: 1, y: 1 });
+  await mouse('mouseReleased', { x: -10, y: -10 });
   assert.equal(await count(), 2, 'Release outside cancels');
   await mouse('mousePressed', p);
   await evaluate(`window.dispatchEvent(new Event('blur'))`);
@@ -489,34 +720,19 @@ try {
   await mouse('mouseReleased', await point('#paper'));
   assert.equal(await count(), 3, 'Resize cancels pending input below cap');
   await click('#new');
-  assert.ok(await evaluate(`document.querySelector('#confirm').open`));
-  assert.equal(await count(), 3, 'New paper requires confirmation');
-  await shot('stamp-confirm');
-  await click('button[value="cancel"]');
-  await delay(50);
-  assert.equal(await count(), 3);
-  await click('#new');
-  await call('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Escape',
-    code: 'Escape',
-    windowsVirtualKeyCode: 27,
-    nativeVirtualKeyCode: 27,
-  });
-  await call('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Escape',
-    code: 'Escape',
-    windowsVirtualKeyCode: 27,
-    nativeVirtualKeyCode: 27,
-  });
-  await delay(50);
-  assert.ok(await evaluate(`!document.querySelector('#confirm').open`));
-  assert.equal(await count(), 3, 'Escape preserves paper');
-  await click('#new');
-  await click('#clear');
-  await delay(50);
-  assert.equal(await count(), 0);
+  assert.equal(await count(), 0, 'New paper immediately clears artwork');
+  assert.equal(
+    await evaluate(`document.querySelector('dialog')`),
+    null,
+    'No confirmation dialog',
+  );
+  assert.equal(
+    await evaluate(
+      `document.querySelectorAll('.charge,.stamp-particle').length`,
+    ),
+    0,
+    'New paper clears transient effects',
+  );
   await evaluate(`document.querySelector('#paper').focus()`);
   await call('Input.dispatchKeyEvent', {
     type: 'keyDown',
@@ -548,7 +764,15 @@ try {
   await click('#paper');
   assert.equal(await count(), 2, 'Assistive activation');
   report(
-    'Stamp: CDP synthetic two-finger touch, cancel, drag/outside release, blur/hidden, resume, clear confirmation/cancel, keyboard and assistive click PASS',
+    'Stamp: CDP synthetic two-finger touch, cancel, moved/outside release, blur/hidden, resume, immediate new paper, keyboard and assistive click PASS',
+  );
+  await evaluate(
+    `for(let i=0;i<58;i++)document.querySelector('#paper').click()`,
+  );
+  assert.equal(await count(), 60);
+  assert.ok(
+    await evaluate(`document.querySelector('#full').hidden`),
+    'Reaching the limit alone does not show a notice',
   );
   await evaluate(
     `for(let i=0;i<200;i++)document.querySelector('#paper').click()`,
@@ -566,7 +790,11 @@ try {
   assert.ok(await evaluate(`!document.querySelector('#full').hidden`));
   await tap(await point('#paper'));
   assert.equal(await count(), 60, 'At cap taps preserve all artwork');
-  await delay(850);
+  await delay(3700);
+  assert.ok(
+    await evaluate(`document.querySelector('#full').hidden`),
+    'Notice disappears automatically',
+  );
   assert.equal(
     await evaluate(
       `document.querySelector('#paper').getAnimations({subtree:true}).length`,
@@ -574,6 +802,51 @@ try {
     0,
     'Idle animations end',
   );
+  for (const [width, height] of [
+    [320, 568],
+    [390, 844],
+    [844, 390],
+    [1280, 800],
+  ]) {
+    await call('Emulation.setDeviceMetricsOverride', {
+      width,
+      height,
+      deviceScaleFactor: 1,
+      mobile: true,
+    });
+    await delay(100);
+    await tap(await point('#paper'));
+    await delay(450);
+    assert.ok(
+      await evaluate(`(() => {
+      const f=document.querySelector('#full'), a=document.querySelector('#full-arrow'), n=document.querySelector('#new');
+      const r=f.getBoundingClientRect(), ar=a.getBoundingClientRect(), nr=n.getBoundingClientRect();
+      return !f.hidden && [...f.querySelectorAll('span')].map(s=>s.textContent).join('')==='かみがいっぱい！あたらしいかみにしてね！' &&
+        r.left>=0 && r.right<=innerWidth && r.top>=0 && r.bottom<=innerHeight &&
+        Math.abs(ar.left+ar.width/2-(nr.left+nr.width/2))<12 &&
+        a.getAnimations().length>0 && n.getAnimations().length>0 &&
+        n.contains(document.elementFromPoint(nr.x+nr.width/2,nr.y+nr.height/2));
+    })()`),
+      'Notice fits screen, animated arrow points at usable new-paper button',
+    );
+    await shot(`stamp-full-notice-${width}`, false);
+  }
+  await call('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+  });
+  await tap(await point('#paper'));
+  assert.ok(
+    await evaluate(
+      `!document.querySelector('#full').hidden && ['#full','#full-arrow','#new'].every(s=>document.querySelector(s).getAnimations().length===0)`,
+    ),
+    'Reduced motion shows the notice and arrow without animation',
+  );
+  await evaluate(`window.dispatchEvent(new Event('blur'))`);
+  assert.ok(
+    await evaluate(`document.querySelector('#full').hidden`),
+    'Blur dismisses notice',
+  );
+  await call('Emulation.setEmulatedMedia', { features: [] });
   const rafBefore = await evaluate('window.rafCalls');
   await delay(300);
   assert.equal(await evaluate('window.rafCalls'), rafBefore, 'No idle RAF');
@@ -585,12 +858,6 @@ try {
   });
   await delay(150);
   assert.equal(await count(), 60, 'Resize keeps artwork');
-  assert.ok(
-    await evaluate(
-      `(()=>{const p=document.querySelector('#paper').getBoundingClientRect();return [...document.querySelectorAll('.stamp')].every(e=>{const r=e.getBoundingClientRect();return r.left>=p.left&&r.top>=p.top&&r.right<=p.right&&r.bottom<=p.bottom})})()`,
-    ),
-    'Rotated bounds remain on paper',
-  );
   await shot('stamp-full-390');
   await mouse('mousePressed', await point('#paper'));
   await call('Emulation.setDeviceMetricsOverride', {
@@ -603,7 +870,6 @@ try {
   await mouse('mouseReleased', await point('#paper'));
   assert.equal(await count(), 60);
   await click('#new');
-  await click('#clear');
   await delay(50);
   await call('Emulation.setEmulatedMedia', {
     features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],

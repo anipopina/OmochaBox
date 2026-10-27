@@ -2,6 +2,9 @@ import pinwheelRotor from './kurukuru-kazaguruma/assets/rotor.svg';
 import stampSquare from './assets/characters/shapes/01-coral-square.svg';
 import stampCyan from './assets/characters/shapes/02-cyan-circle.svg';
 import stampStar from './assets/characters/shapes/05-coral-star.svg';
+import stampPenguin from './assets/characters/aquarium/01-penguin.svg';
+import stampFish from './assets/characters/aquarium/02-clownfish.svg';
+import stampOctopus from './assets/characters/aquarium/05-octopus.svg';
 import { games } from './games';
 import pondGreen from './mizutamari/assets/leaf-green.webp';
 import pondTeal from './mizutamari/assets/leaf-teal.webp';
@@ -36,7 +39,16 @@ for (const game of games) {
   }
   if (game.id === 'ponpon-stamp') {
     art.className = 'stamp-preview';
-    art.innerHTML = `<img src="${stampSquare}" alt="" loading="lazy"><img src="${stampCyan}" alt="" loading="lazy"><img src="${stampStar}" alt="" loading="lazy">`;
+    art.innerHTML = [
+      stampSquare,
+      stampCyan,
+      stampStar,
+      stampPenguin,
+      stampFish,
+      stampOctopus,
+    ]
+      .map((src) => `<img src="${src}" alt="" loading="lazy">`)
+      .join('');
   }
   if (game.id === 'korokoro-suberidai') {
     art.className = 'slide-preview';

@@ -2,12 +2,13 @@ import '../shared/home-button';
 import { stampFeedback, suspendFeedback, clearParticles } from './feedback';
 import { requireElement } from '../shared/dom';
 import { stampSets, type StampItem } from './sets';
+import { createCharge, moveCharge, removeCharge, type Charge } from './charge';
+import { paperScale, heldSize } from './sizing';
 
 const paper = requireElement('#paper', HTMLDivElement);
 const layer = requireElement('#stamps', HTMLDivElement);
 const palette = requireElement('#palette', HTMLDivElement);
 const newPaper = requireElement('#new', HTMLButtonElement);
-const dialog = requireElement('#confirm', HTMLDialogElement);
 const status = requireElement('#status', HTMLParagraphElement);
 const full = requireElement('#full', HTMLParagraphElement);
 const cursor = requireElement('#cursor', HTMLSpanElement);
@@ -16,15 +17,13 @@ type Stamp = {
   x: number;
   y: number;
   size: number;
+  charged: boolean;
   angle: number;
   character: StampItem;
   element: HTMLSpanElement;
 };
 const stamps: Stamp[] = [];
-const pending = new Map<
-  number,
-  { x: number; y: number; character: StampItem }
->();
+const pending = new Map<number, { character: StampItem; charge: Charge }>();
 const items = stampSets.flatMap((set) => set.items);
 const pageSize = 6;
 const pageCount = Math.ceil(items.length / pageSize);
@@ -63,34 +62,82 @@ const clamp = (n: number, min: number, max: number) =>
 
 function cancelInput() {
   const ids = [...pending.keys()];
+  for (const entry of pending.values()) removeCharge(entry.charge);
   pending.clear();
   for (const id of ids)
     if (paper.hasPointerCapture(id)) paper.releasePointerCapture(id);
 }
+let fullTimer: ReturnType<typeof setTimeout> | undefined;
+const fullArrow = requireElement('#full-arrow', SVGSVGElement);
+function hideFullNotice() {
+  clearTimeout(fullTimer);
+  fullTimer = undefined;
+  full.hidden = true;
+  for (const element of [full, fullArrow, newPaper])
+    element.getAnimations().forEach((animation) => animation.cancel());
+}
+function showFullNotice() {
+  hideFullNotice();
+  full.hidden = false;
+  status.textContent = 'かみがいっぱい！あたらしいかみにしてね！';
+  if (!reduced.matches) {
+    full.animate(
+      [
+        { transform: 'translateY(12px) scale(.75)', opacity: 0 },
+        { transform: 'translateY(-5px) scale(1.05)', opacity: 1, offset: 0.65 },
+        { transform: 'translateY(0) scale(1)', opacity: 1 },
+      ],
+      { duration: 420, easing: 'ease-out' },
+    );
+    fullArrow.animate(
+      [
+        { transform: 'translateY(6px)' },
+        { transform: 'translateY(-6px)' },
+        { transform: 'translateY(6px)' },
+      ],
+      { duration: 550, iterations: 6, easing: 'ease-in-out' },
+    );
+    newPaper.animate(
+      [
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.1)' },
+        { transform: 'scale(1)' },
+      ],
+      { duration: 650, iterations: 4, easing: 'ease-in-out' },
+    );
+  }
+  fullTimer = setTimeout(hideFullNotice, 3500);
+}
 function update() {
   newPaper.disabled = stamps.length === 0;
-  full.hidden = stamps.length < 60;
+  if (stamps.length < 60) hideFullNotice();
   paper.dataset.count = String(stamps.length);
 }
 function layout() {
   const w = paper.clientWidth,
     h = paper.clientHeight;
+  const scale = paperScale(w, h);
   for (const stamp of stamps) {
-    const size = Math.min(stamp.size, w * 0.43, h * 0.48);
-    // Leave room for tilted corners; keep every character inside the paper.
-    const margin = size * 0.62;
+    const size = stamp.charged
+      ? stamp.size * scale
+      : Math.min(stamp.size * scale, w * 0.43, h * 0.48);
     stamp.element.style.width = `${size}px`;
     stamp.element.style.height = `${size}px`;
-    stamp.element.style.left = `${clamp(stamp.x * w, margin, w - margin)}px`;
-    stamp.element.style.top = `${clamp(stamp.y * h, margin, h - margin)}px`;
+    stamp.element.style.left = `${stamp.x * w}px`;
+    stamp.element.style.top = `${stamp.y * h}px`;
   }
   cursor.style.left = `${keyboardX * 100}%`;
   cursor.style.top = `${keyboardY * 100}%`;
 }
-function place(x: number, y: number, character = selected) {
-  if (document.hidden || dialog.open || !ready.has(character.id)) return;
+function place(
+  x: number,
+  y: number,
+  character = selected,
+  chargeSize: number | null = null,
+) {
+  if (document.hidden || !ready.has(character.id)) return;
   if (stamps.length >= 60) {
-    status.textContent = 'かみが いっぱい。あたらしい かみで あそべるよ。';
+    showFullNotice();
     return;
   }
   const element = document.createElement('span');
@@ -103,7 +150,8 @@ function place(x: number, y: number, character = selected) {
   const stamp: Stamp = {
     x: clamp(x, 0, 1),
     y: clamp(y, 0, 1),
-    size: 72 + Math.random() * 56,
+    size: chargeSize ?? 72 + Math.random() * 56,
+    charged: chargeSize !== null,
     angle: Math.random() * 20 - 10,
     character,
     element,
@@ -184,33 +232,39 @@ paper.addEventListener('pointerdown', (event) => {
     event.button !== 0 ||
     pending.size >= 10 ||
     !ready.has(selected.id) ||
-    dialog.open ||
     document.hidden
   )
     return;
   event.preventDefault();
+  if (stamps.length >= 60) {
+    showFullNotice();
+    return;
+  }
   paper.classList.remove('keyboard');
+  const r = paper.getBoundingClientRect();
   pending.set(event.pointerId, {
-    x: event.clientX,
-    y: event.clientY,
+    charge: createCharge(
+      event.clientX - r.left,
+      event.clientY - r.top,
+      selected.src,
+    ),
     character: selected,
   });
   paper.setPointerCapture(event.pointerId);
 });
 paper.addEventListener('pointermove', (event) => {
-  const start = pending.get(event.pointerId);
-  if (
-    start &&
-    Math.hypot(event.clientX - start.x, event.clientY - start.y) > 18
-  )
-    pending.delete(event.pointerId);
+  const entry = pending.get(event.pointerId);
+  if (!entry) return;
+  const r = paper.getBoundingClientRect();
+  moveCharge(entry.charge, event.clientX - r.left, event.clientY - r.top);
 });
 paper.addEventListener('pointerup', (event) => {
-  const start = pending.get(event.pointerId);
+  const entry = pending.get(event.pointerId);
   pending.delete(event.pointerId);
+  if (entry) removeCharge(entry.charge);
   if (paper.hasPointerCapture(event.pointerId))
     paper.releasePointerCapture(event.pointerId);
-  if (!start) return;
+  if (!entry) return;
   const r = paper.getBoundingClientRect();
   if (
     event.clientX < r.left ||
@@ -219,17 +273,20 @@ paper.addEventListener('pointerup', (event) => {
     event.clientY > r.bottom
   )
     return;
-  if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 18) return;
   place(
-    (start.x - r.left) / r.width,
-    (start.y - r.top) / r.height,
-    start.character,
+    (event.clientX - r.left) / r.width,
+    (event.clientY - r.top) / r.height,
+    entry.character,
+    heldSize(performance.now() - entry.charge.started),
   );
 });
 for (const event of ['pointercancel', 'lostpointercapture'])
-  paper.addEventListener(event, (e) =>
-    pending.delete((e as PointerEvent).pointerId),
-  );
+  paper.addEventListener(event, (e) => {
+    const id = (e as PointerEvent).pointerId;
+    const entry = pending.get(id);
+    if (entry) removeCharge(entry.charge);
+    pending.delete(id);
+  });
 paper.addEventListener('contextmenu', (e) => e.preventDefault());
 paper.addEventListener('keydown', (event) => {
   if (
@@ -270,30 +327,24 @@ paper.addEventListener('click', (event) => {
 });
 paper.addEventListener('blur', cancelInput);
 newPaper.addEventListener('click', () => {
-  cancelInput();
-  suspendFeedback();
-  dialog.showModal();
-});
-dialog.addEventListener('close', () => {
-  if (dialog.returnValue === 'clear') {
-    stamps.splice(0).forEach((stamp) => stamp.element.remove());
-    keyboardX = keyboardY = 0.5;
-    layout();
-    update();
-    status.textContent = 'あたらしい かみになったよ';
-    paper.focus();
-  }
-  dialog.returnValue = '';
+  suspend();
+  stamps.splice(0).forEach((stamp) => stamp.element.remove());
+  keyboardX = keyboardY = 0.5;
+  layout();
+  update();
+  status.textContent = 'あたらしい かみになったよ';
+  paper.focus();
 });
 function suspend() {
+  hideFullNotice();
   cancelInput();
   suspendFeedback();
   paper
     .getAnimations({ subtree: true })
     .forEach((animation) => animation.cancel());
-  if (dialog.open) dialog.close('cancel');
 }
 window.addEventListener('blur', () => {
+  hideFullNotice();
   cancelInput();
   suspendFeedback();
 });
@@ -306,12 +357,16 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) suspend();
 });
 reduced.addEventListener('change', () => {
-  if (reduced.matches)
+  if (reduced.matches) {
+    for (const element of [full, fullArrow, newPaper])
+      element.getAnimations().forEach((animation) => animation.cancel());
     paper
       .getAnimations({ subtree: true })
       .forEach((animation) => animation.cancel());
+  }
 });
 new ResizeObserver(() => {
+  hideFullNotice();
   cancelInput();
   clearParticles();
   layout();
