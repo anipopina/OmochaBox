@@ -3,11 +3,7 @@ import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
-import {
-  Pond,
-  MAX_RIPPLES,
-  RIPPLE_LIFE,
-} from '../src/mizutamari/model.ts';
+import { Pond, MAX_RIPPLES, RIPPLE_LIFE } from '../src/mizutamari/model.ts';
 import { createStaticServer } from './static-server.mjs';
 
 const model = new Pond();
@@ -290,9 +286,7 @@ try {
       `!!document.querySelector('a[href="https://anipopina.com/"]')`,
     ),
   );
-  await evaluate(
-    `document.querySelector('a[href="mizutamari/"]').click()`,
-  );
+  await evaluate(`document.querySelector('a[href="mizutamari/"]').click()`);
   await waitFor(`document.querySelector('#water')?.dataset.ready==='true'`);
   const fresh = await data();
   await delay(150);

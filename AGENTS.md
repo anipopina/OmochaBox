@@ -11,6 +11,8 @@
 
 依頼された範囲で変更し、既存コンテンツを無断で大幅に再デザインしない。`src/` を編集し、`npm run build` と変更に応じた確認を行う。公開には `.openai/hosting.json` の既存Sitesプロジェクトを使う。
 
+コード変更後は、変更したファイルにPrettierを実行し、完了前に `npm run check` を通す。ツール経由の編集ではVS Codeの保存時整形に頼らない。`.prettierignore` の除外は保持する。
+
 ユーザーとCodexが同じローカル作業環境で共同作業している場合に限り、コミットとSitesへのデプロイのタイミングはユーザーに委ね、明示的な依頼がない限りCodexはいずれも行わない。
 
 Google Material Icons / Material Symbols を使う場合は必要な SVG を取得して同梱し、クライアントから Google のサーバーへ取得しない。取得元とライセンスを確認し、必要な LICENSE / NOTICE や表示を保持する。外部フォント・アイコンCDNへの依存を追加しない。
