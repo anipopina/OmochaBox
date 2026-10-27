@@ -38,3 +38,5 @@
 - 音／振動はトップの共通設定を使用し、個別設定ボタンは設けません。既定値は両方オン。保存不可では現在のページのメモリだけを使い、再入場は既定値に戻り得ます。
 - 2026-10-26確認: [W3C仕様の実装状況](https://www.w3.org/TR/vibration/#status-of-this-document) はChromium系で実装、WebKitは非採用、Firefoxは129で削除と記載。[API仕様](https://www.w3.org/TR/vibration/#vibration-interface) に従いfeature detectionし、権限変更や非標準回避は行いません。iOS/Safari対応とは扱いません。
 - CDP合成入力、ネイティブWeb Audioの生成・上限・suspend、振動APIのテスト代替で要求値を検査します。実機の音色・音量・触覚・Safariは未検証です。
+
+フィールドは画面全体に広げ、ヘッダ・個別タイトルは表示しません。戻るボタンを左上、選択・操作ボタンを下（狭い横画面では右）に重ねます。操作ボタンが覆う部分はボタンの操作を優先します。

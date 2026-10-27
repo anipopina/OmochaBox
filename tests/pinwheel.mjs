@@ -225,11 +225,11 @@ try {
     assert.ok(
       await evaluate(`(() => {
       const r=document.querySelector('#wheel').getBoundingClientRect();
-      const header=document.querySelector('header').getBoundingClientRect();
+      const back=document.querySelector('#back').getBoundingClientRect();
       const hint=document.querySelector('#hint').getBoundingClientRect();
-      return r.top>=header.bottom+4 && r.bottom<=hint.top-4 && r.left>=4 && r.right<=innerWidth-4;
+      return (r.top>=back.bottom+4 || r.left>=back.right+4) && r.bottom<=hint.top-4 && r.left>=4 && r.right<=innerWidth-4;
     })()`),
-      'Entire rotation circle clears header, back button, hint and viewport edges',
+      'Entire rotation circle clears back button, hint and viewport edges',
     );
     assert.ok(
       await evaluate(`(() => {

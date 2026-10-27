@@ -204,9 +204,9 @@ try {
     );
     assert.ok(
       await evaluate(
-        `(()=>{const r=document.querySelector('#held').getBoundingClientRect(),h=document.querySelector('header').getBoundingClientRect();return r.top>=h.bottom&&r.left>=0&&r.right<=innerWidth})()`,
+        `(()=>{const r=document.querySelector('#held').getBoundingClientRect(),h=document.querySelector('#back').getBoundingClientRect();return (r.top>=h.bottom||r.left>=h.right)&&r.left>=0&&r.right<=innerWidth})()`,
       ),
-      'Maximum balloon fits below header',
+      'Maximum balloon clears back button',
     );
     await shot(`balloon-held-${width}`);
     await mouse('mouseReleased', { x: 8, y: height / 2 });

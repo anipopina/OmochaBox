@@ -158,7 +158,7 @@ try {
     await visit();
     await delay(150);
     const r = await rect();
-    assert.ok(r.w > 200 && r.h > 190);
+    assert.deepEqual(r, { x: 0, y: 0, w, h }, 'Glass fills the viewport');
     assert.ok(
       await evaluate(
         `document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight`,

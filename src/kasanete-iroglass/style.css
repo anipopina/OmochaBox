@@ -18,13 +18,7 @@ body {
     env(safe-area-inset-bottom) env(safe-area-inset-left);
   overscroll-behavior: none;
 }
-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 20px;
-  flex: none;
-}
+
 #back {
   display: grid;
   place-items: center;
@@ -41,15 +35,7 @@ header {
   line-height: 1;
   box-shadow: 0 4px 0 #e5dfcf;
 }
-h1 {
-  margin: 0;
-  font-size: clamp(21px, 4.6vw, 40px);
-  font-weight: 900;
-  line-height: 1.3;
-}
-h1 span {
-  display: inline-block;
-}
+
 main {
   flex: 1;
   min-height: 0;
@@ -165,10 +151,6 @@ button:active {
   border: 0;
 }
 @media (max-width: 360px) {
-  header {
-    padding: 8px 12px;
-    gap: 10px;
-  }
   #back {
     width: 56px;
     height: 56px;
@@ -177,22 +159,14 @@ button:active {
   main {
     padding: 4px 10px 12px;
   }
-  h1 {
-    font-size: 21px;
-  }
 }
 @media (orientation: landscape) and (max-height: 600px) {
-  header {
-    padding: 6px 14px;
-  }
   #back {
     width: 56px;
     height: 56px;
     font-size: 40px;
   }
-  h1 {
-    font-size: 26px;
-  }
+
   main {
     grid-template-columns: minmax(0, 1fr) 150px;
     grid-template-rows: minmax(0, 1fr);
@@ -223,5 +197,59 @@ button:active {
 @media (prefers-reduced-motion: reduce) {
   button:active {
     transform: none;
+  }
+}
+
+/* Keep navigation above the field without reserving a header row. */
+#back {
+  position: fixed;
+  z-index: 10;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+}
+
+body {
+  padding: 0;
+  min-height: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+main {
+  position: fixed;
+  inset: 0;
+  display: block;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+#lightbox {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+canvas {
+  border-radius: 0;
+}
+
+aside {
+  position: absolute;
+  z-index: 2;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  width: auto;
+  max-width: 1000px;
+  margin: auto;
+  padding: 10px;
+  border-radius: 24px;
+  background: #fff9ebee;
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  aside {
+    left: auto;
+    width: 264px;
+    max-height: calc(100dvh - 24px);
   }
 }

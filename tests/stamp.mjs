@@ -122,7 +122,7 @@ try {
     );
   const point = (selector, fx = 0.5, fy = 0.5) =>
     evaluate(
-      `(()=>{const r=document.querySelector('${selector}').getBoundingClientRect();return {x:r.x+r.width*${fx},y:r.y+r.height*${fy}}})()`,
+      `(()=>{const r=document.querySelector('${selector}').getBoundingClientRect();let w=r.width,h=r.height;if('${selector}'==='#paper'){const a=document.querySelector('aside').getBoundingClientRect();if(a.width<r.width*0.6)w=a.left-r.left;else h=a.top-r.top;}return {x:r.x+w*${fx},y:r.y+h*${fy}}})()`,
     );
   const mouse = (type, p) =>
     call('Input.dispatchMouseEvent', {
@@ -171,7 +171,7 @@ try {
     );
     assert.ok(
       await evaluate(
-        `(()=>{const r=document.querySelector('#paper').getBoundingClientRect();return r.width>=180&&r.height>=160})()`,
+        `(()=>{const r=document.querySelector('#paper').getBoundingClientRect();return r.x===0&&r.y===0&&r.width===innerWidth&&r.height===innerHeight})()`,
       ),
       'Paper remains usable',
     );

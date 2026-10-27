@@ -19,28 +19,7 @@ body {
     max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom))
     max(10px, env(safe-area-inset-left));
 }
-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  max-width: 1000px;
-  width: 100%;
-  margin: 0 auto 8px;
-  flex: 0 0 64px;
-}
-h1 {
-  margin: 0;
-  font-size: clamp(23px, 4.2vw, 38px);
-  line-height: 1.1;
-  font-weight: 900;
-}
-h1 span {
-  display: inline-block;
-  color: #dc224b;
-}
-h1 span + span {
-  color: #006dcc;
-}
+
 button,
 #back {
   -webkit-tap-highlight-color: transparent;
@@ -252,7 +231,8 @@ svg path {
 }
 #full {
   position: absolute;
-  bottom: 8px;
+  top: max(90px, calc(env(safe-area-inset-top) + 78px));
+  bottom: auto;
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
@@ -326,18 +306,12 @@ dialog button span {
   }
 }
 @media (max-height: 500px) and (min-width: 480px) {
-  header {
-    flex-basis: 56px;
-    margin-bottom: 6px;
-  }
   #back {
     height: 56px;
     flex-basis: 64px;
     font-size: 28px;
   }
-  h1 {
-    font-size: 27px;
-  }
+
   main {
     grid-template-columns: minmax(180px, 1fr) 264px;
     grid-template-rows: minmax(0, 1fr);
@@ -453,4 +427,59 @@ dialog button span {
   border-radius: 3px;
   width: 12px;
   height: 20px;
+}
+
+/* Keep navigation above the field without reserving a header row. */
+#back {
+  position: fixed;
+  z-index: 10;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+}
+
+body {
+  padding: 0;
+  min-height: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+main {
+  position: fixed;
+  inset: 0;
+  display: block;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.paper-wrap {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+#paper {
+  border: 0;
+  border-radius: 0;
+}
+
+aside {
+  position: absolute;
+  z-index: 2;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  width: auto;
+  max-width: 1000px;
+  margin: auto;
+  padding: 10px;
+  border-radius: 24px;
+  background: #fff9ebee;
+}
+@media (max-height: 500px) and (min-width: 480px) {
+  aside {
+    left: auto;
+    width: 264px;
+    max-height: calc(100dvh - 24px);
+  }
 }
