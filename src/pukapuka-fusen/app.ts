@@ -10,7 +10,6 @@ import type { Flight } from './model';
 const pump = requireElement('#pump', HTMLButtonElement);
 const sky = requireElement('#sky', HTMLDivElement);
 const held = requireElement('#held', HTMLImageElement);
-const hint = requireElement('#hint', HTMLParagraphElement);
 const status = requireElement('#status', HTMLParagraphElement);
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 const artwork = [cyan, star, triangle, purple];
@@ -71,7 +70,6 @@ function begin() {
   started = performance.now();
   pump.setAttribute('aria-pressed', 'true');
   document.body.classList.add('holding', 'played');
-  hint.textContent = 'はなすと ぷかぷか！';
   wake();
 }
 
@@ -100,7 +98,6 @@ function finish(launch: boolean) {
     held.src = artwork[next];
     status.textContent = 'ふうせんが とんだよ';
   }
-  hint.textContent = 'おして ふくらむ';
   drawHeld(now);
   wake();
 }

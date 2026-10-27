@@ -70,7 +70,7 @@ main {
 }
 #sky {
   position: absolute;
-  inset: 0 0 235px;
+  inset: 0 0 calc(160px + max(10px, env(safe-area-inset-bottom)));
   pointer-events: none;
 }
 #held,
@@ -123,21 +123,7 @@ main {
   width: min(320px, 85%);
   text-align: center;
 }
-#hint,
-.release-hint {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 900;
-  line-height: 1.5;
-}
-#hint {
-  position: relative;
-  display: inline-block;
-  padding: 3px 20px;
-  border: 2px solid #10194c;
-  border-radius: 30px;
-  background: white;
-}
+
 #pump {
   position: relative;
   display: block;
@@ -170,9 +156,7 @@ main {
 .played .hand {
   display: none;
 }
-.release-hint {
-  font-size: 17px;
-}
+
 #pump:focus-visible {
   outline: 5px solid #8523bf;
   outline-offset: 4px;
@@ -209,7 +193,7 @@ main {
 }
 @media (max-height: 650px) and (orientation: portrait) {
   #sky {
-    bottom: 210px;
+    bottom: calc(135px + max(10px, env(safe-area-inset-bottom)));
   }
   #pump {
     height: 120px;
@@ -233,10 +217,7 @@ main {
   #pump {
     height: 112px;
   }
-  #hint {
-    font-size: 18px;
-    padding-inline: 12px;
-  }
+
   .welcome {
     width: 60px;
   }
