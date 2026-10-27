@@ -6,11 +6,9 @@ import { stampSets, type StampItem } from './sets';
 const paper = requireElement('#paper', HTMLDivElement);
 const layer = requireElement('#stamps', HTMLDivElement);
 const palette = requireElement('#palette', HTMLDivElement);
-const undo = requireElement('#undo', HTMLButtonElement);
 const newPaper = requireElement('#new', HTMLButtonElement);
 const dialog = requireElement('#confirm', HTMLDialogElement);
 const status = requireElement('#status', HTMLParagraphElement);
-const guide = requireElement('#guide', HTMLDivElement);
 const full = requireElement('#full', HTMLParagraphElement);
 const cursor = requireElement('#cursor', HTMLSpanElement);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -57,9 +55,6 @@ function updateLoading() {
   const loaded = ready.has(selected.id);
   paper.setAttribute('aria-busy', String(!loaded));
   paper.setAttribute('aria-disabled', String(!loaded));
-  guide.querySelector('strong')!.textContent = loaded
-    ? 'ここに ぽん！'
-    : 'えを よみこみちゅう…';
 }
 let keyboardX = 0.5;
 let keyboardY = 0.5;
@@ -73,8 +68,7 @@ function cancelInput() {
     if (paper.hasPointerCapture(id)) paper.releasePointerCapture(id);
 }
 function update() {
-  undo.disabled = newPaper.disabled = stamps.length === 0;
-  guide.hidden = stamps.length > 0;
+  newPaper.disabled = stamps.length === 0;
   full.hidden = stamps.length < 60;
   paper.dataset.count = String(stamps.length);
 }
@@ -96,8 +90,7 @@ function layout() {
 function place(x: number, y: number, character = selected) {
   if (document.hidden || dialog.open || !ready.has(character.id)) return;
   if (stamps.length >= 60) {
-    status.textContent =
-      'かみが いっぱい。もどすか、あたらしい かみで あそべるよ。';
+    status.textContent = 'かみが いっぱい。あたらしい かみで あそべるよ。';
     return;
   }
   const element = document.createElement('span');
@@ -276,13 +269,6 @@ paper.addEventListener('click', (event) => {
   if (event.detail === 0) place(keyboardX, keyboardY);
 });
 paper.addEventListener('blur', cancelInput);
-undo.addEventListener('click', () => {
-  cancelInput();
-  clearParticles();
-  stamps.pop()?.element.remove();
-  update();
-  status.textContent = 'ひとつ もどしたよ';
-});
 newPaper.addEventListener('click', () => {
   cancelInput();
   suspendFeedback();
@@ -294,7 +280,7 @@ dialog.addEventListener('close', () => {
     keyboardX = keyboardY = 0.5;
     layout();
     update();
-    status.textContent = 'あたらしい かみ。ここに ぽん！';
+    status.textContent = 'あたらしい かみになったよ';
     paper.focus();
   }
   dialog.returnValue = '';

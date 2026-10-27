@@ -161,7 +161,7 @@ try {
     );
     assert.ok(
       await evaluate(
-        `[...document.querySelectorAll('.choice,.page-arrow,#undo,#new,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
+        `[...document.querySelectorAll('.choice,.page-arrow,#new,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
       ),
       '56px controls visible',
     );
@@ -186,6 +186,25 @@ try {
       );
     }
     await shot(`stamp-initial-${width}`);
+    const gap = await evaluate(`(() => {
+      const a=document.querySelector('aside'), r=a.getBoundingClientRect();
+      const n=document.querySelector('#new').getBoundingClientRect();
+      return {x:r.x+1,y:r.y+1,transparent:getComputedStyle(a).backgroundColor==='rgba(0, 0, 0, 0)',
+        passes:document.elementFromPoint(r.x+1,r.y+1)===document.querySelector('#paper'),
+        topRight:n.top<40&&n.right>innerWidth-40,
+        removed:!document.querySelector('#guide,#undo,.touch,.guide-ring')};
+    })()`);
+    assert.ok(
+      gap.transparent && gap.passes && gap.topRight && gap.removed,
+      'Guide and undo removed, new paper at top right, palette gaps pass through',
+    );
+    await tap({ x: gap.x, y: gap.y });
+    assert.equal(await count(), 1, 'Palette gap taps stamp on the paper');
+    await click('#new');
+    await click('#clear');
+    await delay(50);
+    assert.equal(await count(), 0);
+
     for (let i = 0; i < 6; i++) {
       await click(`.choice:nth-child(${i + 1})`);
       await tap(
@@ -241,7 +260,7 @@ try {
 
       assert.ok(
         await evaluate(
-          `[...document.querySelectorAll('.choice,.page-arrow,#undo,#new')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
+          `[...document.querySelectorAll('.choice,.page-arrow,#new')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
         ),
         'Paged controls fit',
       );
@@ -305,16 +324,8 @@ try {
       await evaluate(`document.querySelector('#palette').dataset.page`),
       '2',
     );
-    for (let i = 0; i < 9; i++) await click('#undo');
-    assert.equal(await count(), 5, 'Undo crosses page and set boundaries');
-    assert.equal(
-      await evaluate(
-        `document.querySelector('.stamp:last-child').dataset.item`,
-      ),
-      'shapes/coral-star',
-    );
     for (let i = 0; i < 20; i++) await click('#next-page');
-    assert.equal(await count(), 5, 'Rapid paging retains art');
+    assert.equal(await count(), 14, 'Rapid paging retains art');
     assert.equal(
       await evaluate(
         `document.querySelectorAll('.choice[aria-pressed="true"]').length`,
@@ -366,7 +377,7 @@ try {
     identifier: gate.identifier,
   });
   report(
-    'Stamp paging: 14 originals, all 8 aquarium selections, mixed art, common undo, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS',
+    'Stamp paging: 14 originals, all 8 aquarium selections, mixed art, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS',
   );
   await visit();
   await evaluate(`document.querySelector('#next-page').focus()`);
@@ -467,8 +478,6 @@ try {
   );
   await tap(p);
   assert.equal(await count(), 3, 'Resumes');
-  await click('#undo');
-  assert.equal(await count(), 2);
   await mouse('mousePressed', await point('#paper'));
   await call('Emulation.setDeviceMetricsOverride', {
     width: 390,
@@ -478,14 +487,14 @@ try {
   });
   await delay(100);
   await mouse('mouseReleased', await point('#paper'));
-  assert.equal(await count(), 2, 'Resize cancels pending input below cap');
+  assert.equal(await count(), 3, 'Resize cancels pending input below cap');
   await click('#new');
   assert.ok(await evaluate(`document.querySelector('#confirm').open`));
-  assert.equal(await count(), 2, 'New paper requires confirmation');
+  assert.equal(await count(), 3, 'New paper requires confirmation');
   await shot('stamp-confirm');
   await click('button[value="cancel"]');
   await delay(50);
-  assert.equal(await count(), 2);
+  assert.equal(await count(), 3);
   await click('#new');
   await call('Input.dispatchKeyEvent', {
     type: 'keyDown',
@@ -503,7 +512,7 @@ try {
   });
   await delay(50);
   assert.ok(await evaluate(`!document.querySelector('#confirm').open`));
-  assert.equal(await count(), 2, 'Escape preserves paper');
+  assert.equal(await count(), 3, 'Escape preserves paper');
   await click('#new');
   await click('#clear');
   await delay(50);
@@ -539,7 +548,7 @@ try {
   await click('#paper');
   assert.equal(await count(), 2, 'Assistive activation');
   report(
-    'Stamp: CDP synthetic two-finger touch, cancel, drag/outside release, blur/hidden, resume, undo, clear confirmation/cancel, keyboard and assistive click PASS',
+    'Stamp: CDP synthetic two-finger touch, cancel, drag/outside release, blur/hidden, resume, clear confirmation/cancel, keyboard and assistive click PASS',
   );
   await evaluate(
     `for(let i=0;i<200;i++)document.querySelector('#paper').click()`,
@@ -555,10 +564,8 @@ try {
     'At cap artwork unchanged',
   );
   assert.ok(await evaluate(`!document.querySelector('#full').hidden`));
-  await click('#undo');
-  assert.equal(await count(), 59);
   await tap(await point('#paper'));
-  assert.equal(await count(), 60);
+  assert.equal(await count(), 60, 'At cap taps preserve all artwork');
   await delay(850);
   assert.equal(
     await evaluate(
@@ -808,7 +815,7 @@ try {
     );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Stamp: 200 placements / 60 cap, no automatic deletion, undo recovery, idle animations/RAF stop, resize, reduced motion, pagehide/re-entry, hub/footer, no JS errors PASS',
+    'Stamp: 200 placements / 60 cap, no automatic deletion, new paper recovery, idle animations/RAF stop, resize, reduced motion, pagehide/re-entry, hub/footer, no JS errors PASS',
   );
   await writeFile(join(output, 'stamp-results.txt'), reports.join('\n') + '\n');
 } finally {

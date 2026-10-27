@@ -56,15 +56,9 @@
         >
           <div id="effects" aria-hidden="true"></div>
           <div id="stamps" aria-hidden="true"></div>
-          <div id="guide" aria-hidden="true">
-            <span class="touch">☝</span><span class="guide-ring"></span
-            ><strong>ここに ぽん！</strong>
-          </div>
           <span id="cursor" aria-hidden="true"></span>
         </div>
-        <p id="full" hidden>
-          <span aria-hidden="true">↶</span> もどす / あたらしい かみ
-        </p>
+        <p id="full" hidden>かみが いっぱい。あたらしい かみで あそぼう</p>
       </div>
       <aside aria-label="スタンプをえらぶ">
         <div class="palette-pager">
@@ -87,16 +81,13 @@
           </button>
         </div>
         <p id="page-status" class="sr-only" role="status"></p>
-        <div class="actions">
-          <button id="undo" disabled aria-label="ひとつもどす">
-            <span aria-hidden="true">↶</span><small>もどす</small></button
-          ><button id="new" disabled aria-label="あたらしいかみ">
-            <svg viewBox="0 0 48 48" aria-hidden="true">
-              <path d="M10 4h18l12 12v28H10Z M28 4v12h12" /></svg
-            ><small>あたらしい かみ</small>
-          </button>
-        </div>
       </aside>
+      <button id="new" disabled aria-label="あたらしいかみ">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M10 4h18l12 12v28H10Z M28 4v12h12" />
+        </svg>
+        <small>あたらしい かみ</small>
+      </button>
     </main>
     <p id="status" class="sr-only" role="status" aria-live="polite"></p>
     <dialog id="confirm">

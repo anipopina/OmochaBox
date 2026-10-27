@@ -90,36 +90,7 @@ main {
   object-fit: contain;
   display: block;
 }
-#guide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  color: #4e637d;
-  pointer-events: none;
-}
-#guide[hidden] {
-  display: none;
-}
-.touch {
-  font-size: 66px;
-  line-height: 1;
-  transform: rotate(-22deg);
-}
-.guide-ring {
-  border: 4px dashed #007cdb;
-  width: 72px;
-  height: 35px;
-  border-radius: 50%;
-  margin-top: -35px;
-  margin-left: 20px;
-}
-#guide strong {
-  font-size: 17px;
-}
+
 aside {
   min-width: 0;
   display: grid;
@@ -166,36 +137,34 @@ aside {
 [aria-pressed='true'] .selected-mark {
   display: block;
 }
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 12px;
-}
-.actions button {
+
+#new {
+  position: absolute;
+  z-index: 3;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 2px;
+  min-width: 116px;
   height: 60px;
-  padding: 4px;
-  border: 0;
-  border-radius: 20px;
-}
-#undo {
-  background: #9bdeff;
-}
-#new {
+  padding: 5px 12px;
+  border-color: #16834d;
+  border-radius: 18px;
   background: #6bea9c;
+  box-shadow: 0 3px 0 #16834d;
 }
-.actions span {
-  font-size: 38px;
-  line-height: 1;
+#new svg {
+  width: 28px;
+  height: 30px;
 }
-.actions svg {
-  width: 32px;
-  height: 36px;
+aside button {
+  pointer-events: auto;
 }
-.actions svg path,
+
+#new svg path,
 dialog svg path {
   fill: white;
   stroke: #172339;
@@ -285,11 +254,6 @@ dialog button span {
   #palette {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
-  .actions {
-    max-width: 440px;
-    width: 100%;
-    margin: auto;
-  }
 }
 @media (max-height: 500px) and (min-width: 480px) {
   main {
@@ -309,32 +273,13 @@ dialog button span {
   #palette {
     gap: 7px;
   }
-  .actions {
-    gap: 8px;
-  }
-  .actions button {
-    flex-direction: column;
-    gap: 0;
-    height: 64px;
-    border-radius: 15px;
-  }
-  .actions span {
-    font-size: 28px;
-  }
-  .actions svg {
-    width: 26px;
-    height: 30px;
-  }
-  .actions small {
-    font-size: 10px;
-  }
 }
 
 .palette-pager {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr) 56px;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 .page-arrow {
   padding: 0;
@@ -368,9 +313,6 @@ dialog button span {
     gap: 6px;
   }
   .choice {
-    height: 56px;
-  }
-  .actions button {
     height: 56px;
   }
 }
@@ -444,9 +386,8 @@ aside {
   width: auto;
   max-width: 1000px;
   margin: auto;
-  padding: 10px;
-  border-radius: 24px;
-  background: #fff9ebee;
+  padding: 0;
+  pointer-events: none;
 }
 @media (max-height: 500px) and (min-width: 480px) {
   aside {
