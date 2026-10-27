@@ -43,7 +43,6 @@ window.__test = {
     sampleStatus,
     sampleDuration: sampleBuffer?.duration,
     raf,
-    muted,
     audio: audio?.state,
     width,
     height,

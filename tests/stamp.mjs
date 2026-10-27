@@ -138,10 +138,6 @@ try {
   const count = () => evaluate(`document.querySelectorAll('.stamp').length`);
   const click = (selector) =>
     evaluate(`document.querySelector('${selector}').click()`);
-  const setFeedback = (sound, vibration) =>
-    evaluate(
-      `localStorage.setItem('omochabox-play-settings-v1',JSON.stringify({sound:${sound},vibration:${vibration}}));window.dispatchEvent(new StorageEvent('storage',{key:'omochabox-play-settings-v1'}))`,
-    );
   for (const [width, height] of [
     [320, 568],
     [390, 844],
@@ -693,38 +689,18 @@ try {
     ),
     'Short rate-limited vibration requests',
   );
-  await setFeedback(false, false);
-  await delay(100);
-  assert.equal(
-    await evaluate('feedbackProbe.contexts[0].state'),
-    'suspended',
-    'Mute suspends native audio output',
-  );
-  const pulseCount = await evaluate(
-    'feedbackProbe.pulses.filter(p=>p.value>0).length',
-  );
-  await tap(await point('#paper'));
-  assert.equal(await evaluate('feedbackProbe.contexts[0].state'), 'suspended');
-  assert.equal(
-    await evaluate('feedbackProbe.pulses.filter(p=>p.value>0).length'),
-    pulseCount,
+  // Legacy preferences and storage events must no longer disable feedback.
+  await evaluate(
+    `localStorage.setItem('omochabox-play-settings-v1',JSON.stringify({sound:false,vibration:false}));window.dispatchEvent(new StorageEvent('storage',{key:'omochabox-play-settings-v1'}))`,
   );
   await visit();
-  assert.deepEqual(
-    await evaluate(
-      `JSON.parse(localStorage.getItem('omochabox-play-settings-v1'))`,
-    ),
-    { sound: false, vibration: false },
-  );
-  await tap(await point('#paper'));
-  assert.equal(
-    await evaluate('feedbackProbe.contexts.length'),
-    0,
-    'Direct/reloaded entry inherits mute',
-  );
-  await setFeedback(true, true);
+  assert.equal(await evaluate('feedbackProbe.contexts.length'), 0);
   await tap(await point('#paper'));
   await waitFor('feedbackProbe.max>0');
+  assert.ok(
+    await evaluate('feedbackProbe.pulses.some(p=>p.value===12)'),
+    'Saved OFF preferences are ignored',
+  );
   await evaluate(
     `Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`,
   );
@@ -775,35 +751,18 @@ try {
     identifier: noVibration.identifier,
   });
   report(
-    'Feedback: native AudioContext starts only after user input, <=3 sine voices / 0.075 gain, mute and stored preferences, background suspend/resume; <=72 particles and expiry, reduced <=4; Vibration API spy 12ms / >=160ms and unsupported fallback PASS (no physical audio/haptic verification)',
-  );
-  // Actual hub buttons, persisted values, invalid data, and storage failures.
-  await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===8`);
-  assert.ok(
-    await evaluate(
-      `[...document.querySelectorAll('.setting-buttons button')].every(b=>{const r=b.getBoundingClientRect();return r.width>=56&&r.height>=56})`,
-    ),
-  );
-  await click('#sound-setting');
-  await click('#vibration-setting');
-  await shot('stamp-settings-hub-390', false);
-  await click('a[href="ponpon-stamp/"]');
-  await waitFor(`document.querySelectorAll('.choice').length===6`);
-  assert.deepEqual(
-    await evaluate(
-      `JSON.parse(localStorage.getItem('omochabox-play-settings-v1'))`,
-    ),
-    { sound: false, vibration: false },
+    'Feedback: native AudioContext starts only after user input, <=3 sine voices / 0.075 gain, legacy OFF preferences ignored, background suspend/resume; <=72 particles and expiry, reduced <=4; Vibration API spy 12ms / >=160ms and unsupported fallback PASS (no physical audio/haptic verification)',
   );
   await click('#back');
   await waitFor(`document.querySelectorAll('.game-card').length===8`);
   assert.equal(
     await evaluate(
-      `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
+      `document.querySelector('.play-settings,#sound-setting,#vibration-setting')`,
     ),
-    'false',
+    null,
+    'Hub has no settings panel or buttons',
   );
+  await shot('stamp-hub-390', false);
   const drawingProbe = await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `window.contextsCreated=0;const NativeAudio=AudioContext;window.AudioContext=class extends NativeAudio{constructor(...args){super(...args);window.contextsCreated++}}`,
   });
@@ -811,63 +770,27 @@ try {
   await waitFor(
     `document.readyState==='complete'&&!!document.querySelector('canvas')`,
   );
-  await tap(await point('canvas'));
   assert.equal(
     await evaluate('contextsCreated'),
     0,
-    'Drawing direct entry inherits shared mute',
-  );
-  assert.equal(
-    await evaluate(`document.querySelectorAll('button').length`),
-    0,
-    'Drawing has no individual settings buttons',
-  );
-  await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===8`);
-  await click('#sound-setting');
-  await click('a[href="hikari-no-oekaki/"]');
-  await waitFor(
-    `document.readyState==='complete'&&!!document.querySelector('canvas')`,
+    'Drawing waits for user input',
   );
   await tap(await point('canvas'));
   assert.equal(
     await evaluate('contextsCreated'),
     1,
-    'Drawing enabled sound starts on next gesture',
+    'Drawing ignores saved OFF preferences',
   );
   await click('#back');
   await waitFor(`document.querySelectorAll('.game-card').length===8`);
   await call('Page.removeScriptToEvaluateOnNewDocument', {
     identifier: drawingProbe.identifier,
   });
-  await evaluate(
-    `localStorage.setItem('omochabox-play-settings-v1','invalid json')`,
-  );
-  await call('Page.reload');
-  await waitFor(`document.querySelectorAll('.game-card').length===8`);
-  assert.equal(
-    await evaluate(
-      `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
-    ),
-    'true',
-  );
   const blockedStorage = await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `Storage.prototype.getItem=Storage.prototype.setItem=()=>{throw new DOMException('blocked','SecurityError')}`,
   });
   await call('Page.reload');
   await waitFor(`document.querySelectorAll('.game-card').length===8`);
-  await click('#sound-setting');
-  assert.equal(
-    await evaluate(
-      `document.querySelector('#sound-setting').getAttribute('aria-pressed')`,
-    ),
-    'false',
-  );
-  assert.ok(
-    await evaluate(
-      `document.querySelector('#settings-note').textContent.includes('ほぞんできない')`,
-    ),
-  );
   await click('a[href="ponpon-stamp/"]');
   await waitFor(`document.querySelectorAll('.choice').length===6`);
   await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
@@ -877,7 +800,7 @@ try {
     identifier: blockedStorage.identifier,
   });
   report(
-    'Common settings: hub-only 56px buttons, browser persistence, hub/game round trip, direct/reloaded entry, storage event update, invalid JSON and blocked storage fallback PASS',
+    'Feedback always enabled: no hub controls, legacy saved OFF ignored by stamp and drawing, blocked storage still plays PASS',
   );
   if (process.env.STAMP_EXPECT_BOUNDARIES)
     report(

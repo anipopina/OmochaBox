@@ -1,5 +1,4 @@
 import '../shared/home-button';
-import { getPlaySettings, onPlaySettings } from '../shared/settings';
 import { requireContext2d, requireElement } from '../shared/dom';
 import topLeftUrl from './assets/leaves-top-left.webp';
 import topRightUrl from './assets/leaves-top-right.webp';
@@ -90,7 +89,6 @@ type Voice = FlowerVoice | SampleVoice;
     height = 0,
     raf = 0,
     colorIndex = 0,
-    muted = !getPlaySettings().sound,
     generation = 0;
   let audio: AudioContext | null = null,
     master: GainNode | null = null,
@@ -455,7 +453,6 @@ type Voice = FlowerVoice | SampleVoice;
   }
   function playSample(now: number, charge: number) {
     if (
-      muted ||
       document.hidden ||
       !audio ||
       !master ||
@@ -495,13 +492,7 @@ type Voice = FlowerVoice | SampleVoice;
     nextSampleAt = now + 4800;
   }
   function syncSparkles(now: number) {
-    if (
-      !fingers.size ||
-      muted ||
-      document.hidden ||
-      !audio ||
-      audio.state !== 'running'
-    )
+    if (!fingers.size || document.hidden || !audio || audio.state !== 'running')
       return;
     const charge = Math.max(
       ...[...fingers.values()].map((p) => chargeAt(p, now)),
@@ -539,7 +530,6 @@ type Voice = FlowerVoice | SampleVoice;
     }
   }
   function unlock() {
-    if (muted) return;
     try {
       if (!audio) {
         const Audio = window.AudioContext || window.webkitAudioContext;
@@ -565,7 +555,6 @@ type Voice = FlowerVoice | SampleVoice;
   function sound(color: number) {
     const now = performance.now();
     if (
-      muted ||
       document.hidden ||
       !audio ||
       !master ||
@@ -730,15 +719,6 @@ type Voice = FlowerVoice | SampleVoice;
   requireElement('#back', HTMLAnchorElement).addEventListener('click', () => {
     reset();
     if (audio) audio.suspend().catch(() => {});
-  });
-  onPlaySettings((settings) => {
-    const nextMuted = !settings.sound;
-    if (muted === nextMuted) return;
-    muted = nextMuted;
-    generation++;
-    silence();
-    if (muted && audio) void audio.suspend().catch(() => {});
-    // Enabling sound waits for the next play gesture; never replay an old hold.
   });
   document.addEventListener('visibilitychange', () => {
     reset();

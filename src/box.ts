@@ -1,8 +1,3 @@
-import {
-  getPlaySettings,
-  setPlaySettings,
-  onPlaySettings,
-} from './shared/settings';
 import pinwheelRotor from './kurukuru-kazaguruma/assets/rotor.svg';
 import stampSquare from './assets/characters/shapes/01-coral-square.svg';
 import stampCyan from './assets/characters/shapes/02-cyan-circle.svg';
@@ -68,42 +63,3 @@ for (const game of games) {
   card.append(art, copy);
   gamesContainer.append(card);
 }
-
-const soundSetting = requireElement('#sound-setting', HTMLButtonElement);
-const vibrationSetting = requireElement(
-  '#vibration-setting',
-  HTMLButtonElement,
-);
-const settingsNote = requireElement('#settings-note', HTMLParagraphElement);
-function showSettings() {
-  const settings = getPlaySettings();
-  for (const [button, enabled] of [
-    [soundSetting, settings.sound],
-    [vibrationSetting, settings.vibration],
-  ] as const) {
-    button.setAttribute('aria-pressed', String(enabled));
-    button.querySelector('b')!.textContent = enabled ? 'オン' : 'オフ';
-    button.querySelector('span')!.textContent = enabled
-      ? button === soundSetting
-        ? '♪'
-        : '〰'
-      : '×';
-  }
-  settingsNote.textContent =
-    typeof navigator.vibrate === 'function'
-      ? 'すべての あそびに つかうよ。このブラウザに おぼえるよ。'
-      : 'すべての あそびに つかうよ。ふるえは このブラウザでは つかえないよ。';
-}
-for (const [button, key] of [
-  [soundSetting, 'sound'],
-  [vibrationSetting, 'vibration'],
-] as const) {
-  button.addEventListener('click', () => {
-    const saved = setPlaySettings({ [key]: !getPlaySettings()[key] });
-    if (!saved)
-      settingsNote.textContent =
-        'せっていを ほぞんできないため、このページの あいだだけ おぼえるよ。';
-  });
-}
-onPlaySettings(showSettings);
-showSettings();

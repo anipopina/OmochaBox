@@ -1,4 +1,3 @@
-import { getPlaySettings, onPlaySettings } from '../shared/settings';
 import { requireElement } from '../shared/dom';
 
 // Feedback is bounded and independent from the permanent artwork/history.
@@ -7,7 +6,6 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const particles = new Map<HTMLSpanElement, Animation>();
 const voices = new Map<OscillatorNode, GainNode>();
 const supportsVibration = typeof navigator.vibrate === 'function';
-let { sound, vibration } = getPlaySettings();
 let context: AudioContext | undefined;
 let lastPulse = -Infinity;
 let lastSound = -Infinity;
@@ -36,16 +34,10 @@ function stopVibration() {
     }
   }
 }
-onPlaySettings((settings) => {
-  sound = settings.sound;
-  vibration = settings.vibration;
-  if (!sound) stopSound();
-  if (!vibration) stopVibration();
-});
 
 function playSound() {
   // No audio objects at boot. Browser activation and policy are never bypassed.
-  if (!sound || document.hidden || !navigator.userActivation?.isActive) return;
+  if (document.hidden || !navigator.userActivation?.isActive) return;
   const now = performance.now();
   if (now - lastSound < 65) return;
   lastSound = now;
@@ -56,7 +48,6 @@ function playSound() {
     const play = () => {
       if (
         token !== generation ||
-        !sound ||
         document.hidden ||
         audio.state !== 'running' ||
         performance.now() - now > 180 ||
@@ -96,7 +87,6 @@ function playSound() {
 function pulse() {
   if (
     !supportsVibration ||
-    !vibration ||
     document.hidden ||
     !navigator.userActivation?.isActive
   )

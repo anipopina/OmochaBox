@@ -145,10 +145,6 @@ try {
     }
     assert.fail(`Timed out waiting for ${expression}`);
   };
-  const toggleSound = () =>
-    evaluate(
-      `(()=>{const key='omochabox-play-settings-v1';const value=JSON.parse(localStorage.getItem(key)||'{"sound":true,"vibration":true}');value.sound=!value.sound;localStorage.setItem(key,JSON.stringify(value));window.dispatchEvent(new StorageEvent('storage',{key}));})()`,
-    );
   await call('Runtime.enable');
   await call('Page.enable');
   await mkdir(join(root, 'test-results'), { recursive: true });
@@ -494,17 +490,6 @@ try {
       multi.peaks,
       'No repeated 10-finger bursts',
     );
-    await toggleSound();
-    const mutedNotes = (await state()).notes.length;
-    assert.equal((await state()).voices, 0);
-    await delay(650);
-    assert.equal((await state()).notes.length, mutedNotes);
-    await toggleSound();
-    await delay(600);
-    assert.ok(
-      (await state()).notes.length - mutedNotes <= 5,
-      'No catch-up notes after unmute',
-    );
     await evaluate(
       `Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`,
     );
@@ -532,7 +517,7 @@ try {
         .every((n, i) => n.time - flowerNotes[i].time >= 149.5),
     );
     report(
-      '10 fingers: particles<=220 total voices<=4 MP3 voices<=2 gain<=2.25 each; mute/cancel/hidden restore without stale playback PASS',
+      '10 fingers: particles<=220 total voices<=4 MP3 voices<=2 gain<=2.25 each; cancel/hidden restore without stale playback PASS',
     );
     // Trusted mouse input exercises actual browser capture and audio activation.
     await call('Input.dispatchMouseEvent', {
@@ -560,10 +545,6 @@ try {
     assert.equal((await state()).fingers, 0);
     await delay(20);
     assert.ok((await state()).voices > 0, 'Release plays a short sound');
-    await toggleSound();
-    assert.equal((await state()).muted, true);
-    assert.equal((await state()).voices, 0);
-    await toggleSound();
     await evaluate(
       `(async()=>{const c=document.querySelector('canvas');for(let i=0;i<2000;i++){c.dispatchEvent(new PointerEvent('pointerdown',{pointerId:42,pointerType:'touch',clientX:100,clientY:100}));c.dispatchEvent(new PointerEvent('pointermove',{pointerId:42,pointerType:'touch',clientX:1000,clientY:600}));c.dispatchEvent(new PointerEvent('pointerup',{pointerId:42}));}await Promise.resolve()})()`,
     );
@@ -584,7 +565,7 @@ try {
     );
     await pointer('pointerup', 600, 250, 7);
     report(
-      'Trusted mouse, Web Audio activation, mute, 2,000 taps and 5,000 long-drag moves bounded PASS',
+      'Trusted mouse, Web Audio activation, 2,000 taps and 5,000 long-drag moves bounded PASS',
     );
     await delay(6900);
     const idle = await state();
@@ -816,16 +797,17 @@ try {
             clean.raf,
           0,
         );
-        await toggleSound();
-        assert.equal((await state()).muted, true);
         await evaluate('document.querySelector("#back").click()');
         await delay(300);
         assert.equal(await evaluate('document.title'), 'おもちゃボックス');
-        await evaluate(`document.querySelector('#sound-setting').click()`);
+        assert.equal(
+          await evaluate(`document.querySelector('.play-settings')`),
+          null,
+        );
       }
     }
     report(
-      'Hub: 320/390/1180px, simplified copy, eight cards, 56px controls, lifecycle cleanup, mute, return/re-entry x9, no horizontal overflow PASS',
+      'Hub: 320/390/1180px, simplified copy, eight cards, 56px controls, lifecycle cleanup, return/re-entry x9, no horizontal overflow PASS',
     );
   }
   // Real touch input exercises pointer capture and the fog alpha mask.
