@@ -75,7 +75,7 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 - [キャラクターと共有素材](docs/branding.md)：なかまたち・favicon・OGPの仕様と出典
 - [資料一覧](docs/README.md)：開発資料と過去の検証記録
 
-各遊びのREADMEには現在の仕様と固有の注意点を記載します。新規の生成原本・編集用データはユーザーのGoogle Drive「クルミ」以下に保存し、GitHubには配信用の最適化素材と `source-assets/` の原本リンク・出典／ライセンス・SHA-256・変換手順を残します。詳細は [開発ガイド](docs/development.md#素材原本の保存方針) を参照してください。過去の実装・検証報告は `docs/` に保存します。
+各遊びのREADMEには現在の仕様と固有の注意点を記載します。新規の生成原本・編集用データはユーザーのGoogle Drive「クルミ」内の [omochabox-source-assets](https://drive.google.com/drive/folders/1frb9dbwGcTCrmGq7Do38ZVBxp8CkRBSh) 配下に保存し、GitHubには配信用の最適化素材と `source-assets/` の原本リンク・出典／ライセンス・SHA-256・変換手順を残します。詳細は [開発ガイド](docs/development.md#素材原本の保存方針) を参照してください。過去の実装・検証報告は `docs/` に保存します。
 
 ## 公開
 

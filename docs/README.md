@@ -15,7 +15,7 @@
 
 - [くるくる、かざぐるま](../src/kurukuru-kazaguruma/README.md)：指で払って回す折り紙風の風車
 
-原本へのDriveリンク・出典／ライセンス・ハッシュ・変換記録と既存原本は [source-assets/](../source-assets/) を参照してください。新規の生成原本・編集用データの保存先はGoogle Drive「クルミ」以下です。詳細は [素材原本の保存方針](development.md#素材原本の保存方針) を参照してください。
+原本へのDriveリンク・出典／ライセンス・ハッシュ・変換記録と既存原本は [source-assets/](../source-assets/) を参照してください。新規の生成原本・編集用データの保存先はGoogle Drive「クルミ」内の専用フォルダ [omochabox-source-assets](https://drive.google.com/drive/folders/1frb9dbwGcTCrmGq7Do38ZVBxp8CkRBSh) 配下です。詳細は [素材原本の保存方針](development.md#素材原本の保存方針) を参照してください。
 
 - [かさねて、いろガラス](../src/kasanete-iroglass/README.md)：3枚の色板を動かす色の重なり遊び
 
