@@ -37,7 +37,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 CHROME_PATH=/path/to/chromium npm test
 ```
 
-`npm test` はビルド、[出力検査](../tests/build.mjs)、[ブランド素材検査](../tests/branding.mjs)、[シリーズ別SVGの原本一致検査](../tests/characters.mjs)、[ブラウザーテスト](../tests/browser.mjs) に加え、[風船](../tests/balloon.mjs)・[スタンプ](../tests/stamp.mjs)・[すべりだい](../tests/slide.mjs)・[風車](../tests/pinwheel.mjs)・[いろガラス](../tests/glass.mjs)・[みずたまり](../tests/pond.mjs)の専用テストを実行します。結果とスクリーンショットは `test-results/` に保存します。
+`npm test` はビルド、[出力検査](../tests/build.mjs)、[ブランド素材検査](../tests/branding.mjs)、[シリーズ別SVGの原本一致検査](../tests/characters.mjs)、[ブラウザーテスト](../tests/browser.mjs) に加え、[風船](../tests/balloon.mjs)・[スタンプ](../tests/stamp.mjs)・[すべりだい](../tests/slide.mjs)・[風車](../tests/pinwheel.mjs)・[いろガラス](../tests/glass.mjs)・[みずたまり](../tests/pond.mjs)・[もぐもぐともだち](../tests/mogumogu.mjs)の専用テストを実行します。結果とスクリーンショットは `test-results/` に保存します。
 
 専用一時プロファイルと自動選択ポートを使い、終了時にブラウザーとHTTPサーバーを停止します。ヘッドレス検証では `--no-sandbox` を指定するため、対象はこのローカルコードだけにしてください。エミュレーションとは別に、実機iPhone/iPadのSafari、OSジェスチャー、音の聴感も確認します。
 

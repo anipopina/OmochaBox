@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffdf9f" />
+    <title>もぐもぐともだち｜おもちゃボックス</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="おもちゃボックス" />
+    <meta property="og:title" content="もぐもぐともだち｜おもちゃボックス" />
+    <meta
+      property="og:description"
+      content="たべものを どうぞ。もぐもぐ、にっこり！"
+    />
+    <meta
+      property="og:url"
+      content="https://omochabox.ryonchibi.chatgpt.site/mogumogu-tomodachi/"
+    />
+    <meta
+      property="og:image"
+      content="https://omochabox.ryonchibi.chatgpt.site/assets/branding/ogp.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="黄色の背景に、おもちゃボックスの文字とカラフルな図形のなかまたち。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <main id="play" aria-label="もぐもぐともだち">
+      <a
+        id="back"
+        data-home-button
+        href="../"
+        aria-label="おもちゃボックスにもどる"
+      ></a>
+      <div
+        id="friend"
+        data-phase="idle"
+        role="img"
+        aria-label="にっこりした おともだち"
+      >
+        <img class="body-art" alt="" draggable="false" />
+        <svg class="face" viewBox="0 0 500 500" aria-hidden="true">
+          <defs>
+            <clipPath id="mouth-clip">
+              <ellipse cx="250" cy="290" rx="83" ry="62" />
+            </clipPath>
+          </defs>
+          <g class="eyes-open">
+            <ellipse cx="193" cy="205" rx="23" ry="28" fill="#fff9e4" />
+            <ellipse cx="307" cy="205" rx="23" ry="28" fill="#fff9e4" />
+            <ellipse cx="197" cy="208" rx="12" ry="17" fill="#34312e" />
+            <ellipse cx="303" cy="208" rx="12" ry="17" fill="#34312e" />
+            <circle cx="200" cy="202" r="4" fill="white" />
+            <circle cx="306" cy="202" r="4" fill="white" />
+          </g>
+          <g
+            class="eyes-happy"
+            fill="none"
+            stroke="#34312e"
+            stroke-width="10"
+            stroke-linecap="round"
+          >
+            <path d="M174 212Q193 180 212 212M288 212Q307 180 326 212" />
+          </g>
+          <ellipse
+            class="cheek cheek-left"
+            cx="148"
+            cy="270"
+            rx="24"
+            ry="18"
+            fill="#ff9b9c"
+          />
+          <ellipse
+            class="cheek cheek-right"
+            cx="352"
+            cy="270"
+            rx="24"
+            ry="18"
+            fill="#ff9b9c"
+          />
+          <g class="mouth-open">
+            <ellipse cx="250" cy="290" rx="83" ry="62" fill="#713b36" />
+            <g clip-path="url(#mouth-clip)">
+              <ellipse cx="253" cy="342" rx="64" ry="33" fill="#ed8078" />
+              <image id="mouth-food" x="206" y="220" width="88" height="88" />
+            </g>
+          </g>
+          <path
+            class="mouth-closed"
+            d="M218 281Q234 292 250 281Q266 292 282 281"
+            fill="none"
+            stroke="#633e34"
+            stroke-width="8"
+            stroke-linecap="round"
+          />
+          <path
+            class="mouth-smile"
+            d="M220 273Q250 311 280 273"
+            fill="none"
+            stroke="#633e34"
+            stroke-width="9"
+            stroke-linecap="round"
+          />
+        </svg>
+        <div class="delight" aria-hidden="true"><i>♥</i><i>✦</i><i>♥</i></div>
+      </div>
+      <img id="flying-food" alt="" draggable="false" hidden />
+      <div id="foods" role="group" aria-label="たべものを どうぞ">
+        <button data-food="strawberry" aria-label="いちごを あげる">
+          <img alt="" draggable="false" />
+        </button>
+        <button data-food="banana" aria-label="バナナを あげる">
+          <img alt="" draggable="false" />
+        </button>
+        <button data-food="carrot" aria-label="にんじんを あげる">
+          <img alt="" draggable="false" />
+        </button>
+      </div>
+      <span id="status" class="sr-only" role="status" aria-live="polite"></span>
+    </main>
+    <script type="module" src="app.ts"></script>
+  </body>
+</html>

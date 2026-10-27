@@ -138,7 +138,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===8"
+        ? "document.querySelectorAll('.game-card').length===9"
         : "document.querySelector('#water')?.dataset.ready === 'true'",
     );
   };
@@ -280,7 +280,7 @@ try {
     'Rings and leaves settle to idle',
   );
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===8`);
+  await waitFor(`document.querySelectorAll('.game-card').length===9`);
   assert.ok(
     await evaluate(
       `!!document.querySelector('a[href="https://anipopina.com/"]')`,

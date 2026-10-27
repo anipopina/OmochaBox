@@ -127,7 +127,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===8"
+        ? "document.querySelectorAll('.game-card').length===9"
         : "document.querySelectorAll('.supply').length===3",
     );
   };
@@ -293,7 +293,7 @@ try {
   await shot('slide-reduced');
   await waitFor("document.querySelectorAll('.ball').length===0");
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===8");
+  await waitFor("document.querySelectorAll('.game-card').length===9");
   await evaluate(
     'document.querySelector(\'a[href="korokoro-suberidai/"]\').click()',
   );

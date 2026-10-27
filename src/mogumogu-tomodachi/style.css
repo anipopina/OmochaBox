@@ -1,0 +1,268 @@
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #ffe8b8;
+}
+body {
+  font-family: system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#play {
+  width: 100%;
+  height: 100svh;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, #fff7de, #ffe3a6);
+}
+#play::before {
+  content: '';
+  position: absolute;
+  inset: 72% -10% -20%;
+  background: #efb96f;
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 -12px 0 #fff0c9;
+}
+#back {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  left: max(14px, env(safe-area-inset-left));
+  z-index: 10;
+}
+#friend {
+  position: absolute;
+  width: min(94vw, 65dvh, 580px);
+  aspect-ratio: 1;
+  left: 50%;
+  top: 43%;
+  transform: translate(-50%, -50%);
+}
+.body-art,
+.face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.face {
+  overflow: visible;
+}
+.eyes-happy,
+.mouth-open,
+.mouth-closed,
+#mouth-food {
+  opacity: 0;
+}
+#friend[data-phase='offering'] .mouth-open {
+  opacity: 1;
+}
+#friend[data-phase='offering'] .mouth-smile,
+#friend[data-phase='chewing'] .mouth-smile,
+#friend[data-phase='swallowing'] .mouth-smile {
+  opacity: 0;
+}
+#friend[data-phase='chewing'] .mouth-closed,
+#friend[data-phase='swallowing'] .mouth-closed {
+  opacity: 1;
+}
+#friend[data-phase='chewing'] {
+  margin-top: calc(var(--chew) * 3px);
+}
+.cheek {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+#friend[data-phase='chewing'] .cheek-left {
+  transform: scale(calc(1.25 + var(--chew) * 0.3));
+}
+#friend[data-phase='chewing'] .cheek-right {
+  transform: scale(calc(1.25 - var(--chew) * 0.3));
+}
+#friend[data-phase='swallowing'] .face {
+  animation: gulp 300ms ease-in-out;
+}
+#friend[data-phase='happy'] .eyes-open {
+  opacity: 0;
+}
+#friend[data-phase='happy'] .eyes-happy {
+  opacity: 1;
+}
+#friend[data-phase='happy'] {
+  animation: happy-hop 950ms ease-in-out;
+}
+#friend[data-phase='happy'][data-food='banana'] {
+  animation-name: happy-sway;
+}
+#friend[data-phase='happy'][data-food='carrot'] {
+  animation-name: happy-bounce;
+}
+.delight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.delight i {
+  position: absolute;
+  color: #f36b64;
+  font-size: clamp(28px, 6vw, 52px);
+  font-style: normal;
+  top: 28%;
+  left: 6%;
+}
+.delight i:nth-child(2) {
+  color: #e49b05;
+  top: 8%;
+  left: 48%;
+}
+.delight i:nth-child(3) {
+  left: auto;
+  right: 6%;
+  top: 23%;
+}
+#friend[data-phase='happy'] .delight {
+  animation: delight 950ms ease-out;
+}
+#friend[data-reaction='1'] .delight {
+  transform: scaleX(-1);
+}
+#flying-food {
+  position: fixed;
+  z-index: 4;
+  pointer-events: none;
+}
+#foods {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(12px, 3vw, 32px);
+  align-items: center;
+}
+#foods button {
+  position: relative;
+  width: clamp(80px, 25vw, 148px);
+  height: clamp(80px, 25vw, 148px);
+  border: 4px solid #fff9e8;
+  border-radius: 50%;
+  background: #fff4d8;
+  box-shadow:
+    0 7px 0 #c68a48,
+    0 12px 20px #8f65341c;
+  padding: 6px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+#foods img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+#foods .next {
+  border-color: #f29932;
+  background: #ffdf8d;
+}
+#foods .next::after {
+  content: '♥';
+  color: #df6550;
+  position: absolute;
+  right: -3px;
+  top: -12px;
+  font-size: 28px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 4px solid #1a6575;
+  outline-offset: 5px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@keyframes gulp {
+  50% {
+    transform: translateY(6px) scaleY(0.97);
+  }
+}
+@keyframes happy-hop {
+  35% {
+    transform: translate(-50%, -54%) rotate(-4deg);
+  }
+  70% {
+    transform: translate(-50%, -50%) rotate(4deg);
+  }
+}
+@keyframes happy-sway {
+  25% {
+    transform: translate(-53%, -50%) rotate(-7deg);
+  }
+  70% {
+    transform: translate(-47%, -50%) rotate(7deg);
+  }
+}
+@keyframes happy-bounce {
+  30%,
+  65% {
+    transform: translate(-50%, -54%) scale(1.04, 0.97);
+  }
+}
+@keyframes delight {
+  15%,
+  70% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    translate: 0 -20px;
+  }
+}
+@media (orientation: landscape) and (max-height: 600px) {
+  #friend {
+    width: min(67dvh, 400px);
+    top: 43%;
+    left: 38%;
+  }
+  #foods {
+    flex-direction: column;
+    bottom: 50%;
+    left: auto;
+    right: max(20px, env(safe-area-inset-right));
+    transform: translateY(50%);
+    gap: 12px;
+  }
+  #foods button {
+    width: clamp(64px, 22dvh, 110px);
+    height: clamp(64px, 22dvh, 110px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #friend,
+  .face,
+  .delight {
+    animation: none !important;
+  }
+  #friend[data-phase='happy'] .delight {
+    opacity: 1;
+  }
+  #friend[data-phase='chewing'] {
+    margin-top: 0;
+  }
+}

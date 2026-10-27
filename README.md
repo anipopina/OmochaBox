@@ -18,6 +18,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [みずたまり](src/mizutamari/README.md) | 水面を触って波紋を重ね、浮き葉を揺らす遊び |
 
+| [もぐもぐともだち](src/mogumogu-tomodachi/README.md) | たべものをあげて、もぐもぐと笑顔を楽しむ遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。

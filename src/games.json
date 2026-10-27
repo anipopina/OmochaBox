@@ -46,5 +46,11 @@
     "title": "みずたまり",
     "description": "さわって、なぞって。みずの わが ひろがるよ。",
     "href": "mizutamari/"
+  },
+  {
+    "id": "mogumogu-tomodachi",
+    "title": "もぐもぐともだち",
+    "description": "たべものを どうぞ。もぐもぐ、にっこり！",
+    "href": "mogumogu-tomodachi/"
   }
 ]
