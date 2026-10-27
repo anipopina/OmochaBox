@@ -16,7 +16,7 @@
 Vite自体は型チェックを行いません。`npm run build` は型チェックを通してから `dist/` に出力します。
 依存関係は `package-lock.json` で固定し、環境構築には `npm ci` を使います。
 
-VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vscode/) にあります。素材記録と既存原本の `source-assets/`、検証資料の `docs/`、`AGENTS.md`、生成物は一括整形の対象外です。
+VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vscode/) にあります。原本の `source-assets/`、検証資料の `docs/`、`AGENTS.md`、生成物は一括整形の対象外です。
 
 ## ページと素材の追加
 
@@ -26,15 +26,8 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 - `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
-- 共有キャラクターSVGは `src/assets/characters/<series>/` に置き、出典とSHA-256は `source-assets/characters/` に記録します。既存のユーザー提供SVGは原本一致を維持し、整形・最適化しません。ゲームへの採用は別途判断します。
-- 新規素材の原本保存と記録は次の方針に従います。`dist/` を直接編集しません。
-
-### 素材原本の保存方針
-
-- 新規の生成原本や編集用データは、ユーザーのGoogle Drive「クルミ」内の専用フォルダ [omochabox-source-assets](https://drive.google.com/drive/folders/1frb9dbwGcTCrmGq7Do38ZVBxp8CkRBSh) 配下で、遊び・共有素材別に整理して保存します。アイディア等の資料が入った既存の「おもちゃボックス」フォルダには保存せず、原本と資料を混在させません。原本を上書きせず、配信用素材は別途最適化して `src/<slug>/assets/` や共有素材の配置先に同梱します。
-- GitHubの `source-assets/<slug>/`（共有素材は対応するディレクトリ）には、原本へのDriveリンク、出典・作者／生成方法、確認できたライセンス・利用条件、原本と配信用素材のSHA-256、対応するファイル名、変換手順（ツール・設定・コマンド）を記録します。不明な作者・ライセンスは推定せず、その旨を記します。
-- 通常の開発・ビルド・公開に必要な配信用素材はリポジトリ内で完結させます。Driveの認証・原本ダウンロードを通常のビルドや公開の前提にせず、Driveからの取得は素材を再編集・再変換するときに限ります。
-- この方針は今後の素材保存に適用します。既存の原本ファイルや過去の履歴は移動・削除せず、過去の素材READMEや検証記録にある保存先の事実も遡って書き換えません。既存のユーザー提供SVGの原本一致方針も維持します。
+- 共有キャラクターSVGは `src/assets/characters/<series>/` に置き、出典とSHA-256は `source-assets/characters/` に記録します。原本SVGを整形・最適化せず、ゲームへの採用は別途判断します。
+- 素材原本と出典・変換記録は `source-assets/<slug>/` に保存します。`dist/` を直接編集しません。
 
 ## ブラウザーテスト
 
