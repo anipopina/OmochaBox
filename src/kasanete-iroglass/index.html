@@ -54,72 +54,11 @@
           id="glass"
           tabindex="0"
           role="application"
-          aria-label="いろガラスの光台。色板を指で動かせます。下の形ボタンで選び、矢印キーで動かせます。"
+          aria-label="いろガラスの光台。色板を指で動かせます。1〜3キーで板を選び、矢印キーで動かせます。"
           aria-describedby="hint"
         ></canvas>
       </div>
-      <aside>
-        <p id="hint">うごかして、<br class="wide-break" />かさねてみよう</p>
-        <div class="tools" aria-label="いろガラスをえらぶ">
-          <button data-shape="0" aria-label="まるをえらぶ" aria-pressed="true">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <circle
-                cx="32"
-                cy="32"
-                r="24"
-                fill="#00d6f6"
-                stroke="#009abb"
-                stroke-width="3"
-              /></svg
-            ><span class="check" aria-hidden="true">✓</span>
-          </button>
-          <button
-            data-shape="1"
-            aria-label="しかくをえらぶ"
-            aria-pressed="false"
-          >
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <rect
-                x="10"
-                y="10"
-                width="44"
-                height="44"
-                rx="9"
-                fill="#ffe600"
-                stroke="#d6a700"
-                stroke-width="3"
-              /></svg
-            ><span class="check" aria-hidden="true">✓</span>
-          </button>
-          <button
-            data-shape="2"
-            aria-label="さんかくをえらぶ"
-            aria-pressed="false"
-          >
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path
-                d="M32 7 58 55H6Z"
-                stroke-linejoin="round"
-                fill="#ff24bc"
-                stroke="#d1008c"
-                stroke-width="3"
-              /></svg
-            ><span class="check" aria-hidden="true">✓</span>
-          </button>
-          <button id="reset" aria-label="はじめのならびにもどす">
-            <svg viewBox="0 0 64 64" aria-hidden="true">
-              <path
-                d="M17 19a22 22 0 1 1-5 25M17 7v17H3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      </aside>
+      <p id="hint">うごかして、かさねてみよう</p>
       <p id="status" class="sr-only" role="status"></p>
     </main>
     <script type="module" src="app.ts"></script>

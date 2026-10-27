@@ -136,9 +136,10 @@ try {
       "(()=>{const r=document.querySelector('canvas').getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})()",
     );
   const pick = async (i) =>
-    evaluate(`document.querySelector('[data-shape="${i}"]').click()`);
-  const reset = async () =>
-    evaluate("document.querySelector('#reset').click()");
+    evaluate(
+      `document.querySelector('canvas').dispatchEvent(new KeyboardEvent('keydown',{key:'${i + 1}'}))`,
+    );
+  const reset = () => visit();
   const touch = (type, points = []) =>
     call('Input.dispatchTouchEvent', { type, touchPoints: points });
   for (const [w, h] of [
@@ -170,6 +171,16 @@ try {
         `[...document.querySelectorAll('button,#back')].every(e=>{const r=e.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
       ),
     );
+    assert.ok(
+      await evaluate(`(() => {
+      const hint=document.querySelector('#hint'), r=hint.getBoundingClientRect();
+      return document.querySelectorAll('button').length===0 &&
+        hint.textContent==='うごかして、かさねてみよう' &&
+        r.left>=0 && r.right<=innerWidth && r.top>=0 && r.bottom<=innerHeight &&
+        document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===document.querySelector('canvas');
+    })()`),
+      'Only a pointer-transparent hint remains over the field',
+    );
     await shot(`glass-${w}x${h}`);
     const radius = Math.min(r.w * 0.31, r.h * 0.29, 190);
     const before = await data();
@@ -195,7 +206,7 @@ try {
     assert.equal(await data(), before);
   }
   report(
-    'Glass PASS: six viewports, 56px controls, no overflow, CDP synthetic touch movement (not physical-device touch), reset, screenshots',
+    'Glass PASS: six viewports, 56px controls, no overflow, CDP synthetic touch movement (not physical-device touch), unobstructed hint, re-entry, screenshots',
   );
   await call('Emulation.setDeviceMetricsOverride', {
     width: 390,
@@ -213,7 +224,7 @@ try {
     assert.ok(n > 50, `${name} visible: ${n}`);
   const r = await rect();
   const radius = Math.min(r.w * 0.31, r.h * 0.29, 190);
-  // Move each shape onto the same center; the palette must retrieve every one.
+  // Move each shape onto the same center; keyboard selection must retrieve every one.
   for (const [i, x, y] of [
     [0, 0.5 - (radius * 0.55) / r.w, 0.5 - (radius * 0.4) / r.h],
     [1, 0.5 + (radius * 0.55) / r.w, 0.5 - (radius * 0.3) / r.h],
@@ -238,6 +249,24 @@ try {
     assert.equal(await dragging(), 'false');
   }
   await shot('glass-overlap-390x844');
+  await reset();
+  await pick(0);
+  const hintPoint = await evaluate(
+    `(() => {const r=document.querySelector('#hint').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,id:1}})()`,
+  );
+  await touch('touchStart', [
+    { x: r.w * 0.5 - radius * 0.55, y: r.h * 0.5 - radius * 0.4, id: 1 },
+  ]);
+  await touch('touchMove', [hintPoint]);
+  await touch('touchEnd');
+  await touch('touchStart', [hintPoint]);
+  assert.equal(
+    await dragging(),
+    'true',
+    'A plate beneath the hint can be grabbed',
+  );
+  await touch('touchMove', [{ ...hintPoint, y: hintPoint.y - 70 }]);
+  await touch('touchEnd');
   await reset();
   // Directly grabbing an exposed other plate changes selection naturally.
   await touch('touchStart', [
@@ -269,10 +298,8 @@ try {
       code: 'ArrowRight',
     });
   assert.equal(await data(), edge, 'Movement clamped at edge');
-  for (let i = 0; i < 100; i++) {
-    await pick(i % 3);
-    await reset();
-  }
+  for (let i = 0; i < 100; i++) await pick(i % 3);
+  await reset();
   assert.equal(await data(), original);
   await touch('touchStart', [
     {
@@ -321,7 +348,7 @@ try {
   assert.equal(await selected(), '0');
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Glass PASS: green/red/blue/dark pixels, fully overlapping plate retrieval, direct selection, cancel/blur/resize, edge limits, 100 resets, keyboard, reduced motion/idle, hub/re-entry, no JS errors',
+    'Glass PASS: green/red/blue/dark pixels, fully overlapping plate retrieval, direct selection, cancel/blur/resize, edge limits, repeated keyboard selection, reduced motion/idle, hub/re-entry, no JS errors',
   );
   await writeFile(join(output, 'glass-results.txt'), reports.join('\n') + '\n');
 } finally {

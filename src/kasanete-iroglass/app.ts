@@ -5,9 +5,6 @@ const canvas = requireElement('#glass', HTMLCanvasElement);
 const ctx = canvas.getContext('2d')!;
 const board = requireElement('#lightbox', HTMLDivElement);
 const status = requireElement('#status', HTMLParagraphElement);
-const choices = [
-  ...document.querySelectorAll<HTMLButtonElement>('[data-shape]'),
-];
 const colors = ['#00d8f5', '#ffe900', '#ff26bd'];
 const names = ['まる', 'しかく', 'さんかく'];
 let positions = [
@@ -99,9 +96,6 @@ function draw() {
 function select(i: number) {
   selected = i;
   order = order.filter((value) => value !== i).concat(i);
-  choices.forEach((button, n) =>
-    button.setAttribute('aria-pressed', String(n === i)),
-  );
   status.textContent = `${names[i]}を えらんだよ`;
   draw();
 }
@@ -167,14 +161,13 @@ for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) {
     if ((event as PointerEvent).pointerId === drag?.id) stop();
   });
 }
-choices.forEach((button, i) =>
-  button.addEventListener('click', () => {
-    stop();
-    select(i);
-  }),
-);
-requireElement('#reset', HTMLButtonElement).addEventListener('click', reset);
 canvas.addEventListener('keydown', (event) => {
+  if (['1', '2', '3'].includes(event.key)) {
+    event.preventDefault();
+    stop();
+    select(Number(event.key) - 1);
+    return;
+  }
   const delta: Record<string, [number, number]> = {
     ArrowLeft: [-1, 0],
     ArrowRight: [1, 0],
