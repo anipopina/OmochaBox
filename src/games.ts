@@ -1,4 +1,5 @@
-// Add an independent game directory and one entry here. No shared game runtime.
+import catalogue from './games.json';
+
 export interface Game {
   id: string;
   title: string;
@@ -6,53 +7,4 @@ export interface Game {
   href: string;
 }
 
-export const games: readonly Game[] = [
-  {
-    id: 'hikari-no-oekaki',
-    title: 'ひかりのおえかき',
-    description: 'さわると おはな。なぞると ひかりのみち。',
-    href: 'hikari-no-oekaki/',
-  },
-  {
-    id: 'fukifuki-mado',
-    title: 'ふきふき、まど',
-    description: 'まどを ふきふき。だれが いるかな？',
-    href: 'fukifuki-mado/',
-  },
-  {
-    id: 'pukapuka-fusen',
-    title: 'ぷかぷか、ふうせん',
-    description: 'おすと ふくらむ。はなすと ぷかぷか。',
-    href: 'pukapuka-fusen/',
-  },
-  {
-    id: 'ponpon-stamp',
-    title: 'ぽんぽんスタンプ',
-    description: 'えらんで、ぽん！ なかまたちで えを つくろう。',
-    href: 'ponpon-stamp/',
-  },
-  {
-    id: 'korokoro-suberidai',
-    title: 'ころころ、すべりだい',
-    description: 'たまを さわると、ころころ！',
-    href: 'korokoro-suberidai/',
-  },
-  {
-    id: 'kurukuru-kazaguruma',
-    title: 'くるくる、かざぐるま',
-    description: 'さわって、はらって。かぜを おくろう！',
-    href: 'kurukuru-kazaguruma/',
-  },
-  {
-    id: 'kasanete-iroglass',
-    title: 'かさねて、いろガラス',
-    description: 'うごかして、かさねて。いろが かわるよ！',
-    href: 'kasanete-iroglass/',
-  },
-  {
-    id: 'mizutamari',
-    title: 'みずたまり',
-    description: 'さわって、なぞって。みずの わが ひろがるよ。',
-    href: 'mizutamari/',
-  },
-];
+export const games: readonly Game[] = catalogue;

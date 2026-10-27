@@ -1,0 +1,10 @@
+{
+  "hosted-zone:account=209018279507:domainName=anipopina.com:privateZone=false:region=us-east-1": {
+    "Id": "/hostedzone/Z100947420XSLWOY8HP9I",
+    "Name": "anipopina.com."
+  },
+  "hosted-zone:account=209018279507:domainName=anipopina.com:privateZone=false:region=ap-northeast-1": {
+    "Id": "/hostedzone/Z100947420XSLWOY8HP9I",
+    "Name": "anipopina.com."
+  }
+}

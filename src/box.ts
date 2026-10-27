@@ -1,19 +1,6 @@
-import pinwheelRotor from './kurukuru-kazaguruma/assets/rotor.svg';
-import stampSquare from './assets/characters/shapes/01-coral-square.svg';
-import stampCyan from './assets/characters/shapes/02-cyan-circle.svg';
-import stampStar from './assets/characters/shapes/05-coral-star.svg';
-import stampPenguin from './assets/characters/aquarium/01-penguin.svg';
-import stampFish from './assets/characters/aquarium/02-clownfish.svg';
-import stampOctopus from './assets/characters/aquarium/05-octopus.svg';
 import { games } from './games';
-import pondGreen from './mizutamari/assets/leaf-green.webp';
-import pondTeal from './mizutamari/assets/leaf-teal.webp';
+import previews from 'virtual:game-previews';
 import { requireElement } from './shared/dom';
-import windowPreviewUrl from './assets/previews/fukifuki-mado.webp';
-import slidePreviewUrl from './assets/previews/korokoro-suberidai.svg';
-import balloonCyan from './pukapuka-fusen/assets/cyan.svg';
-import balloonStar from './pukapuka-fusen/assets/star.svg';
-import balloonTriangle from './pukapuka-fusen/assets/triangle.svg';
 
 const gamesContainer = requireElement('#games', HTMLDivElement);
 for (const game of games) {
@@ -21,47 +8,10 @@ for (const game of games) {
   card.className = 'game-card';
   card.href = game.href;
   const art = document.createElement('div');
-  art.className = 'garden-preview';
+  const preview = previews[game.id]();
+  art.className = preview.className;
   art.setAttribute('aria-hidden', 'true');
-  art.innerHTML =
-    '<span class="flower"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></span><span class="spark one">✦</span><span class="spark two">✧</span><span class="trail"></span>';
-  if (game.id === 'mizutamari') {
-    art.className = 'pond-preview';
-    art.innerHTML = `<i></i><img src="${pondGreen}" alt="" loading="lazy"><img src="${pondTeal}" alt="" loading="lazy">`;
-  }
-  if (game.id === 'fukifuki-mado') {
-    art.className = 'window-preview';
-    art.innerHTML = `<img src="${windowPreviewUrl}" alt="" loading="lazy"><span>ふきふき ✦</span>`;
-  }
-  if (game.id === 'pukapuka-fusen') {
-    art.className = 'balloon-preview';
-    art.innerHTML = `<img src="${balloonCyan}" alt="" loading="lazy"><img src="${balloonStar}" alt="" loading="lazy"><img src="${balloonTriangle}" alt="" loading="lazy">`;
-  }
-  if (game.id === 'ponpon-stamp') {
-    art.className = 'stamp-preview';
-    art.innerHTML = [
-      stampSquare,
-      stampCyan,
-      stampStar,
-      stampPenguin,
-      stampFish,
-      stampOctopus,
-    ]
-      .map((src) => `<img src="${src}" alt="" loading="lazy">`)
-      .join('');
-  }
-  if (game.id === 'korokoro-suberidai') {
-    art.className = 'slide-preview';
-    art.innerHTML = `<img src="${slidePreviewUrl}" width="480" height="550" alt="" loading="lazy">`;
-  }
-  if (game.id === 'kurukuru-kazaguruma') {
-    art.className = 'pinwheel-preview';
-    art.innerHTML = `<span></span><img src="${pinwheelRotor}" width="640" height="640" alt="" loading="lazy">`;
-  }
-  if (game.id === 'kasanete-iroglass') {
-    art.className = 'glass-preview';
-    art.innerHTML = '<i></i><i></i><i></i>';
-  }
+  art.innerHTML = preview.html;
   const copy = document.createElement('div');
   copy.className = 'card-copy';
   const title = document.createElement('h2');

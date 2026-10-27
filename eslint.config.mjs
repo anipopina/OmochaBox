@@ -5,10 +5,16 @@ import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier/flat';
 
 export default defineConfig(
-  globalIgnores(['dist/**', 'test-results/**', 'source-assets/**']),
+  globalIgnores([
+    'dist/**',
+    'test-results/**',
+    'source-assets/**',
+    'dist-production/**',
+    'cdk.out/**',
+  ]),
   js.configs.recommended,
   {
-    files: ['src/**/*.ts', 'vite.config.ts'],
+    files: ['src/**/*.ts', 'build/**/*.ts', 'infra/**/*.ts', 'vite.config.ts'],
     extends: [tseslint.configs.recommended],
   },
   {
@@ -16,7 +22,7 @@ export default defineConfig(
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['**/*.mjs', 'vite.config.ts'],
+    files: ['**/*.mjs', 'build/**/*.ts', 'infra/**/*.ts', 'vite.config.ts'],
     languageOptions: { globals: globals.node },
   },
   {

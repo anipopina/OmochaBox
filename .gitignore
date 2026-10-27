@@ -3,3 +3,5 @@ test-results/
 node_modules/
 tmp/
 *.zip
+dist-production/
+cdk.out/

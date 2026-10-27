@@ -21,7 +21,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 ## ページと素材の追加
 
 - 遊びは独立したページとし、`src/<slug>/index.html` に `<script type="module" src="app.ts"></script>` を記載します。ViteがHTMLを自動検出します。
-- 一覧への登録は [src/games.ts](../src/games.ts)、カードの図案は [src/box.ts](../src/box.ts) で管理します。
+- 一覧への登録は [src/games.json](../src/games.json)、カードの図案は `src/previews/<slug>.ts` で管理します。本番公開の選択は [config/production-games.json](../config/production-games.json)、AWSの手順は [infra/README.md](../infra/README.md) を参照してください。
 - 各遊びにREADMEを用意し、遊び方・状態の扱い・実装上の注意・素材の出典へのリンク・固有の確認項目を記載します。
 - `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。

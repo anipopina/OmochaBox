@@ -46,7 +46,7 @@ npm run dev
 ```text
 src/
   index.html, box.ts, box.css  遊びを選ぶ入口
-  games.ts                    遊びの一覧
+  games.json, games.ts        遊びの一覧
   <slug>/                     遊びごとの実装・素材・README
   assets/characters/          シリーズ別SVG（shapes・aquarium）
   shared/                     共通処理
@@ -59,7 +59,7 @@ docs/                         開発資料・過去の検証記録
 ## 遊びを追加する
 
 1. `src/<slug>/` に `index.html`・`app.ts`・`style.css`・`README.md` と必要な素材を追加します。
-2. `src/games.ts` に遊びを登録し、`src/box.ts` にカードの図案を追加します。
+2. `src/games.json` に遊びを登録し、`src/previews/<slug>.ts` にカードの図案を追加します。
 3. 遊び固有の検証と入口からの往復を確認し、`npm run check` と `npm test` を実行します。
 
 HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材の参照方法やページの共通要件は [開発ガイド](docs/development.md) を参照してください。
@@ -77,5 +77,7 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 
 ## 公開
 
-公開先は [おもちゃボックス（Sites）](https://omochabox.ryonchibi.chatgpt.site/) です。
-`npm run build` の出力 `dist/` を、[.openai/hosting.json](.openai/hosting.json) に記録された既存Sitesプロジェクトへソース同期・バージョン保存・デプロイします。
+- 検証用の [Sites](https://omochabox.ryonchibi.chatgpt.site/) は、`npm run build` の `dist/` を既存プロジェクトへ公開します。全遊びが対象です。
+- AWS本番は `https://omochabox.anipopina.com/`。公開対象は [config/production-games.json](config/production-games.json) の `true`／`false` で選びます。`npm run build:production` は対象の遊びだけを `dist-production/` に出力します。
+
+AWSの構成・初回準備とデプロイ手順は [infra/README.md](infra/README.md) を参照してください。

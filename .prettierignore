@@ -7,3 +7,5 @@ docs/
 AGENTS.md
 src/assets/characters/**/*.svg
 src/shared/icons/*.svg
+dist-production/
+cdk.out/
