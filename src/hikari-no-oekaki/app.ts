@@ -96,6 +96,7 @@ type Voice = FlowerVoice | SampleVoice;
   let lastSound = -Infinity;
   let sampleBuffer: AudioBuffer | null = null;
   let sampleStatus: 'idle' | 'loading' | 'ready' | 'failed' = 'idle',
+    sampleRetryAt = 0,
     nextSampleAt = 0;
   const clamp = (n: number, a: number, b: number) =>
     Math.max(a, Math.min(b, n));
@@ -433,7 +434,14 @@ type Voice = FlowerVoice | SampleVoice;
     nextSampleAt = 0;
   }
   function loadSample() {
-    if (sampleStatus !== 'idle' || !audio) return;
+    if (
+      !audio ||
+      document.hidden ||
+      sampleStatus === 'loading' ||
+      sampleStatus === 'ready' ||
+      performance.now() < sampleRetryAt
+    )
+      return;
     const context = audio;
     sampleStatus = 'loading';
     void fetch(sampleUrl)
@@ -448,6 +456,8 @@ type Voice = FlowerVoice | SampleVoice;
       })
       .catch(() => {
         sampleStatus = 'failed';
+        // Retry only on a later gesture, with a cooldown for rapid taps.
+        sampleRetryAt = performance.now() + 1000;
       });
     // Loading never schedules playback: only a current held gesture can play.
   }

@@ -18,6 +18,7 @@ const report = (message) => {
 let audioFailure = false,
   audioDelay = 0,
   audioRequests = 0;
+let audioResponseGate = null;
 let fogDelay = 0,
   fogFailure = false;
 const buildDirectory = join(root, 'test-results/build');
@@ -53,6 +54,7 @@ const server = createStaticServer(
     }
     if (pathname !== samplePath) return false;
     audioRequests++;
+    if (audioResponseGate) await audioResponseGate;
     if (audioDelay)
       await new Promise((resolve) => setTimeout(resolve, audioDelay));
     if (audioFailure) {
@@ -719,6 +721,133 @@ try {
     report(
       'MP3 exact bytes and audio/mpeg; single fetch/shared decode; no delayed play after first-load release; release tail bounded; HTTP503 keeps drawing functional PASS',
     );
+    const pressAudio = () =>
+      call('Input.dispatchMouseEvent', {
+        type: 'mousePressed',
+        x: 300,
+        y: 300,
+        button: 'left',
+        clickCount: 1,
+      });
+    const releaseAudio = () =>
+      call('Input.dispatchMouseEvent', {
+        type: 'mouseReleased',
+        x: 300,
+        y: 300,
+        button: 'left',
+        clickCount: 1,
+      });
+    const failedRequests = audioRequests;
+    await evaluate(`(()=>{
+      const canvas=document.querySelector('canvas');
+      for(let i=0;i<50;i++)for(const type of ['pointerdown','pointerup'])
+        canvas.dispatchEvent(new PointerEvent(type,{pointerId:99,pointerType:'touch',clientX:300,clientY:300}));
+    })()`);
+    assert.equal(
+      audioRequests,
+      failedRequests,
+      'Rapid taps respect retry cooldown',
+    );
+    await delay(1100);
+    await pressAudio();
+    await waitFor(`__test.snapshot().sampleStatus==='failed'`);
+    assert.equal(
+      audioRequests,
+      failedRequests + 1,
+      'One retry on next gesture',
+    );
+    await delay(1100);
+    assert.equal(
+      audioRequests,
+      failedRequests + 1,
+      'Holding never retries automatically',
+    );
+    await pointer('pointercancel', 300, 300, 1);
+    await releaseAudio();
+    audioFailure = false;
+    await pressAudio();
+    await waitFor(`__test.snapshot().samples.length>0`);
+    assert.equal(
+      audioRequests,
+      failedRequests + 2,
+      'Recovery fetches once without reload',
+    );
+    assert.equal((await state()).sampleStatus, 'ready');
+    await releaseAudio();
+    report(
+      'MP3: transient/continuous HTTP503, rapid-tap cooldown, no automatic hold retry, same-page recovery PASS',
+    );
+
+    for (const lifecycle of ['release', 'hidden', 'pagehide']) {
+      let completeResponse;
+      audioResponseGate = new Promise((resolve) => {
+        completeResponse = resolve;
+      });
+      await call('Page.reload');
+      await waitFor(
+        `document.readyState==='complete' && window.__test?.snapshot().sampleStatus==='idle'`,
+      );
+      await delay(100);
+      const requestsBefore = audioRequests;
+      await pressAudio();
+      await waitFor(`__test.snapshot().sampleStatus==='loading'`);
+      for (let i = 0; i < 10; i++) {
+        await pointer('pointerdown', 400, 300, 99);
+        await pointer('pointerup', 400, 300, 99);
+      }
+      assert.equal(
+        audioRequests,
+        requestsBefore + 1,
+        'Only one request while loading',
+      );
+      if (lifecycle === 'hidden') {
+        await evaluate(
+          `Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`,
+        );
+      } else if (lifecycle === 'pagehide') {
+        await evaluate(
+          `window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))`,
+        );
+      }
+      await releaseAudio();
+      const notesBefore = (await state()).notes.length;
+      completeResponse();
+      audioResponseGate = null;
+      await waitFor(`__test.snapshot().sampleStatus==='ready'`);
+      assert.equal((await state()).fingers, 0);
+      assert.equal((await state()).samples.length, 0);
+      assert.equal(
+        (await state()).notes.length,
+        notesBefore,
+        'Late load never starts sound',
+      );
+      if (lifecycle === 'hidden') {
+        await evaluate(
+          `delete document.hidden;document.dispatchEvent(new Event('visibilitychange'))`,
+        );
+      } else if (lifecycle === 'pagehide') {
+        await evaluate(
+          `window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))`,
+        );
+      }
+      await delay(100);
+      assert.equal(
+        (await state()).notes.length,
+        notesBefore,
+        'Restore alone stays silent',
+      );
+      await pressAudio();
+      await waitFor(`__test.snapshot().samples.length>0`);
+      assert.equal(
+        audioRequests,
+        requestsBefore + 1,
+        'Next gesture reuses decoded buffer',
+      );
+      await releaseAudio();
+    }
+    report(
+      'MP3: in-flight request shared; delayed completion after release/hidden/pagehide stays silent; next gesture recovers PASS',
+    );
     // Exercise the real hub → game → hub navigation and lifecycle cleanup.
     for (const [w, h] of [
       [320, 568],
@@ -786,6 +915,16 @@ try {
         await pointer('pointerup', 200, 250);
         assert.equal((await state()).flowers, 1);
         assert.equal(await evaluate('document.querySelector("#reset")'), null);
+        if (n === 0) {
+          await pressAudio();
+          await waitFor(`__test.snapshot().samples.length>0`);
+          assert.equal(
+            (await state()).sampleStatus,
+            'ready',
+            'Fresh entry can play MP3',
+          );
+          await releaseAudio();
+        }
         await evaluate('window.dispatchEvent(new Event("blur"))');
         const clean = await state();
         assert.equal(
