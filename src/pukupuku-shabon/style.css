@@ -65,14 +65,7 @@ body {
     0 3px 4px #25709918;
   animation: arrive 250ms ease-out;
 }
-.film::after {
-  content: '';
-  position: absolute;
-  inset: 14% 22% 58% 16%;
-  border-top: 5px solid white;
-  border-radius: 50%;
-  transform: rotate(-30deg);
-}
+
 .bubble.popping .film {
   animation: pop 380ms ease-out forwards;
 }
@@ -246,4 +239,9 @@ body {
       opacity: 0;
     }
   }
+}
+
+#field.paused .film,
+#field.paused .pop-glint {
+  animation-play-state: paused;
 }

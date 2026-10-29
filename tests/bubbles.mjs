@@ -153,6 +153,13 @@ try {
     });
     await visit();
     assert.equal(await count(), 1);
+    assert.equal(
+      await evaluate(
+        "getComputedStyle(document.querySelector('.film'),'::after').content",
+      ),
+      'none',
+      'Inner highlight line removed',
+    );
     assert.ok(
       await evaluate(
         'document.documentElement.scrollWidth<=innerWidth && document.documentElement.scrollHeight<=innerHeight',
@@ -241,10 +248,15 @@ try {
   await evaluate("window.dispatchEvent(new Event('blur'))");
   assert.equal(
     await evaluate("document.querySelectorAll('.pop-glint').length"),
-    0,
-    'Blur removes glints',
+    108,
+    'Blur preserves glints',
   );
-  assert.equal(await count(), 0);
+  assert.equal(await count(), 18, 'Blur preserves popping bubbles');
+  assert.ok(
+    await evaluate(
+      "getComputedStyle(document.querySelector('.film')).animationPlayState==='paused'",
+    ),
+  );
   await delay(50);
   assert.ok(
     await evaluate(
@@ -255,16 +267,97 @@ try {
   const idle = await evaluate('window.rafCalls');
   await delay(100);
   assert.equal(await evaluate('window.rafCalls'), idle);
+  await evaluate("window.dispatchEvent(new Event('focus'))");
+  await delay(450);
+  assert.equal(await count(), 0, 'Pops finish after resume');
   await touch('touchStart', [
     { x: 200, y: 200, id: 1 },
     { x: 500, y: 300, id: 2 },
   ]);
   await touch('touchEnd');
   assert.equal(await count(), 2, 'Two fingers create independently');
+  const positions = () =>
+    evaluate(
+      "[...document.querySelectorAll('.bubble')].map(b=>b.style.transform)",
+    );
+  await evaluate("window.dispatchEvent(new Event('blur'))");
+  const frozen = await positions();
+  const starts = await evaluate('soundStats.starts.length');
+  await delay(550);
+  assert.deepEqual(await positions(), frozen, 'Blur preserves exact positions');
+  assert.equal(await count(), 2);
+  await evaluate(
+    "Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));window.dispatchEvent(new Event('focus'))",
+  );
+  const hiddenRaf = await evaluate('window.rafCalls');
+  await delay(100);
+  assert.equal(
+    await evaluate('window.rafCalls'),
+    hiddenRaf,
+    'Focus cannot restart a hidden page',
+  );
+  assert.deepEqual(await positions(), frozen);
+  await evaluate(
+    "delete document.hidden;document.dispatchEvent(new Event('visibilitychange'))",
+  );
+  await delay(100);
+  const resumed = await positions();
+  assert.notDeepEqual(resumed, frozen, 'Existing bubbles drift again');
+  assert.equal(await count(), 2);
+  assert.equal(
+    await evaluate('soundStats.starts.length'),
+    starts,
+    'Resume itself stays silent',
+  );
+  await shot('bubbles-focus-resumed');
+  const originalTarget = (await call('Target.getTargetInfo')).targetInfo
+    .targetId;
+  const otherTarget = (
+    await call('Target.createTarget', { url: 'about:blank' })
+  ).targetId;
+  try {
+    await call('Target.activateTarget', { targetId: otherTarget });
+    await waitFor(
+      "document.hidden && document.querySelector('#field').classList.contains('paused')",
+    );
+    const tabPositions = await positions();
+    const tabRaf = await evaluate('window.rafCalls');
+    await delay(300);
+    assert.equal(await count(), 2, 'Real tab switch preserves bubbles');
+    assert.deepEqual(await positions(), tabPositions);
+    assert.equal(await evaluate('window.rafCalls'), tabRaf);
+    await call('Target.activateTarget', { targetId: originalTarget });
+    await waitFor(
+      "!document.hidden && !document.querySelector('#field').classList.contains('paused')",
+    );
+    await delay(100);
+    assert.equal(await count(), 2);
+    assert.notDeepEqual(
+      await positions(),
+      tabPositions,
+      'Real tab return resumes drifting',
+    );
+  } finally {
+    await call('Target.closeTarget', { targetId: otherTarget });
+  }
+
   await touch('touchStart', [{ x: 700, y: 500, id: 3 }]);
   await touch('touchCancel');
   await evaluate("window.dispatchEvent(new Event('pagehide'))");
-  assert.equal(await count(), 0);
+  assert.equal(
+    await count(),
+    3,
+    'Pagehide preserves bubbles for history restoration',
+  );
+  const away = await positions();
+  await delay(100);
+  assert.deepEqual(await positions(), away);
+  await evaluate("window.dispatchEvent(new Event('pageshow'))");
+  await delay(100);
+  assert.notDeepEqual(await positions(), away);
+  await visit();
+  await evaluate("document.querySelector('.bubble').click()");
+  await delay(450);
   await evaluate("document.querySelector('#create').focus()");
   await call('Input.dispatchKeyEvent', {
     type: 'keyDown',
@@ -312,7 +405,7 @@ try {
   await delay(120);
   assert.equal(await evaluate('window.rafCalls'), reducedIdle);
   await evaluate(
-    "Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;",
+    "Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));",
   );
   assert.equal(await count(), 0);
   await tap(160, 300);
@@ -337,7 +430,7 @@ try {
   assert.equal(await count(), 2, 'Audio unavailable does not block play');
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Bubbles PASS: 1000-input cap, multi-touch, keyboard, resize, reduced motion idle, blur/pagehide/hidden cleanup, hub/re-entry, single quiet voice/cooldown/audio failure fallback, bounded glints/cleanup/reduced motion, non-interactive clouds, zero JS exceptions',
+    'Bubbles PASS: 1000-input cap, multi-touch, keyboard, resize, reduced motion idle, real tab switch and blur/pagehide/hidden pause and resume, hub/re-entry, single quiet voice/cooldown/audio failure fallback, bounded glints/cleanup/reduced motion, non-interactive clouds, zero JS exceptions',
   );
   await writeFile(
     join(output, 'bubbles-results.txt'),

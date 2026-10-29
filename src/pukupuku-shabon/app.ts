@@ -28,17 +28,24 @@ let audio: AudioContext | undefined;
 let voice: OscillatorNode | undefined;
 let lastSound = -Infinity;
 let audioGeneration = 0;
+let pausedAt: number | null = null;
+let blurred = false;
+let pageAway = false;
 
 // One quiet voice, with a global cooldown even when several fingers tap.
 async function sound(pop: boolean) {
   const now = performance.now();
-  if (now - lastSound < 140 || document.hidden) return;
+  if (now - lastSound < 140 || document.hidden || pausedAt !== null) return;
   lastSound = now;
   const generation = audioGeneration;
   try {
     audio ??= new AudioContext();
     if (audio.state !== 'running') await audio.resume();
-    if (generation !== audioGeneration || document.hidden || voice) return;
+    if (pausedAt !== null || document.hidden) {
+      await audio.suspend();
+      return;
+    }
+    if (generation !== audioGeneration || voice) return;
     const oscillator = audio.createOscillator();
     const gain = audio.createGain();
     const t = audio.currentTime;
@@ -76,7 +83,7 @@ function position(b: Bubble) {
   b.element.style.transform = `translate(${b.x - b.radius}px, ${b.y - b.radius}px)`;
 }
 function wake() {
-  if (!raf && !document.hidden) {
+  if (!raf && !document.hidden && pausedAt === null) {
     lastFrame = performance.now();
     raf = requestAnimationFrame(frame);
   }
@@ -104,10 +111,10 @@ function frame(now: number) {
     raf = requestAnimationFrame(frame);
 }
 function pop(b: Bubble) {
-  if (b.pop !== null) return;
+  if (b.pop !== null || pausedAt !== null) return;
   b.pop = performance.now();
   b.element.classList.add('popping');
-  // Glints belong to the capped bubble, so eviction and lifecycle cleanup
+  // Glints belong to the capped bubble, so eviction and completed pops
   // remove every effect without timers or a second animation loop.
   const count = reduced.matches ? 3 : 6;
   for (let i = 0; i < count; i++) {
@@ -129,7 +136,7 @@ function pop(b: Bubble) {
   wake();
 }
 function spawn(x: number, y: number, audible = true) {
-  if (document.hidden) return;
+  if (document.hidden || pausedAt !== null) return;
   if (bubbles.length >= 18) remove(bubbles[0]);
   const radius = [48, 64, 80][serial % 3];
   const color = colors[serial++ % colors.length];
@@ -174,19 +181,46 @@ create.addEventListener('pointerdown', (e) => {
 create.addEventListener('click', (e) => {
   if (e.detail === 0) spawn(field.clientWidth * 0.5, field.clientHeight * 0.6);
 });
-function reset() {
+function pause() {
+  if (pausedAt === null) pausedAt = performance.now();
+  field.classList.add('paused');
   cancelAnimationFrame(raf);
   raf = 0;
-  for (const b of [...bubbles]) remove(b);
   audioGeneration++;
   voice?.stop();
   voice = undefined;
   if (audio && audio.state === 'running') void audio.suspend().catch(() => {});
 }
-window.addEventListener('pagehide', reset);
-window.addEventListener('blur', reset);
+function resume() {
+  if (document.hidden || blurred || pageAway || pausedAt === null) return;
+  const elapsed = performance.now() - pausedAt;
+  // Keep the remaining pop lifetime aligned with the paused CSS animation.
+  for (const b of bubbles) if (b.pop !== null) b.pop += elapsed;
+  pausedAt = null;
+  field.classList.remove('paused');
+  wake();
+  // Sound resumes only on the next explicit gesture, never on focus alone.
+}
+window.addEventListener('blur', () => {
+  blurred = true;
+  pause();
+});
+window.addEventListener('focus', () => {
+  blurred = false;
+  resume();
+});
+window.addEventListener('pagehide', () => {
+  pageAway = true;
+  pause();
+});
+window.addEventListener('pageshow', () => {
+  pageAway = false;
+  blurred = !document.hasFocus();
+  resume();
+});
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) reset();
+  if (document.hidden) pause();
+  else resume();
 });
 window.addEventListener('resize', () => {
   for (const b of bubbles) {
