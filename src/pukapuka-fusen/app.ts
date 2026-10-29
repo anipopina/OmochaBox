@@ -4,6 +4,8 @@ import cyan from './assets/cyan.svg';
 import purple from './assets/purple.svg';
 import triangle from './assets/triangle.svg';
 import star from './assets/star.svg';
+import square from './assets/square.svg';
+import rectangle from './assets/rectangle.svg';
 import { FLIGHT_MS, MAX_BALLOONS, growth, flightPosition } from './model';
 import type { Flight } from './model';
 
@@ -12,7 +14,7 @@ const sky = requireElement('#sky', HTMLDivElement);
 const held = requireElement('#held', HTMLImageElement);
 const status = requireElement('#status', HTMLParagraphElement);
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-const artwork = [cyan, star, triangle, purple];
+const artwork = [cyan, star, triangle, purple, square, rectangle];
 const flights: (Flight & { element: HTMLImageElement })[] = [];
 let next = 0;
 let sequence = 0;

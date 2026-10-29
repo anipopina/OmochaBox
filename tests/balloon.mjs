@@ -4,6 +4,19 @@ import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createStaticServer } from './static-server.mjs';
+import { FLIGHT_MS, flightPosition } from '../src/pukapuka-fusen/model.ts';
+
+const expiryFlight = { born: 100, size: 100, lane: 0 };
+for (const reduced of [false, true]) {
+  assert.equal(
+    flightPosition(expiryFlight, 100 + FLIGHT_MS - 1, 320, 568, reduced).done,
+    false,
+  );
+  assert.equal(
+    flightPosition(expiryFlight, 100 + FLIGHT_MS, 320, 568, reduced).done,
+    true,
+  );
+}
 
 const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'balloon-browser-'));
@@ -313,13 +326,35 @@ try {
   );
 
   await visit();
+  const cycle = [];
+  for (let i = 0; i < 7; i++) {
+    const source = await evaluate(
+      `(async()=>{const image=document.querySelector('#held');await image.decode();return image.src})()`,
+    );
+    cycle.push(source);
+    if (i < 6) await shot(`balloon-variant-${i + 1}`);
+    await evaluate(`document.querySelector('#pump').click()`);
+  }
+  assert.equal(
+    new Set(cycle.slice(0, 6)).size,
+    6,
+    'Six distinct decoded variants',
+  );
+  assert.equal(
+    cycle[6],
+    cycle[0],
+    'Variant sequence repeats after six launches',
+  );
   const sources = await evaluate(
     `(()=>{const set=new Set();for(let i=0;i<200;i++){document.querySelector('#pump').click();set.add(document.querySelector('.balloon:last-child').src)}return [...set]})()`,
   );
-  assert.equal(sources.length, 4, 'Four distinct assets repeat');
+  assert.equal(sources.length, 6, 'Six distinct assets repeat');
   assert.equal(await count(), 18, '200 launches bounded at 18 nodes');
-  await delay(9800);
-  assert.equal(await count(), 0, 'Expired balloons removed');
+  await delay(FLIGHT_MS + 300);
+  // Expiry cleanup runs in RAF. Wall-clock sleep alone does not guarantee that
+  // Chromium delivered a frame, especially while capturing other pages.
+  await evaluate('new Promise(resolve => requestAnimationFrame(resolve))');
+  assert.equal(await count(), 0, 'Expired balloons removed on the next frame');
   const frames = await evaluate('window.rafCalls');
   await delay(250);
   assert.equal(await evaluate('window.rafCalls'), frames, 'Idle loop stops');
@@ -344,7 +379,7 @@ try {
     'false',
   );
   report(
-    'Balloon: four variants, 200 launches / 18-node cap, 9.5s expiry, idle and held-max RAF stop, synthetic hidden cleanup PASS',
+    'Balloon: six variants, 200 launches / 18-node cap, 9.5s expiry, idle and held-max RAF stop, synthetic hidden cleanup PASS',
   );
 
   await call('Emulation.setEmulatedMedia', {

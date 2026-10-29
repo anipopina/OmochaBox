@@ -188,10 +188,10 @@ try {
     await waitFor(
       `document.querySelector('#friend').dataset.phase==='offering'`,
     );
-    await delay(510);
-    assert.ok(
-      await evaluate(`document.querySelector('#flying-food').hidden`),
-      'Food crosses into mouth clip',
+    // Model time advances on RAF and caps long deltas. A 510ms host sleep
+    // can finish before the mouth transition when Chromium drops frames.
+    await waitFor(
+      `document.querySelector('#friend').dataset.phase==='offering' && document.querySelector('#flying-food').hidden`,
     );
     await shot(`mogu-${food}-mouth`);
     await waitFor(
