@@ -52,5 +52,11 @@
     "title": "もぐもぐともだち",
     "description": "たべものを どうぞ。もぐもぐ、にっこり！",
     "href": "mogumogu-tomodachi/"
+  },
+  {
+    "id": "pukupuku-shabon",
+    "title": "ぷくぷくシャボン",
+    "description": "さわって ぷくっ。もういちど ぽこん。",
+    "href": "pukupuku-shabon/"
   }
 ]

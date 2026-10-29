@@ -671,3 +671,15 @@ footer p {
   height: 58px;
   object-fit: contain;
 }
+
+.bubble-preview {
+  height: 190px;
+  flex: none;
+  overflow: hidden;
+  background: linear-gradient(#289df1, #68d3f5);
+}
+.bubble-preview svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

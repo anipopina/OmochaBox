@@ -1,0 +1,249 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #46b9f5;
+}
+#field {
+  position: relative;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 90% 0%, #fff9c7 0%, transparent 22%),
+    linear-gradient(#289df1, #68d3f5);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#create {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  touch-action: none;
+}
+#bubbles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.bubble {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 50%;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.film {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid #ffffffee;
+  background:
+    radial-gradient(ellipse at 29% 25%, #fff 0 5%, #ffffff00 10%),
+    radial-gradient(ellipse at 70% 75%, #ffe996aa, #ffffff00 42%),
+    radial-gradient(
+      circle at 40% 38%,
+      #ffffff55 30%,
+      var(--tint) 89%,
+      #ffffffcc 94%
+    );
+  box-shadow:
+    inset 4px 5px 7px #fff,
+    inset -4px -5px 8px var(--rim),
+    0 3px 4px #25709918;
+  animation: arrive 250ms ease-out;
+}
+.film::after {
+  content: '';
+  position: absolute;
+  inset: 14% 22% 58% 16%;
+  border-top: 5px solid white;
+  border-radius: 50%;
+  transform: rotate(-30deg);
+}
+.bubble.popping .film {
+  animation: pop 380ms ease-out forwards;
+}
+.bubble:focus-visible {
+  outline: 4px solid #7449ae;
+  outline-offset: 6px;
+}
+#create:focus-visible {
+  outline: 4px solid #7449ae;
+  outline-offset: -5px;
+}
+@keyframes arrive {
+  from {
+    transform: scale(0.55);
+    opacity: 0.35;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.16, 0.7);
+    opacity: 1;
+  }
+  65% {
+    transform: scale(1.1);
+    background: transparent;
+    box-shadow: none;
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .film {
+    animation: none;
+  }
+  .bubble.popping .film {
+    animation: fade 180ms forwards;
+  }
+}
+@keyframes fade {
+  to {
+    opacity: 0;
+  }
+}
+
+.film::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    #fffbb5,
+    #ffc8ed,
+    #b9c6ff,
+    #94f2ef,
+    #fff9b0,
+    #f7b1e8,
+    #b3d5ff,
+    #fffbb5
+  );
+  mask-image: radial-gradient(circle, transparent 51%, #0009 62%, #000 70%);
+}
+
+.clouds {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.clouds i {
+  position: absolute;
+  width: clamp(170px, 28vw, 360px);
+  height: clamp(90px, 14vw, 160px);
+  opacity: 0.65;
+  background:
+    radial-gradient(
+      ellipse 28% 38% at 50% 40%,
+      #fff 65%,
+      #ffffffbb 80%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 24% 27% at 25% 65%,
+      #fff 65%,
+      #ffffffaa 80%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 24% 27% at 75% 65%,
+      #fff 65%,
+      #ffffffaa 80%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 42% 26% at 50% 70%,
+      #fff 65%,
+      #ffffffaa 80%,
+      transparent 100%
+    );
+}
+.clouds i:nth-child(1) {
+  left: -80px;
+  top: 19%;
+  transform: rotate(-8deg);
+}
+.clouds i:nth-child(2) {
+  right: -85px;
+  top: 37%;
+  transform: scale(0.85) rotate(10deg);
+  opacity: 0.5;
+}
+.clouds i:nth-child(3) {
+  left: -45px;
+  bottom: -18px;
+}
+.clouds i:nth-child(4) {
+  right: -50px;
+  bottom: 7%;
+  transform: scale(0.9);
+  opacity: 0.55;
+}
+.pop-glint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
+  border-radius: 50%;
+  background: #fffbc2;
+  border: 1px solid #fff;
+  pointer-events: none;
+  opacity: 0;
+  animation: glint 270ms 100ms ease-out forwards;
+}
+.pop-glint:nth-child(2n) {
+  width: 8px;
+  height: 8px;
+  background: #ffe0f4;
+}
+@keyframes glint {
+  from {
+    opacity: 0.9;
+    transform: translate(var(--start-x), var(--start-y)) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--end-x), var(--end-y)) scale(0.4);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop-glint {
+    animation: glint-still 160ms ease-out forwards;
+    transform: translate(var(--start-x), var(--start-y));
+  }
+  @keyframes glint-still {
+    from {
+      opacity: 0.65;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}

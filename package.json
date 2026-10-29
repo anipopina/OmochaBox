@@ -15,7 +15,7 @@
     "build:test": "vite build --mode test",
     "test:home-button": "node tests/home-button.mjs",
     "test:stamp-boundaries": "node tests/stamp-pagination-boundaries.mjs",
-    "test": "npm run build && npm run build:production && npm run test:publication && npm run test:infra && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/home-button.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs && node tests/pond.mjs && node tests/mogumogu.mjs",
+    "test": "npm run build && npm run build:production && npm run test:publication && npm run test:infra && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/home-button.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs && node tests/pond.mjs && node tests/mogumogu.mjs && node tests/bubbles.mjs",
     "build:production": "npm run typecheck && vite build --mode aws",
     "preview:production": "vite preview --mode aws",
     "infra:synth": "npm run build:production && node infra/cli.mjs synth",
