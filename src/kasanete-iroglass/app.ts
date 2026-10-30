@@ -7,6 +7,17 @@ const board = requireElement('#lightbox', HTMLDivElement);
 const status = requireElement('#status', HTMLParagraphElement);
 const colors = ['#00d8f5', '#ffe900', '#ff26bd'];
 const names = ['まる', 'しかく', 'さんかく'];
+const tapSelection =
+  new URLSearchParams(location.search).get('trial') === 'select';
+let pending: {
+  id: number;
+  x: number;
+  y: number;
+  shape: number;
+  hits: number[];
+} | null = null;
+let armed: number | null = null;
+let lastTap: { x: number; y: number; key: string } | null = null;
 let positions = [
   { x: 0.5, y: 0.5 },
   { x: 0.5, y: 0.5 },
@@ -93,15 +104,18 @@ function draw() {
   canvas.dataset.selected = String(selected);
   canvas.dataset.dragging = String(!!drag);
 }
-function select(i: number) {
+function select(i: number, front = true) {
   selected = i;
-  order = order.filter((value) => value !== i).concat(i);
+  if (front) order = order.filter((value) => value !== i).concat(i);
   status.textContent = `${names[i]}を えらんだよ`;
   draw();
 }
 function stop() {
-  const old = drag;
+  const old = drag ?? pending;
   drag = null;
+  pending = null;
+  armed = null;
+  lastTap = null;
   if (old && canvas.hasPointerCapture(old.id))
     canvas.releasePointerCapture(old.id);
   draw();
@@ -122,9 +136,10 @@ function point(event: PointerEvent) {
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 canvas.addEventListener('pointerdown', (event) => {
-  if (drag || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  if (drag || pending || (event.pointerType === 'mouse' && event.button !== 0))
+    return;
   const q = point(event);
-  const i = [...order].reverse().find((n) => {
+  const hits = [...order].reverse().filter((n) => {
     const p = positions[n]!;
     return ctx.isPointInPath(
       path(n, p.x * width, p.y * height),
@@ -132,9 +147,27 @@ canvas.addEventListener('pointerdown', (event) => {
       q.y * devicePixelRatio,
     );
   });
-  if (i === undefined) return;
+  const i = hits[0];
+  if (i === undefined) {
+    if (tapSelection) {
+      armed = null;
+      lastTap = null;
+    }
+    return;
+  }
   event.preventDefault();
   canvas.focus({ preventScroll: true });
+  if (tapSelection) {
+    pending = {
+      id: event.pointerId,
+      x: q.x,
+      y: q.y,
+      shape: armed !== null && hits.includes(armed) ? armed : i,
+      hits,
+    };
+    canvas.setPointerCapture(event.pointerId);
+    return;
+  }
   select(i);
   const p = positions[i]!;
   drag = {
@@ -147,6 +180,21 @@ canvas.addEventListener('pointerdown', (event) => {
   draw();
 });
 canvas.addEventListener('pointermove', (event) => {
+  if (pending && event.pointerId === pending.id) {
+    const q = point(event);
+    if (Math.hypot(q.x - pending.x, q.y - pending.y) <= 10) return;
+    const p = positions[pending.shape]!;
+    drag = {
+      id: pending.id,
+      shape: pending.shape,
+      dx: pending.x - p.x * width,
+      dy: pending.y - p.y * height,
+    };
+    pending = null;
+    armed = null;
+    lastTap = null;
+    select(drag.shape);
+  }
   if (!drag || event.pointerId !== drag.id) return;
   const q = point(event);
   positions[drag.shape] = {
@@ -156,9 +204,30 @@ canvas.addEventListener('pointermove', (event) => {
   bound(drag.shape);
   draw();
 });
+canvas.addEventListener('pointerup', (event) => {
+  if (!pending || event.pointerId !== pending.id) return;
+  const p = pending,
+    q = point(event);
+  pending = null;
+  if (Math.hypot(q.x - p.x, q.y - p.y) <= 10) {
+    const key = p.hits.join(',');
+    const repeated =
+      lastTap?.key === key &&
+      Math.hypot(p.x - lastTap.x, p.y - lastTap.y) <= 24;
+    const index = repeated ? (p.hits.indexOf(selected) + 1) % p.hits.length : 0;
+    armed = p.hits[index];
+    select(armed, false);
+    lastTap = { x: p.x, y: p.y, key };
+  } else {
+    armed = null;
+    lastTap = null;
+  }
+  if (canvas.hasPointerCapture(event.pointerId))
+    canvas.releasePointerCapture(event.pointerId);
+});
 for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) {
   canvas.addEventListener(name, (event) => {
-    if ((event as PointerEvent).pointerId === drag?.id) stop();
+    if ((event as PointerEvent).pointerId === (drag?.id ?? pending?.id)) stop();
   });
 }
 canvas.addEventListener('keydown', (event) => {
