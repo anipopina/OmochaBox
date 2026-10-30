@@ -6,7 +6,13 @@ import triangle from './assets/triangle.svg';
 import star from './assets/star.svg';
 import square from './assets/square.svg';
 import rectangle from './assets/rectangle.svg';
-import { FLIGHT_MS, MAX_BALLOONS, growth, flightPosition } from './model';
+import {
+  FLIGHT_MS,
+  MAX_BALLOONS,
+  growth,
+  flightPosition,
+  kickFlight,
+} from './model';
 import type { Flight } from './model';
 
 const pump = requireElement('#pump', HTMLButtonElement);
@@ -51,6 +57,9 @@ function tick(now: number) {
       continue;
     }
     flight.element.style.transform = `translate(${position.x}px, ${position.y}px) translate(-50%, -100%) rotate(${position.tilt}deg)`;
+    flight.element.dataset.tapped = String(
+      !!flight.kick && now - flight.kick.at < 180,
+    );
     // Reduced motion uses a short, gentle reveal at rest, then fades away.
     if (motion.matches) {
       flight.element.style.transform = `translate(${width / 2 + flight.lane * width * 0.3}px, ${height * 0.48}px) translate(-50%, -50%)`;
@@ -85,7 +94,10 @@ function finish(launch: boolean) {
   if (launch) {
     const element = document.createElement('img');
     element.src = artwork[next];
-    element.alt = '';
+    element.alt = 'ふうせんを はじく';
+    element.setAttribute('role', 'button');
+    element.tabIndex = 0;
+    element.draggable = false;
     element.className = 'balloon';
     element.style.width = `${currentSize}px`;
     const lane = [-0.82, 0.84, -0.38, 0.42, 0][sequence++ % 5];
@@ -94,7 +106,37 @@ function finish(launch: boolean) {
       ? `translate(${width / 2 + lane * width * 0.3}px, ${height * 0.48}px) translate(-50%, -50%)`
       : `translate(${width / 2}px, ${height}px) translate(-50%, -100%)`;
     sky.append(element);
-    flights.push({ element, born: now, size: currentSize, lane });
+    const flight = { element, born: now, size: currentSize, lane };
+    flights.push(flight);
+    const kick = (clientX?: number) => {
+      if (document.hidden) return;
+      const r = element.getBoundingClientRect();
+      const direction =
+        clientX === undefined
+          ? lane < 0
+            ? 1
+            : -1
+          : clientX < r.x + r.width / 2
+            ? 1
+            : -1;
+      kickFlight(flight, performance.now(), direction, motion.matches);
+      status.textContent = 'ふうせんを はじいたよ';
+      wake();
+    };
+    element.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      kick(event.clientX);
+    });
+    element.addEventListener('keydown', (event) => {
+      if (event.code === 'Enter' || event.code === 'Space') {
+        event.preventDefault();
+        if (!event.repeat) kick();
+      }
+    });
+    element.addEventListener('click', (event) => {
+      if (event.detail === 0) kick();
+    });
     if (flights.length > MAX_BALLOONS) flights.shift()?.element.remove();
     next = (next + 1) % artwork.length;
     held.src = artwork[next];

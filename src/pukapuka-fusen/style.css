@@ -92,6 +92,9 @@ main {
   filter: drop-shadow(0 0 12px #fff) drop-shadow(0 0 4px #ffdf00);
 }
 .balloon {
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
   left: 0;
   top: 0;
   will-change: transform;
@@ -242,4 +245,13 @@ main {
   --home-button-border: #10194c;
   --home-button-focus: #8523bf;
   --home-button-shadow: 0 4px 0 #10194c;
+}
+
+.balloon[data-tapped='true'] {
+  filter: drop-shadow(0 0 5px white);
+}
+.balloon:focus-visible {
+  outline: 4px solid #8523bf;
+  outline-offset: 3px;
+  border-radius: 40%;
 }

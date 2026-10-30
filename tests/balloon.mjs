@@ -4,7 +4,11 @@ import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createStaticServer } from './static-server.mjs';
-import { FLIGHT_MS, flightPosition } from '../src/pukapuka-fusen/model.ts';
+import {
+  FLIGHT_MS,
+  flightPosition,
+  kickFlight,
+} from '../src/pukapuka-fusen/model.ts';
 
 const expiryFlight = { born: 100, size: 100, lane: 0 };
 for (const reduced of [false, true]) {
@@ -18,6 +22,19 @@ for (const reduced of [false, true]) {
   );
 }
 
+const nudged = { born: 0, size: 100, lane: 0 };
+kickFlight(nudged, 100, 1, false);
+assert.ok(flightPosition(nudged, 400, 390, 600, false).x > 195);
+kickFlight(nudged, 500, -1, false);
+assert.ok(
+  flightPosition(nudged, 800, 390, 600, false).x <
+    flightPosition(nudged, 500, 390, 600, false).x,
+);
+for (let i = 0; i < 1000; i++) kickFlight(nudged, 1000 + i, 1, false);
+assert.equal(nudged.size, 100);
+assert.equal(nudged.born, 0);
+assert.ok(flightPosition(nudged, 8000, 390, 600, false).x <= 340);
+assert.equal(flightPosition(nudged, FLIGHT_MS, 390, 600, false).done, true);
 const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'balloon-browser-'));
 const output = join(root, 'test-results');
@@ -193,6 +210,33 @@ try {
     await delay(70);
     await mouse('mouseReleased', p);
     assert.equal(await count(), 1, 'Short tap launches');
+    const hit = await evaluate(
+      "(()=>{const e=document.querySelector('.balloon'),r=e.getBoundingClientRect();return {x:r.x+r.width*.25,y:r.y+r.height*.35}})()",
+    );
+    const originalSize = await evaluate(
+      "document.querySelector('.balloon').style.width",
+    );
+    await mouse('mousePressed', hit);
+    await mouse('mouseReleased', hit);
+    await delay(30);
+    assert.equal(
+      await evaluate("document.querySelector('.balloon').dataset.tapped"),
+      'true',
+      'Flying balloon receives direct tap',
+    );
+    assert.equal(
+      await evaluate(
+        "document.querySelector('#pump').getAttribute('aria-pressed')",
+      ),
+      'false',
+    );
+    assert.equal(await count(), 1, 'Kick cannot inflate or spawn');
+    assert.equal(
+      await evaluate("document.querySelector('.balloon').style.width"),
+      originalSize,
+      'Kick does not enlarge',
+    );
+    await shot(`balloon-kicked-${width}`);
     assert.ok(
       await evaluate(
         `document.querySelector('.balloon').getBoundingClientRect().width>=40`,
@@ -397,6 +441,7 @@ try {
   const transform = await evaluate(
     `document.querySelector('.balloon').style.transform`,
   );
+  await evaluate("document.querySelector('.balloon').click()");
   await delay(300);
   assert.equal(
     await evaluate(`document.querySelector('.balloon').style.transform`),
