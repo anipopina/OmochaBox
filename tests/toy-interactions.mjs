@@ -7,7 +7,6 @@ import { tmpdir } from 'node:os';
 import { createStaticServer } from './static-server.mjs';
 
 const pond = new Pond();
-pond.carry = true;
 pond.resize(390, 844);
 let now = 0;
 const settle = () => {
@@ -193,7 +192,12 @@ try {
     deviceScaleFactor: 1,
     mobile: true,
   });
-  await visit('/kasanete-iroglass/?trial=select');
+  await visit('/');
+  await evaluate(
+    `document.querySelector('a[href="kasanete-iroglass/"]').click()`,
+  );
+  await waitFor("document.querySelector('#glass')?.dataset.ready==='true'");
+  assert.equal(await evaluate('location.search'), '');
   const r = await rect();
   const radius = 190;
   for (const [i, x, y] of [
@@ -226,7 +230,7 @@ try {
       'Selection preserves mixed color and position',
     );
   }
-  await shot('trial-glass-selected');
+  await shot('interaction-glass-selected');
   await touch('touchStart', [{ x: 640, y: 450, id: 1 }]);
   await touch('touchMove', [{ x: 940, y: 450, id: 1 }]);
   assert.equal(
@@ -242,7 +246,7 @@ try {
     mixed,
     'Plate really moved out of overlap',
   );
-  await shot('trial-glass-extracted');
+  await shot('interaction-glass-extracted');
   await touch('touchStart', [{ x: 640, y: 450, id: 1 }]);
   await touch('touchCancel');
   assert.equal(await selected(), '0', 'Canceled tap cannot cycle');
@@ -276,13 +280,16 @@ try {
       deviceScaleFactor: 2,
       mobile: true,
     });
-    await visit('/kasanete-iroglass/?trial=select');
+    await visit('/kasanete-iroglass/');
     await touch('touchStart', [{ x: width / 2, y: height / 2, id: 1 }]);
     await touch('touchEnd');
     assert.ok(['0', '1', '2'].includes(await selected()));
-    await shot(`trial-glass-${width}`);
+    await shot(`interaction-glass-${width}`);
   }
-  await visit('/mizutamari/?trial=carry');
+  await visit('/');
+  await evaluate(`document.querySelector('a[href="mizutamari/"]').click()`);
+  await waitFor("document.querySelector('canvas')?.dataset.ready==='true'");
+  assert.equal(await evaluate('location.search'), '');
   const before = await data();
   await touch('touchStart', [{ x: 568 * 0.22 - 40, y: 320 * 0.24, id: 1 }]);
   await touch('touchEnd');
@@ -298,11 +305,11 @@ try {
   );
   await evaluate("window.dispatchEvent(new Event('blur'))");
   assert.equal(await data(), carried, 'Blur keeps settled leaf positions');
-  await shot('trial-pond-carried');
+  await shot('interaction-pond-carried');
   await call('Emulation.setEmulatedMedia', {
     features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
   });
-  await visit('/mizutamari/?trial=carry');
+  await visit('/mizutamari/');
   const reduced = await data();
   await touch('touchStart', [{ x: 85, y: 77, id: 1 }]);
   await touch('touchEnd');
@@ -310,10 +317,10 @@ try {
   assert.equal(await data(), reduced, 'Reduced motion disables leaf transport');
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Trials PASS: three-plate tap cycle, unchanged overlap color, lower plate extraction, direct drag, cancel/blur, six viewports, idle; pond persistent transport, blur retention, reduced motion, idle; no JS errors',
+    'Interactions PASS: three-plate tap cycle, unchanged overlap color, lower plate extraction, direct drag, cancel/blur, six viewports, idle; pond persistent transport, blur retention, reduced motion, idle; no JS errors',
   );
   await writeFile(
-    join(output, 'toy-trials-results.txt'),
+    join(output, 'toy-interactions-results.txt'),
     reports.join('\n') + '\n',
   );
 } finally {

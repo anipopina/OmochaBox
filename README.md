@@ -16,7 +16,7 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [かさねて、いろガラス](src/kasanete-iroglass/README.md) | 3枚の色板を動かして重なる色を楽しむ遊び |
 
-| [みずたまり](src/mizutamari/README.md) | 水面を触って波紋を重ね、浮き葉を揺らす遊び |
+| [みずたまり](src/mizutamari/README.md) | 水面を触って波紋を重ね、浮き葉を少しずつ運ぶ遊び |
 
 | [もぐもぐともだち](src/mogumogu-tomodachi/README.md) | たべものをあげて、もぐもぐと笑顔を楽しむ遊び |
 
@@ -81,7 +81,7 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 
 ## 公開
 
-- 検証用の [Sites](https://omochabox.ryonchibi.chatgpt.site/) は、`npm run build` の `dist/` を既存プロジェクトへ公開します。全遊びが対象です。
+- 検証用の [Sites](https://omochabox.ryonchibi.chatgpt.site/) は、`npm run build` の `dist/` を既存プロジェクトへ公開します。全遊びが対象で、改善中の操作も通常の入口・URLから確認します。
 - AWS本番は `https://omochabox.anipopina.com/`。公開対象は [config/production-games.json](config/production-games.json) の `true`／`false` で選びます。`npm run build:production` は対象の遊びだけを `dist-production/` に出力します。
 
 AWSの構成・初回準備とデプロイ手順は [infra/README.md](infra/README.md) を参照してください。

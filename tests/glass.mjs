@@ -191,7 +191,7 @@ try {
         id: 1,
       },
     ]);
-    assert.equal(await dragging(), 'true');
+    assert.equal(await dragging(), 'false', 'Touch starts as a pending tap');
     await touch('touchMove', [
       {
         x: r.x + r.w * 0.5 - radius * 0.55 + 32,
@@ -199,6 +199,7 @@ try {
         id: 1,
       },
     ]);
+    assert.equal(await dragging(), 'true', 'Movement starts a drag');
     await touch('touchEnd');
     assert.notEqual(await data(), before);
     assert.equal(await dragging(), 'false');
@@ -244,7 +245,7 @@ try {
       { x: r.x + r.w * 0.5, y: r.y + r.h * 0.5, id: 1 },
     ]);
     assert.equal(await selected(), String(i));
-    assert.equal(await dragging(), 'true');
+    assert.equal(await dragging(), 'false', 'Touch starts as a pending tap');
     await touch('touchCancel');
     assert.equal(await dragging(), 'false');
   }
@@ -262,17 +263,22 @@ try {
   await touch('touchStart', [hintPoint]);
   assert.equal(
     await dragging(),
-    'true',
-    'A plate beneath the hint can be grabbed',
+    'false',
+    'A plate beneath the hint can be touched',
   );
   await touch('touchMove', [{ ...hintPoint, y: hintPoint.y - 70 }]);
+  assert.equal(await dragging(), 'true');
   await touch('touchEnd');
   await reset();
   // Directly grabbing an exposed other plate changes selection naturally.
   await touch('touchStart', [
     { x: r.x + r.w * 0.82, y: r.y + r.h * 0.5, id: 1 },
   ]);
+  await touch('touchMove', [
+    { x: r.x + r.w * 0.82 - 20, y: r.y + r.h * 0.5, id: 1 },
+  ]);
   assert.equal(await selected(), '1');
+  assert.equal(await dragging(), 'true');
   await touch('touchCancel');
   const frozen = await data();
   await touch('touchStart', [{ x: r.x + 3, y: r.y + 3, id: 1 }]);

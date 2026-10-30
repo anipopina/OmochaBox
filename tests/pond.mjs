@@ -20,7 +20,7 @@ assert.equal(
   false,
   'Leaves converge and RAF can stop',
 );
-assert.ok(model.leaves.every((l) => l.x === l.homeX && l.y === l.homeY));
+assert.ok(model.leaves.every((l) => l.vx === 0 && l.vy === 0));
 model.reduced = true;
 model.splash(90, 200, 20000);
 assert.ok(model.leaves.every((l) => l.vx === 0 && l.spin === 0));
@@ -219,7 +219,11 @@ try {
     'Canceled finger cannot create new ripples',
   );
   await evaluate(`window.dispatchEvent(new Event('blur'))`);
-  assert.equal(await data(), initial, 'Blur clears water and returns leaves');
+  assert.equal(
+    await data(),
+    canceledScene,
+    'Blur preserves transported leaves',
+  );
   const idle = await evaluate('window.rafCalls');
   await delay(200);
   assert.equal(await evaluate('window.rafCalls'), idle, 'Idle RAF stopped');
@@ -228,30 +232,37 @@ try {
     `document.querySelector('canvas').dispatchEvent(new PointerEvent('pointermove',{pointerId:1,clientX:800,clientY:500,bubbles:true}))`,
   );
   await delay(100);
-  assert.equal(await data(), initial);
+  assert.equal(await data(), canceledScene);
   await evaluate(`document.querySelector('canvas').focus()`);
   await call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'ArrowRight' });
   await call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter' });
   await delay(80);
   assert.notEqual(await data(), initial, 'Keyboard creates rings');
   await evaluate(`window.dispatchEvent(new Event('pagehide'))`);
-  assert.equal(await data(), initial, 'Pagehide clears scene');
+  const stopped = await data();
+  await delay(300);
+  assert.equal(await data(), stopped, 'Pagehide stops effects and motion');
   await call('Emulation.setEmulatedMedia', {
     features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
   });
   await tap(600, 400);
   await shot('pond-reduced');
   await delay(650);
-  assert.equal(await data(), initial, 'Reduced rings expire');
+  assert.equal(
+    await data(),
+    stopped,
+    'Reduced rings expire without moving leaves',
+  );
   await call('Emulation.setEmulatedMedia', { features: [] });
   await tap(600, 400);
   await evaluate(
     `Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));`,
   );
-  assert.ok(
-    (await data()) === initial,
-    'Synthetic hidden transition clears effects',
-  );
+  const hidden = await data();
+  const hiddenFrames = await evaluate('window.rafCalls');
+  await delay(300);
+  assert.equal(await data(), hidden, 'Hidden transition freezes the scene');
+  assert.equal(await evaluate('window.rafCalls'), hiddenFrames);
   await tap(600, 400);
   await call('Emulation.setDeviceMetricsOverride', {
     width: 390,

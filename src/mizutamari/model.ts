@@ -7,8 +7,6 @@ export interface Ripple {
   born: number;
 }
 export interface Leaf {
-  homeX: number;
-  homeY: number;
   x: number;
   y: number;
   vx: number;
@@ -25,7 +23,6 @@ export class Pond {
   ripples: Ripple[] = [];
   leaves: Leaf[] = [];
   reduced = false;
-  carry = false;
   resize(width: number, height: number) {
     this.width = Math.max(1, width);
     this.height = Math.max(1, height);
@@ -36,8 +33,6 @@ export class Pond {
       [0.79, 0.35, 0.6],
       [0.39, 0.74, 0.25],
     ].map(([nx, ny, angle], art) => ({
-      homeX: nx * this.width,
-      homeY: ny * this.height,
       x: nx * this.width,
       y: ny * this.height,
       vx: 0,
@@ -71,12 +66,10 @@ export class Pond {
         -60,
         Math.min(60, leaf.vy + (dy / (distance || 1)) * strength),
       );
-      if (this.carry) {
-        const speed = Math.hypot(leaf.vx, leaf.vy);
-        if (speed > 60) {
-          leaf.vx *= 60 / speed;
-          leaf.vy *= 60 / speed;
-        }
+      const speed = Math.hypot(leaf.vx, leaf.vy);
+      if (speed > 60) {
+        leaf.vx *= 60 / speed;
+        leaf.vy *= 60 / speed;
       }
       leaf.spin = Math.max(
         -0.8,
@@ -92,41 +85,27 @@ export class Pond {
     let moving = false;
     for (const leaf of this.leaves) {
       if (this.reduced) continue;
-      if (!this.carry) {
-        leaf.vx += (leaf.homeX - leaf.x) * 8 * dt;
-        leaf.vy += (leaf.homeY - leaf.y) * 8 * dt;
-      }
       leaf.spin += -leaf.tilt * 8 * dt;
-      const damping = Math.exp(-(this.carry ? 2.6 : 4.5) * dt);
+      const damping = Math.exp(-2.6 * dt);
       leaf.vx *= damping;
       leaf.vy *= damping;
       leaf.spin *= damping;
       leaf.x += leaf.vx * dt;
       leaf.y += leaf.vy * dt;
       leaf.tilt += leaf.spin * dt;
-      if (this.carry) {
-        const margin = leaf.size * 0.72;
-        const x = Math.max(margin, Math.min(this.width - margin, leaf.x));
-        const y = Math.max(margin, Math.min(this.height - margin, leaf.y));
-        if (x !== leaf.x) leaf.vx = 0;
-        if (y !== leaf.y) leaf.vy = 0;
-        leaf.x = x;
-        leaf.y = y;
-      }
+      const margin = leaf.size * 0.72;
+      const x = Math.max(margin, Math.min(this.width - margin, leaf.x));
+      const y = Math.max(margin, Math.min(this.height - margin, leaf.y));
+      if (x !== leaf.x) leaf.vx = 0;
+      if (y !== leaf.y) leaf.vy = 0;
+      leaf.x = x;
+      leaf.y = y;
       const energy =
-        (this.carry ? 0 : Math.abs(leaf.x - leaf.homeX)) +
-        (this.carry ? 0 : Math.abs(leaf.y - leaf.homeY)) +
         Math.abs(leaf.vx) +
         Math.abs(leaf.vy) +
         Math.abs(leaf.tilt) * 20 +
         Math.abs(leaf.spin) * 20;
       if (energy < 0.1) {
-        if (this.carry) {
-          leaf.homeX = leaf.x;
-          leaf.homeY = leaf.y;
-        }
-        leaf.x = leaf.homeX;
-        leaf.y = leaf.homeY;
         leaf.vx = leaf.vy = leaf.tilt = leaf.spin = 0;
       } else moving = true;
     }
@@ -135,12 +114,6 @@ export class Pond {
   clear() {
     this.ripples = [];
     for (const leaf of this.leaves) {
-      if (this.carry) {
-        leaf.homeX = leaf.x;
-        leaf.homeY = leaf.y;
-      }
-      leaf.x = leaf.homeX;
-      leaf.y = leaf.homeY;
       leaf.vx = leaf.vy = leaf.tilt = leaf.spin = 0;
     }
   }

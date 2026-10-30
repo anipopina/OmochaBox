@@ -9,7 +9,6 @@ const context = canvas.getContext('2d');
 if (!context) throw new Error('Canvas 2D unavailable');
 const ctx = context;
 const pond = new Pond();
-pond.carry = new URLSearchParams(location.search).get('trial') === 'carry';
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 pond.reduced = motion.matches;
 const leafUrls = [greenLeaf, tealLeaf];

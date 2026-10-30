@@ -7,8 +7,6 @@ const board = requireElement('#lightbox', HTMLDivElement);
 const status = requireElement('#status', HTMLParagraphElement);
 const colors = ['#00d8f5', '#ffe900', '#ff26bd'];
 const names = ['まる', 'しかく', 'さんかく'];
-const tapSelection =
-  new URLSearchParams(location.search).get('trial') === 'select';
 let pending: {
   id: number;
   x: number;
@@ -149,35 +147,20 @@ canvas.addEventListener('pointerdown', (event) => {
   });
   const i = hits[0];
   if (i === undefined) {
-    if (tapSelection) {
-      armed = null;
-      lastTap = null;
-    }
+    armed = null;
+    lastTap = null;
     return;
   }
   event.preventDefault();
   canvas.focus({ preventScroll: true });
-  if (tapSelection) {
-    pending = {
-      id: event.pointerId,
-      x: q.x,
-      y: q.y,
-      shape: armed !== null && hits.includes(armed) ? armed : i,
-      hits,
-    };
-    canvas.setPointerCapture(event.pointerId);
-    return;
-  }
-  select(i);
-  const p = positions[i]!;
-  drag = {
+  pending = {
     id: event.pointerId,
-    shape: i,
-    dx: q.x - p.x * width,
-    dy: q.y - p.y * height,
+    x: q.x,
+    y: q.y,
+    shape: armed !== null && hits.includes(armed) ? armed : i,
+    hits,
   };
   canvas.setPointerCapture(event.pointerId);
-  draw();
 });
 canvas.addEventListener('pointermove', (event) => {
   if (pending && event.pointerId === pending.id) {
