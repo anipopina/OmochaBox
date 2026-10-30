@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#b2e6e8" />
+    <title>ぽろんギター｜おもちゃボックス</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="おもちゃボックス" />
+    <meta property="og:title" content="ぽろんギター｜おもちゃボックス" />
+    <meta
+      property="og:description"
+      content="さわって ぽろん。なでて じゃららん。"
+    />
+    <meta
+      property="og:url"
+      content="https://omochabox.ryonchibi.chatgpt.site/poron-guitar/"
+    />
+    <meta
+      property="og:image"
+      content="https://omochabox.ryonchibi.chatgpt.site/assets/branding/ogp.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="黄色の背景に、おもちゃボックスの文字とカラフルな図形のなかまたち。"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <main id="stage" aria-label="げんを さわって ならそう">
+      <div id="instrument">
+        <img id="guitar-art" alt="" draggable="false" />
+        <div id="strings" aria-label="ギターの げん">
+          <button
+            class="string-button"
+            aria-label="ドの おと"
+            style="--tone: #ff656f"
+          >
+            <span class="string"></span><span class="ring"></span>
+          </button>
+          <button
+            class="string-button"
+            aria-label="ミの おと"
+            style="--tone: #ffdf39"
+          >
+            <span class="string"></span><span class="ring"></span>
+          </button>
+          <button
+            class="string-button"
+            aria-label="ソの おと"
+            style="--tone: #32d8c2"
+          >
+            <span class="string"></span><span class="ring"></span>
+          </button>
+          <button
+            class="string-button"
+            aria-label="たかいドの おと"
+            style="--tone: #aa8afa"
+          >
+            <span class="string"></span><span class="ring"></span>
+          </button>
+        </div>
+      </div>
+      <a id="back" data-home-button href="../"></a>
+    </main>
+    <script type="module" src="app.ts"></script>
+  </body>
+</html>

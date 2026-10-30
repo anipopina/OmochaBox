@@ -159,7 +159,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===10"
+        ? "document.querySelectorAll('.game-card').length===11"
         : "document.querySelector('canvas')?.dataset.ready === 'true'",
     );
   };

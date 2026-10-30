@@ -58,5 +58,11 @@
     "title": "ぷくぷくシャボン",
     "description": "さわって ぷくっ。もういちど ぽこん。",
     "href": "pukupuku-shabon/"
+  },
+  {
+    "id": "poron-guitar",
+    "title": "ぽろんギター",
+    "description": "さわって ぽろん。なでて じゃららん。",
+    "href": "poron-guitar/"
   }
 ]

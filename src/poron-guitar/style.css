@@ -1,0 +1,135 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  background: #a9e7ed;
+  color: #18304b;
+  font-family: system-ui, sans-serif;
+}
+#stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at center,
+    #f3fcde 0%,
+    #c8f1e9 52%,
+    #88dae4 100%
+  );
+}
+#instrument {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(94vw, 440px);
+  height: min(91dvh, 730px);
+  flex-shrink: 0;
+}
+#guitar-art {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  object-fit: fill;
+}
+#strings {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 48%;
+  bottom: 9%;
+  display: flex;
+  touch-action: none;
+}
+.string-button {
+  position: relative;
+  width: 25%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: var(--tone);
+  touch-action: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.string {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 4px);
+  width: 8px;
+  border-radius: 10px;
+  background: var(--tone);
+  box-shadow:
+    0 0 0 2px #17304b,
+    3px 2px 0 #ffffffaa;
+  pointer-events: none;
+}
+.string::after {
+  content: '';
+  position: absolute;
+  left: -13px;
+  bottom: -8px;
+  width: 34px;
+  height: 34px;
+  border: 3px solid #17304b;
+  border-radius: 50%;
+  background: var(--tone);
+  box-shadow: inset 3px 4px 0 #ffffff99;
+}
+.ring {
+  pointer-events: none;
+  position: absolute;
+  left: calc(50% - 22px);
+  top: 45%;
+  width: 44px;
+  height: 44px;
+  border: 6px solid #fffbd1;
+  border-radius: 50%;
+  opacity: 0;
+}
+.string-button:focus-visible {
+  outline: 4px dashed #153556;
+  outline-offset: -3px;
+  border-radius: 24px;
+}
+#back {
+  position: fixed;
+  z-index: 5;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  --home-button-background: #ffe951;
+  --home-button-color: #14365a;
+}
+@media (orientation: landscape) {
+  #instrument {
+    width: min(90dvh, 440px);
+    height: min(89vw, 730px);
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+}
+@media (max-width: 340px) and (orientation: portrait) {
+  #strings {
+    left: 2%;
+    right: 2%;
+  }
+}
+@media (max-height: 340px) and (orientation: landscape) {
+  #strings {
+    left: 2%;
+    right: 2%;
+  }
+}

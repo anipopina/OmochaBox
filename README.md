@@ -22,6 +22,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [ぷくぷくシャボン](src/pukupuku-shabon/README.md) | 空いたところに泡を作り、触ってぽこんと割る遊び |
 
+| [ぽろんギター](src/poron-guitar/README.md) | 太い弦を触って、なでて音を鳴らす楽器遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。

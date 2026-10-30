@@ -143,7 +143,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===10"
+        ? "document.querySelectorAll('.game-card').length===11"
         : "!!document.querySelector('#pump')",
     );
     // Offscreen lazy hub images may never start loading until scrolled into view.
@@ -455,7 +455,7 @@ try {
   await visit('/');
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    10,
+    11,
   );
   await evaluate(`document.querySelector('a[href="pukapuka-fusen/"]').click()`);
   await waitFor(
@@ -468,10 +468,10 @@ try {
   await evaluate(
     `document.querySelector('#pump').click();document.querySelector('#back').click()`,
   );
-  await waitFor(`document.querySelectorAll('.game-card').length===10`);
+  await waitFor(`document.querySelectorAll('.game-card').length===11`);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    10,
+    11,
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

@@ -892,10 +892,10 @@ try {
     '3',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===10`);
+  await waitFor(`document.querySelectorAll('.game-card').length===11`);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    10,
+    11,
   );
   assert.ok(
     await evaluate(
@@ -1027,7 +1027,7 @@ try {
     'Feedback: native AudioContext starts only after user input, <=3 sine voices / 0.075 gain, legacy OFF preferences ignored, background suspend/resume; <=72 particles and expiry, reduced <=4; Vibration API spy 12ms / >=160ms and unsupported fallback PASS (no physical audio/haptic verification)',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===10`);
+  await waitFor(`document.querySelectorAll('.game-card').length===11`);
   assert.equal(
     await evaluate(
       `document.querySelector('.play-settings,#sound-setting,#vibration-setting')`,
@@ -1055,7 +1055,7 @@ try {
     'Drawing ignores saved OFF preferences',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===10`);
+  await waitFor(`document.querySelectorAll('.game-card').length===11`);
   await call('Page.removeScriptToEvaluateOnNewDocument', {
     identifier: drawingProbe.identifier,
   });
@@ -1063,7 +1063,7 @@ try {
     source: `Storage.prototype.getItem=Storage.prototype.setItem=()=>{throw new DOMException('blocked','SecurityError')}`,
   });
   await call('Page.reload');
-  await waitFor(`document.querySelectorAll('.game-card').length===10`);
+  await waitFor(`document.querySelectorAll('.game-card').length===11`);
   await click('a[href="ponpon-stamp/"]');
   await waitFor(`document.querySelectorAll('.choice').length===6`);
   await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);

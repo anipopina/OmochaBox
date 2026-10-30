@@ -1,0 +1,10 @@
+{
+  "source-assets/poron-guitar/generated-guitar.png": {
+    "bytes": 975498,
+    "sha256": "20441031d234fe0bc1196dfd6dff2e318faa8750613fb0f48d19dd6a7d51f9c0"
+  },
+  "src/poron-guitar/assets/guitar.webp": {
+    "bytes": 55906,
+    "sha256": "d5f133e4ba6404713232dfa0fbea6126e501fcbf3792c13a15d78f6992bc99b7"
+  }
+}
