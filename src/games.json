@@ -64,5 +64,11 @@
     "title": "ぽろんギター",
     "description": "さわって ぽろん。なでて じゃららん。",
     "href": "poron-guitar/"
+  },
+  {
+    "id": "kotokoto-kisha",
+    "title": "ことこと汽車",
+    "description": "きしゃを ぽん。みんなで ことこと。",
+    "href": "kotokoto-kisha/"
   }
 ]

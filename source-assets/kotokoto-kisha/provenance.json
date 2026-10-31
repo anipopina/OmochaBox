@@ -1,0 +1,32 @@
+[
+  {
+    "path": "source-assets/kotokoto-kisha/train.png",
+    "size": 1300195,
+    "sha256": "8e20fb5a1d2892145d8edf7ab524c5903fc1be0ddf25e7653b92d0fd4baf04de"
+  },
+  {
+    "path": "source-assets/kotokoto-kisha/animals.png",
+    "size": 1844565,
+    "sha256": "7b78094a470531a05aeee1425ac14cdb71af4ab64c185ee6a64e58b30413fb97"
+  },
+  {
+    "path": "src/kotokoto-kisha/assets/bear.webp",
+    "size": 26098,
+    "sha256": "1fe848255740af1e9343276172f117a9448edcc4814074efe0c2ac898286dfe1"
+  },
+  {
+    "path": "src/kotokoto-kisha/assets/rabbit.webp",
+    "size": 28064,
+    "sha256": "d40e59f7020ab2915e18172948770b55b036a53ebbb9d677a5c9f0aaa6cfc3ab"
+  },
+  {
+    "path": "src/kotokoto-kisha/assets/train.webp",
+    "size": 74196,
+    "sha256": "f0ddc941bbba74c723982f268ab4cda9d5f70e744d33f1d25573ce159d1e8994"
+  },
+  {
+    "path": "src/kotokoto-kisha/assets/cat.webp",
+    "size": 26948,
+    "sha256": "d9709cfb61be86a388d5e941687a060786f6817dc54d228a50776dcfe1d052d9"
+  }
+]

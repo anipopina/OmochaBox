@@ -692,3 +692,11 @@ footer p {
   place-items: center;
   background: #b1e9e5;
 }
+.train-preview {
+  height: 190px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #a4e5f4;
+  flex: none;
+}

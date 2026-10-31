@@ -24,6 +24,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [ぽろんギター](src/poron-guitar/README.md) | 太い弦を触って、なでて音を鳴らす楽器遊び |
 
+| [ことこと汽車](src/kotokoto-kisha/README.md) | 汽車を触って走り、動物の乗客にごあいさつ |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。
