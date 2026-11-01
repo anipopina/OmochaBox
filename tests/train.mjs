@@ -130,7 +130,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===12"
+        ? "document.querySelectorAll('.game-card').length===13"
         : "document.querySelector('#scene')?.dataset.ready === 'true'",
     );
   };
@@ -313,7 +313,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
   await delay(250);
   assert.equal(await evaluate('document.getAnimations().length'), 0);
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===12`);
+  await waitFor(`document.querySelectorAll('.game-card').length===13`);
   await evaluate(`document.querySelector('a[href="kotokoto-kisha/"]').click()`);
   await waitFor(`document.querySelector('#scene')?.dataset.ready==='true'`);
   assert.equal(await evaluate('window.contexts.length'), 0);

@@ -24,6 +24,7 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [ぽろんギター](src/poron-guitar/README.md) | 太い弦を触って、なでて音を鳴らす楽器遊び |
 
+| [だれのおうち？](src/dare-no-ouchi/README.md) | 扉をこんこん、動物にごあいさつ |
 | [ことこと汽車](src/kotokoto-kisha/README.md) | 汽車を触って走り、動物の乗客にごあいさつ |
 
 ## 開発を始める

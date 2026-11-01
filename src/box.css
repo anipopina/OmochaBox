@@ -700,3 +700,10 @@ footer p {
   background: #a4e5f4;
   flex: none;
 }
+
+.house-preview {
+  background: #a1e6f3;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+}
