@@ -133,7 +133,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===13"
+        ? "document.querySelectorAll('.game-card').length===14"
         : "document.querySelector('#friend')?.dataset.ready === 'true'",
     );
   };
@@ -318,7 +318,7 @@ try {
   assert.equal(await evaluate('window.rafCalls'), frames, 'Idle RAF stops');
   await choose('banana');
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===13`);
+  await waitFor(`document.querySelectorAll('.game-card').length===14`);
   await evaluate(
     `document.querySelector('a[href="mogumogu-tomodachi/"]').click()`,
   );

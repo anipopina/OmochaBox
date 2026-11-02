@@ -114,7 +114,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===13"
+        ? "document.querySelectorAll('.game-card').length===14"
         : "document.querySelector('#glass')?.dataset.ready === 'true'",
     );
   };
@@ -341,7 +341,7 @@ try {
   await delay(500);
   assert.equal(await evaluate('window.rafCalls'), frames);
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===13");
+  await waitFor("document.querySelectorAll('.game-card').length===14");
   assert.ok(
     await evaluate(
       '!!document.querySelector(\'a[href="https://anipopina.com/"]\')',

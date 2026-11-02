@@ -27,6 +27,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 | [だれのおうち？](src/dare-no-ouchi/README.md) | 扉をこんこん、動物にごあいさつ |
 | [ことこと汽車](src/kotokoto-kisha/README.md) | 汽車を触って走り、動物の乗客にごあいさつ |
 
+| [ぽこぽこポップコーン](src/pokopoko-popcorn/README.md) | つぶを触ってポップコーンに変え、もう一度はずませる遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。

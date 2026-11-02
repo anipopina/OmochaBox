@@ -130,7 +130,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===13"
+        ? "document.querySelectorAll('.game-card').length===14"
         : "document.querySelector('#scene')?.dataset.ready === 'true'",
     );
   };
@@ -313,11 +313,16 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
   await delay(250);
   assert.equal(await evaluate('document.getAnimations().length'), 0);
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===13`);
+  await waitFor(`document.querySelectorAll('.game-card').length===14`);
   await evaluate(`document.querySelector('a[href="kotokoto-kisha/"]').click()`);
   await waitFor(`document.querySelector('#scene')?.dataset.ready==='true'`);
   assert.equal(await evaluate('window.contexts.length'), 0);
   await call('Emulation.setEmulatedMedia', { features: [] });
+  // Media changes are delivered asynchronously; do not click during that transition.
+  await waitFor("!matchMedia('(prefers-reduced-motion: reduce)').matches");
+  await evaluate(
+    'new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))',
+  );
   await evaluate(
     `window.AudioContext=class {constructor(){throw new Error('blocked')}};document.querySelector('#engine').click()`,
   );
