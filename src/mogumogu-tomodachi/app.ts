@@ -9,6 +9,7 @@ const assets = { strawberry, banana, carrot };
 const names = { strawberry: 'いちご', banana: 'バナナ', carrot: 'にんじん' };
 const friend = new Friend();
 const character = document.querySelector<HTMLButtonElement>('#friend')!;
+const artwork = document.querySelector<HTMLSpanElement>('.friend-art')!;
 const flying = document.querySelector<HTMLImageElement>('#flying-food')!;
 const mouthFood = document.querySelector<SVGImageElement>('#mouth-food')!;
 const status = document.querySelector<HTMLSpanElement>('#status')!;
@@ -29,7 +30,7 @@ function render() {
     friend.phase === 'idle' && !reduced.matches
       ? Math.sin(touchProgress * Math.PI) * 0.065
       : 0;
-  character.style.scale = `${1 - squeeze * 0.45} ${1 - squeeze}`;
+  artwork.style.scale = `${1 - squeeze * 0.45} ${1 - squeeze}`;
   character.dataset.food = friend.food;
   character.dataset.reaction = String(friend.reaction);
   character.style.setProperty('--chew', String(Math.sin(friend.elapsed / 115)));

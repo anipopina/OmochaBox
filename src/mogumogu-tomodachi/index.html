@@ -52,71 +52,75 @@
         data-phase="idle"
         aria-label="おともだちに ふれる"
       >
-        <img class="body-art" alt="" draggable="false" />
-        <svg class="face" viewBox="0 0 500 500" aria-hidden="true">
-          <defs>
-            <clipPath id="mouth-clip">
-              <ellipse cx="250" cy="290" rx="83" ry="62" />
-            </clipPath>
-          </defs>
-          <g class="eyes-open">
-            <ellipse cx="193" cy="205" rx="23" ry="28" fill="#fff9e4" />
-            <ellipse cx="307" cy="205" rx="23" ry="28" fill="#fff9e4" />
-            <ellipse cx="197" cy="208" rx="12" ry="17" fill="#34312e" />
-            <ellipse cx="303" cy="208" rx="12" ry="17" fill="#34312e" />
-            <circle cx="200" cy="202" r="4" fill="white" />
-            <circle cx="306" cy="202" r="4" fill="white" />
-          </g>
-          <g
-            class="eyes-happy"
-            fill="none"
-            stroke="#34312e"
-            stroke-width="10"
-            stroke-linecap="round"
-          >
-            <path d="M174 212Q193 180 212 212M288 212Q307 180 326 212" />
-          </g>
-          <ellipse
-            class="cheek cheek-left"
-            cx="148"
-            cy="270"
-            rx="24"
-            ry="18"
-            fill="#ff9b9c"
-          />
-          <ellipse
-            class="cheek cheek-right"
-            cx="352"
-            cy="270"
-            rx="24"
-            ry="18"
-            fill="#ff9b9c"
-          />
-          <g class="mouth-open">
-            <ellipse cx="250" cy="290" rx="83" ry="62" fill="#713b36" />
-            <g clip-path="url(#mouth-clip)">
-              <ellipse cx="253" cy="342" rx="64" ry="33" fill="#ed8078" />
-              <image id="mouth-food" x="206" y="220" width="88" height="88" />
+        <span class="friend-art">
+          <img class="body-art" alt="" draggable="false" />
+          <svg class="face" viewBox="0 0 500 500" aria-hidden="true">
+            <defs>
+              <clipPath id="mouth-clip">
+                <ellipse cx="250" cy="290" rx="83" ry="62" />
+              </clipPath>
+            </defs>
+            <g class="eyes-open">
+              <ellipse cx="193" cy="205" rx="23" ry="28" fill="#fff9e4" />
+              <ellipse cx="307" cy="205" rx="23" ry="28" fill="#fff9e4" />
+              <ellipse cx="197" cy="208" rx="12" ry="17" fill="#34312e" />
+              <ellipse cx="303" cy="208" rx="12" ry="17" fill="#34312e" />
+              <circle cx="200" cy="202" r="4" fill="white" />
+              <circle cx="306" cy="202" r="4" fill="white" />
             </g>
-          </g>
-          <path
-            class="mouth-closed"
-            d="M218 281Q234 292 250 281Q266 292 282 281"
-            fill="none"
-            stroke="#633e34"
-            stroke-width="8"
-            stroke-linecap="round"
-          />
-          <path
-            class="mouth-smile"
-            d="M220 273Q250 311 280 273"
-            fill="none"
-            stroke="#633e34"
-            stroke-width="9"
-            stroke-linecap="round"
-          />
-        </svg>
-        <span class="delight" aria-hidden="true"><i>♥</i><i>✦</i><i>♥</i></span>
+            <g
+              class="eyes-happy"
+              fill="none"
+              stroke="#34312e"
+              stroke-width="10"
+              stroke-linecap="round"
+            >
+              <path d="M174 212Q193 180 212 212M288 212Q307 180 326 212" />
+            </g>
+            <ellipse
+              class="cheek cheek-left"
+              cx="148"
+              cy="270"
+              rx="24"
+              ry="18"
+              fill="#ff9b9c"
+            />
+            <ellipse
+              class="cheek cheek-right"
+              cx="352"
+              cy="270"
+              rx="24"
+              ry="18"
+              fill="#ff9b9c"
+            />
+            <g class="mouth-open">
+              <ellipse cx="250" cy="290" rx="83" ry="62" fill="#713b36" />
+              <g clip-path="url(#mouth-clip)">
+                <ellipse cx="253" cy="342" rx="64" ry="33" fill="#ed8078" />
+                <image id="mouth-food" x="206" y="220" width="88" height="88" />
+              </g>
+            </g>
+            <path
+              class="mouth-closed"
+              d="M218 281Q234 292 250 281Q266 292 282 281"
+              fill="none"
+              stroke="#633e34"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <path
+              class="mouth-smile"
+              d="M220 273Q250 311 280 273"
+              fill="none"
+              stroke="#633e34"
+              stroke-width="9"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="delight" aria-hidden="true"
+            ><i>♥</i><i>✦</i><i>♥</i></span
+          >
+        </span>
       </button>
       <img id="flying-food" alt="" draggable="false" hidden />
       <div id="foods" role="group" aria-label="たべものを どうぞ">

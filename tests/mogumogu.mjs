@@ -210,6 +210,68 @@ try {
     `[...document.images].every(i=>i.id==='flying-food'||(i.complete&&i.naturalWidth>0))`,
   );
   await shot('mogu-idle-mobile');
+  const checkTouchAnchor = async (label) => {
+    await evaluate(`(() => {
+      const image = document.querySelector('.body-art');
+      const face = document.querySelector('.face');
+      const sample = () => {
+        const r = image.getBoundingClientRect();
+        const m = face.getScreenCTM();
+        const svgBottom = new DOMPoint(250, 500).matrixTransform(m);
+        return {x:r.x+r.width/2, y:r.bottom, width:r.width, height:r.height,
+          svgX:svgBottom.x, svgY:svgBottom.y};
+      };
+      window.anchorSamples = [sample()];
+      window.anchorDone = false;
+      document.querySelector('#friend').click();
+      const start = performance.now();
+      const capture = () => {
+        window.anchorSamples.push(sample());
+        if (performance.now()-start < 700) requestAnimationFrame(capture);
+        else window.anchorDone = true;
+      };
+      requestAnimationFrame(capture);
+    })()`);
+    await delay(240);
+    await shot(`mogu-anchor-${label}-squeezed`);
+    await waitFor('window.anchorDone');
+    const samples = await evaluate('window.anchorSamples');
+    const first = samples[0];
+    const metrics = {
+      label,
+      samples,
+      maxXDrift: Math.max(...samples.map((s) => Math.abs(s.x - first.x))),
+      maxYDrift: Math.max(...samples.map((s) => Math.abs(s.y - first.y))),
+      maxFaceDrift: Math.max(
+        ...samples.map((s) => Math.hypot(s.svgX - s.x, s.svgY - s.y)),
+      ),
+      minHeightRatio: Math.min(...samples.map((s) => s.height / first.height)),
+    };
+    await writeFile(
+      join(output, `mogu-anchor-${label}.json`),
+      JSON.stringify(metrics, null, 2),
+    );
+    console.log(
+      'Touch anchor',
+      label,
+      JSON.stringify({ ...metrics, samples: undefined }),
+    );
+    assert.ok(metrics.minHeightRatio < 0.95, 'Body visibly shrinks');
+    assert.ok(
+      metrics.maxXDrift < 0.1,
+      'Image bottom center stays fixed horizontally',
+    );
+    assert.ok(
+      metrics.maxYDrift < 0.1,
+      'Image bottom center stays fixed vertically',
+    );
+    assert.ok(
+      metrics.maxFaceDrift < 0.1,
+      'SVG viewBox stays aligned with body image',
+    );
+  };
+  await checkTouchAnchor('mobile');
+
   assert.ok(
     await evaluate(
       `[...document.querySelectorAll('button')].every(b=>{const r=b.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
@@ -236,14 +298,14 @@ try {
   );
   await delay(180);
   assert.notEqual(
-    await evaluate(`document.querySelector('#friend').style.scale`),
+    await evaluate(`document.querySelector('.friend-art').style.scale`),
     '1 1',
   );
   await shot('mogu-touch-idle-mobile');
   await choose('banana');
   assert.equal(await phase(), 'offering');
   assert.equal(
-    await evaluate(`document.querySelector('#friend').style.scale`),
+    await evaluate(`document.querySelector('.friend-art').style.scale`),
     '1',
   );
   await evaluate(`window.dispatchEvent(new Event('blur'))`);
@@ -268,7 +330,7 @@ try {
       '1',
     );
     assert.equal(
-      await evaluate(`document.querySelector('#friend').style.scale`),
+      await evaluate(`document.querySelector('.friend-art').style.scale`),
       '1',
     );
     if (state === 'chewing') {
@@ -400,6 +462,7 @@ try {
       ),
     );
     await shot(`mogu-${width}x${height}`);
+    await checkTouchAnchor(`${width}x${height}`);
   }
   await evaluate(
     `document.querySelector('#foods button[data-food="banana"]').focus()`,
@@ -447,7 +510,7 @@ try {
       'true',
     );
     assert.equal(
-      await evaluate(`document.querySelector('#friend').style.scale`),
+      await evaluate(`document.querySelector('.friend-art').style.scale`),
       '1',
     );
     await shot('mogu-touch-reduced-keyboard');

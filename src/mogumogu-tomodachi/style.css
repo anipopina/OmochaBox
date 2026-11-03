@@ -52,6 +52,14 @@ body {
   top: 43%;
   transform: translate(-50%, -50%);
 }
+/* Keep layout translation outside the touch scale so its anchor cannot drift. */
+.friend-art {
+  position: absolute;
+  inset: 0;
+  transform-box: border-box;
+  transform-origin: center bottom;
+  pointer-events: none;
+}
 .body-art,
 .face {
   position: absolute;
