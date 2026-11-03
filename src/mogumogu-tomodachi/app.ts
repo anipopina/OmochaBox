@@ -8,12 +8,12 @@ import carrot from './assets/carrot.webp';
 const assets = { strawberry, banana, carrot };
 const names = { strawberry: 'いちご', banana: 'バナナ', carrot: 'にんじん' };
 const friend = new Friend();
-const character = document.querySelector<HTMLDivElement>('#friend')!;
+const character = document.querySelector<HTMLButtonElement>('#friend')!;
 const flying = document.querySelector<HTMLImageElement>('#flying-food')!;
 const mouthFood = document.querySelector<SVGImageElement>('#mouth-food')!;
 const status = document.querySelector<HTMLSpanElement>('#status')!;
 const buttons = [
-  ...document.querySelectorAll<HTMLButtonElement>('[data-food]'),
+  ...document.querySelectorAll<HTMLButtonElement>('#foods [data-food]'),
 ];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 document.querySelector<HTMLImageElement>('.body-art')!.src = body;
@@ -23,6 +23,13 @@ let previous = '';
 
 function render() {
   character.dataset.phase = friend.phase;
+  character.dataset.touched = String(friend.touchRemaining > 0);
+  const touchProgress = 1 - friend.touchRemaining / 520;
+  const squeeze =
+    friend.phase === 'idle' && !reduced.matches
+      ? Math.sin(touchProgress * Math.PI) * 0.065
+      : 0;
+  character.style.scale = `${1 - squeeze * 0.45} ${1 - squeeze}`;
   character.dataset.food = friend.food;
   character.dataset.reaction = String(friend.reaction);
   character.style.setProperty('--chew', String(Math.sin(friend.elapsed / 115)));
@@ -78,9 +85,15 @@ function tick(time: number) {
   friend.step(last ? time - last : 0);
   last = time;
   render();
-  if (friend.phase !== 'idle') frame = requestAnimationFrame(tick);
+  if (friend.phase !== 'idle' || friend.touchRemaining > 0)
+    frame = requestAnimationFrame(tick);
   else last = 0;
 }
+character.addEventListener('click', () => {
+  friend.touch();
+  render();
+  if (!frame) frame = requestAnimationFrame(tick);
+});
 for (const button of buttons) {
   const food = button.dataset.food as Food;
   button.querySelector('img')!.src = assets[food];

@@ -39,6 +39,12 @@ body {
   z-index: 10;
 }
 #friend {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 28%;
+  cursor: pointer;
+  touch-action: manipulation;
   position: absolute;
   width: min(94vw, 65dvh, 580px);
   aspect-ratio: 1;
@@ -92,9 +98,11 @@ body {
 #friend[data-phase='swallowing'] .face {
   animation: gulp 300ms ease-in-out;
 }
+#friend[data-touched='true'] .eyes-open,
 #friend[data-phase='happy'] .eyes-open {
   opacity: 0;
 }
+#friend[data-touched='true'] .eyes-happy,
 #friend[data-phase='happy'] .eyes-happy {
   opacity: 1;
 }

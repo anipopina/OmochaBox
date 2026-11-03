@@ -21,6 +21,36 @@ for (const phase of ['offering', 'chewing', 'swallowing', 'happy']) {
   assert.equal(model.phase, 'idle');
   assert.equal(model.next, null);
 }
+// Touch feedback is one replaceable response and never owns the meal clock.
+for (const state of ['idle', 'offering', 'chewing', 'swallowing', 'happy']) {
+  model.reset();
+  if (state !== 'idle') {
+    model.offer('strawberry');
+    while (model.phase !== state) model.step(20);
+    model.offer('carrot');
+  }
+  const before = [
+    model.phase,
+    model.elapsed,
+    model.food,
+    model.next,
+    model.meals,
+  ];
+  for (let i = 0; i < 10000; i++) model.touch();
+  assert.deepEqual(
+    [model.phase, model.elapsed, model.food, model.next, model.meals],
+    before,
+  );
+  assert.equal(model.touchRemaining, 520);
+  for (let i = 0; i < 7; i++) model.step(80);
+  assert.equal(model.touchRemaining, 0);
+  model.touch();
+  model.reset();
+  assert.equal(model.touchRemaining, 0);
+}
+model.touch();
+model.offer('banana');
+assert.equal(model.phase, 'offering');
 console.log(
   'Mogu model PASS: 10000 inputs produce exactly two meals; all interrupted phases reset',
 );
@@ -148,10 +178,12 @@ try {
   const phase = () =>
     evaluate("document.querySelector('#friend').dataset.phase");
   const choose = async (food) =>
-    evaluate(`document.querySelector('button[data-food="${food}"]').click()`);
+    evaluate(
+      `document.querySelector('#foods button[data-food="${food}"]').click()`,
+    );
   const touchFood = async (food) => {
     const p = await evaluate(
-      `(()=>{const r=document.querySelector('button[data-food="${food}"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`,
+      `(()=>{const r=document.querySelector('#foods button[data-food="${food}"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`,
     );
     await call('Input.dispatchTouchEvent', {
       type: 'touchStart',
@@ -182,6 +214,94 @@ try {
     await evaluate(
       `[...document.querySelectorAll('button')].every(b=>{const r=b.getBoundingClientRect();return r.width>=56&&r.height>=56&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`,
     ),
+  );
+  const touchFriend = async () => {
+    const p = await evaluate(
+      `(()=>{const r=document.querySelector('#friend').getBoundingClientRect();return {x:r.x+r.width*0.3,y:r.y+r.height*0.6}})()`,
+    );
+    await call('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ ...p, id: 1 }],
+    });
+    await call('Input.dispatchTouchEvent', {
+      type: 'touchEnd',
+      touchPoints: [],
+    });
+  };
+  await touchFriend();
+  assert.equal(await phase(), 'idle');
+  assert.equal(
+    await evaluate(`document.querySelector('#friend').dataset.touched`),
+    'true',
+  );
+  await delay(180);
+  assert.notEqual(
+    await evaluate(`document.querySelector('#friend').style.scale`),
+    '1 1',
+  );
+  await shot('mogu-touch-idle-mobile');
+  await choose('banana');
+  assert.equal(await phase(), 'offering');
+  assert.equal(
+    await evaluate(`document.querySelector('#friend').style.scale`),
+    '1',
+  );
+  await evaluate(`window.dispatchEvent(new Event('blur'))`);
+  for (const state of ['offering', 'chewing', 'swallowing', 'happy']) {
+    await choose('strawberry');
+    await waitFor(
+      `document.querySelector('#friend').dataset.phase==='${state}'`,
+    );
+    await choose('carrot');
+    await evaluate(
+      `for(let i=0;i<100;i++)document.querySelector('#friend').click()`,
+    );
+    assert.equal(await phase(), state);
+    assert.equal(
+      await evaluate(`document.querySelector('button.next').dataset.food`),
+      'carrot',
+    );
+    assert.equal(
+      await evaluate(
+        `getComputedStyle(document.querySelector('.eyes-happy')).opacity`,
+      ),
+      '1',
+    );
+    assert.equal(
+      await evaluate(`document.querySelector('#friend').style.scale`),
+      '1',
+    );
+    if (state === 'chewing') {
+      assert.equal(
+        await evaluate(
+          `getComputedStyle(document.querySelector('.mouth-closed')).opacity`,
+        ),
+        '1',
+      );
+      await shot('mogu-touch-chewing-mobile');
+    }
+    await waitFor(`document.querySelector('#friend').dataset.food==='carrot'`);
+    await waitFor(`document.querySelector('#friend').dataset.phase==='idle'`);
+    assert.equal(
+      await evaluate(`document.querySelector('#friend').dataset.touched`),
+      'false',
+    );
+  }
+  for (const event of ['blur', 'pagehide', 'resize']) {
+    await touchFriend();
+    await evaluate(`window.dispatchEvent(new Event('${event}'))`);
+    assert.equal(
+      await evaluate(`document.querySelector('#friend').dataset.touched`),
+      'false',
+    );
+  }
+  await touchFriend();
+  await evaluate(
+    `Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;`,
+  );
+  assert.equal(
+    await evaluate(`document.querySelector('#friend').dataset.touched`),
+    'false',
   );
   for (const food of ['strawberry', 'banana', 'carrot']) {
     await touchFood(food);
@@ -216,7 +336,7 @@ try {
   }
   await choose('strawberry');
   await evaluate(
-    `for(let i=0;i<100;i++)document.querySelector('button[data-food="banana"]').click();document.querySelector('button[data-food="carrot"]').click()`,
+    `for(let i=0;i<100;i++)document.querySelector('#foods button[data-food="banana"]').click();document.querySelector('#foods button[data-food="carrot"]').click()`,
   );
   assert.equal(
     await evaluate(`document.querySelectorAll('button.next').length`),
@@ -282,7 +402,7 @@ try {
     await shot(`mogu-${width}x${height}`);
   }
   await evaluate(
-    `document.querySelector('button[data-food="banana"]').focus()`,
+    `document.querySelector('#foods button[data-food="banana"]').focus()`,
   );
   await call('Input.dispatchKeyEvent', {
     type: 'keyDown',
@@ -304,6 +424,37 @@ try {
   await waitFor(
     `matchMedia('(prefers-reduced-motion: reduce)').matches && document.querySelector('#friend').dataset.phase==='idle'`,
   );
+  for (const [key, code, vk] of [
+    ['Enter', 'Enter', 13],
+    [' ', 'Space', 32],
+  ]) {
+    await evaluate(`document.querySelector('#friend').focus()`);
+    await call('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key,
+      code,
+      windowsVirtualKeyCode: vk,
+      text: key === 'Enter' ? '\r' : ' ',
+    });
+    await call('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key,
+      code,
+      windowsVirtualKeyCode: vk,
+    });
+    assert.equal(
+      await evaluate(`document.querySelector('#friend').dataset.touched`),
+      'true',
+    );
+    assert.equal(
+      await evaluate(`document.querySelector('#friend').style.scale`),
+      '1',
+    );
+    await shot('mogu-touch-reduced-keyboard');
+    await waitFor(
+      `document.querySelector('#friend').dataset.touched==='false'`,
+    );
+  }
   await choose('carrot');
   await waitFor(`document.querySelector('#friend').dataset.phase==='happy'`);
   assert.equal(
@@ -326,7 +477,7 @@ try {
   assert.equal(await phase(), 'idle');
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Mogu PASS: real browser touch simulation, all foods, clipped mouth, closed chewing, bounded repeats, all phase interruptions, resize, reduced motion, keyboard, home/reentry, final asset loading, idle RAF, no JS errors',
+    'Mogu PASS: body touch, 100 repeats per meal phase, preserved next bite, immediate food acceptance, touch interruptions, Enter/Space, reduced-motion touch; real browser touch simulation, all foods, clipped mouth, closed chewing, bounded repeats, all phase interruptions, resize, reduced motion, keyboard, home/reentry, final asset loading, idle RAF, no JS errors',
   );
   await writeFile(join(output, 'mogu-results.txt'), reports.join('\n') + '\n');
 } finally {

@@ -16,6 +16,10 @@ export class Friend {
   elapsed = 0;
   reaction = 0;
   meals = 0;
+  touchRemaining = 0;
+  touch() {
+    this.touchRemaining = 520;
+  }
   offer(food: Food) {
     if (this.phase !== 'idle') {
       this.next = food;
@@ -26,6 +30,10 @@ export class Friend {
     this.elapsed = 0;
   }
   step(delta: number) {
+    this.touchRemaining = Math.max(
+      0,
+      this.touchRemaining - Math.max(0, Math.min(delta, 80)),
+    );
     if (this.phase === 'idle') return;
     this.elapsed += Math.max(0, Math.min(delta, 80));
     if (this.elapsed < durations[this.phase]) return;
@@ -41,6 +49,7 @@ export class Friend {
     }
   }
   reset() {
+    this.touchRemaining = 0;
     this.phase = 'idle';
     this.next = null;
     this.elapsed = 0;
