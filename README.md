@@ -29,6 +29,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [ぽこぽこポップコーン](src/pokopoko-popcorn/README.md) | つぶを触ってポップコーンに変え、もう一度はずませる遊び |
 
+| [つみつみアイス](src/tsumitsumi-ice/README.md) | アイスを選んで重ね、自分の組み合わせを作る遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。

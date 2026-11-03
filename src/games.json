@@ -82,5 +82,11 @@
     "title": "ぽこぽこポップコーン",
     "description": "つぶを ぽん。ふわっと はずむ。",
     "href": "pokopoko-popcorn/"
+  },
+  {
+    "id": "tsumitsumi-ice",
+    "title": "つみつみアイス",
+    "description": "えらんで、かさねて。じぶんの アイス！",
+    "href": "tsumitsumi-ice/"
   }
 ]

@@ -120,7 +120,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===14"
+        ? "document.querySelectorAll('.game-card').length===15"
         : "document.querySelector('#instrument')?.dataset.ready === 'true'",
     );
   };
@@ -275,7 +275,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
   await delay(250);
   assert.equal(await playing(), 0, 'Reduced feedback is short');
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===14`);
+  await waitFor(`document.querySelectorAll('.game-card').length===15`);
   await evaluate(`document.querySelector('a[href="poron-guitar/"]').click()`);
   await waitFor(
     `document.querySelector('#instrument')?.dataset.ready==='true'`,
