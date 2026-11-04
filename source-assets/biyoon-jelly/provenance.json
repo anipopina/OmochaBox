@@ -1,0 +1,24 @@
+{
+  "source": "https://drive.google.com/file/d/1dqPcHgX-zejQEoD-3ssbuz0YMbitaLC4/view",
+  "creator": "OpenAI image generation, provided by Kurumi parent task",
+  "date": "2026-11-04",
+  "original": {
+    "file": "source-assets/biyoon-jelly/original.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "bytes": 981020,
+    "sha256": "4827d8ac36fc00205140b00be7c7496bd40f725ac01d20cf21986485b8e348f9"
+  },
+  "web": {
+    "file": "src/biyoon-jelly/assets/jelly.webp",
+    "size": [
+      640,
+      507
+    ],
+    "bytes": 35698,
+    "sha256": "4cd8c347567794861b2c51236e777d77f4ec479cfe7310bc2987343b1e138bc6"
+  },
+  "conversion": "RGBA; crop alpha>4 bbox plus 32px margin, box (357, 211, 1158, 846); Lanczos max 640px; WebP quality90 method6. No redrawing, hue/shape changes or alpha replacement."
+}

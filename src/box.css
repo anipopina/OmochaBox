@@ -716,3 +716,10 @@ footer p {
   border-radius: 20px;
   gap: 10px;
 }
+
+.jelly-preview {
+  display: grid;
+  place-items: center;
+  min-height: 204px;
+  background: #ffc94e;
+}

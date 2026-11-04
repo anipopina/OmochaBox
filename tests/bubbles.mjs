@@ -117,7 +117,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===15"
+        ? "document.querySelectorAll('.game-card').length===16"
         : "document.querySelector('#field')?.dataset.ready === 'true'",
     );
   };
@@ -411,7 +411,7 @@ try {
   await tap(160, 300);
   assert.equal(await count(), 1, 'Resumes after hidden');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===15");
+  await waitFor("document.querySelectorAll('.game-card').length===16");
   await evaluate(
     'document.querySelector(\'a[href="pukupuku-shabon/"]\').scrollIntoView()',
   );

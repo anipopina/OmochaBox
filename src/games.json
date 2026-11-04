@@ -88,5 +88,11 @@
     "title": "つみつみアイス",
     "description": "えらんで、かさねて。じぶんの アイス！",
     "href": "tsumitsumi-ice/"
+  },
+  {
+    "id": "biyoon-jelly",
+    "title": "びよーんゼリー",
+    "description": "ひっぱって びよーん。はなして ぷるん！",
+    "href": "biyoon-jelly/"
   }
 ]
