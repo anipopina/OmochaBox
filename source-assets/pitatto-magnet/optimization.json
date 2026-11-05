@@ -1,0 +1,62 @@
+[
+  {
+    "name": "magnet",
+    "crop": [
+      129,
+      133,
+      1158,
+      1105
+    ],
+    "size": [
+      420,
+      397
+    ],
+    "bytes": 24278,
+    "sha256": "28c3d55e87fe4cce548387e2d5afe480ef931699a70a6fabd0e6b4a9b066a547"
+  },
+  {
+    "name": "star",
+    "crop": [
+      62,
+      63,
+      1208,
+      1167
+    ],
+    "size": [
+      240,
+      231
+    ],
+    "bytes": 10172,
+    "sha256": "d99e9954321fcca575851a4b46ed6fc30c36136c440246aa94a20a8a6c6a1b3d"
+  },
+  {
+    "name": "fish",
+    "crop": [
+      199,
+      179,
+      1244,
+      880
+    ],
+    "size": [
+      240,
+      161
+    ],
+    "bytes": 8170,
+    "sha256": "b8aec3e397bd86b72b79ca7f37cffd61f71aa9b4b25af4277e85acc099b1f7db"
+  },
+  {
+    "name": "flower",
+    "crop": [
+      285,
+      43,
+      1232,
+      985
+    ],
+    "size": [
+      240,
+      239
+    ],
+    "bytes": 9474,
+    "sha256": "33bc29d7ca1fcd346e324f6234bad43e82d71c939744c826d0f8a6576ac0e8b7"
+  }
+]

@@ -129,7 +129,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===16"
+        ? "document.querySelectorAll('.game-card').length===17"
         : "document.querySelector('#house')?.dataset.ready === 'true'",
     );
   };
