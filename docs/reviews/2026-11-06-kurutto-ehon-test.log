@@ -1,0 +1,496 @@
+
+> test
+> npm run build && npm run build:production && npm run test:publication && npm run test:infra && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/home-button.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs && node tests/pond.mjs && node tests/mogumogu.mjs && node tests/bubbles.mjs && node tests/toy-interactions.mjs && node tests/guitar.mjs && node tests/train.mjs && node tests/house.mjs && node tests/popcorn.mjs && node tests/ice.mjs && node tests/jelly.mjs && node --import tsx tests/magnet-model.mjs && node tests/magnet.mjs && node tests/ehon.mjs
+
+
+> build
+> npm run typecheck && vite build
+
+
+> typecheck
+> tsc --noEmit && tsc --project tsconfig.node.json
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 170 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/404.html                                     0.90 kB │ gzip: 0.56 kB
+dist/assets/04-yellow-triangle-DftIzwiC.svg       1.26 kB │ gzip: 0.67 kB
+dist/assets/03-purple-circle-Do0qK_i7.svg         1.33 kB │ gzip: 0.70 kB
+dist/assets/06-mint-rectangle-CtIYuggT.svg        1.42 kB │ gzip: 0.75 kB
+dist/assets/05-coral-star-Dz146y4b.svg            1.42 kB │ gzip: 0.76 kB
+dist/assets/02-cyan-circle-CgFFWwX3.svg           1.71 kB │ gzip: 0.89 kB
+dist/pukupuku-shabon/index.html                   2.40 kB │ gzip: 0.97 kB
+dist/hikari-no-oekaki/index.html                  2.53 kB │ gzip: 0.97 kB
+dist/assets/01-coral-square-DTcQLMqf.svg          2.55 kB │ gzip: 1.38 kB
+dist/mizutamari/index.html                        2.71 kB │ gzip: 1.08 kB
+dist/biyoon-jelly/index.html                      2.72 kB │ gzip: 1.07 kB
+dist/pokopoko-popcorn/index.html                  2.72 kB │ gzip: 1.04 kB
+dist/kasanete-iroglass/index.html                 2.78 kB │ gzip: 1.09 kB
+dist/pitatto-magnet/index.html                    2.79 kB │ gzip: 1.10 kB
+dist/dare-no-ouchi/index.html                     3.07 kB │ gzip: 1.13 kB
+dist/kurukuru-kazaguruma/index.html               3.22 kB │ gzip: 1.28 kB
+dist/tsumitsumi-ice/index.html                    3.39 kB │ gzip: 1.20 kB
+dist/poron-guitar/index.html                      3.43 kB │ gzip: 1.10 kB
+dist/kurutto-ehon/index.html                      3.56 kB │ gzip: 1.28 kB
+dist/kotokoto-kisha/index.html                    3.67 kB │ gzip: 1.13 kB
+dist/assets/rotor-0gXr_tbw.svg                    4.09 kB │ gzip: 0.77 kB
+dist/ponpon-stamp/index.html                      4.38 kB │ gzip: 1.55 kB
+dist/assets/frog-pond-C7Ph4MFk.webp               4.83 kB
+dist/assets/06-crab-J09R4m2k.svg                  4.95 kB │ gzip: 1.77 kB
+dist/index.html                                   5.13 kB │ gzip: 1.62 kB
+dist/assets/05-octopus-C1vGjAoV.svg               5.17 kB │ gzip: 2.31 kB
+dist/assets/animal-train-CxSsSYRd.webp            5.47 kB
+dist/assets/02-clownfish-DWQdueNV.svg             5.55 kB │ gzip: 2.08 kB
+dist/mogumogu-tomodachi/index.html                5.62 kB │ gzip: 1.75 kB
+dist/assets/garden-DKhwdU6o.webp                  5.72 kB
+dist/assets/underwater-Cml2OwZP.webp              6.30 kB
+dist/assets/shapes-picnic-CgUlVmEV.webp           6.32 kB
+dist/assets/shapes-hello-0L9OMQ2S.webp            6.61 kB
+dist/assets/banana-B0c56mll.webp                  6.98 kB
+dist/fukifuki-mado/index.html                     7.59 kB │ gzip: 2.89 kB
+dist/korokoro-suberidai/index.html                8.12 kB │ gzip: 2.09 kB
+dist/assets/fish-3mqaGEqc.webp                    8.17 kB
+dist/assets/carrot-CcvqEDui.webp                  9.10 kB
+dist/assets/flower-BJM4XImt.webp                  9.47 kB
+dist/assets/star-CjvDF1Q-.webp                   10.17 kB
+dist/pukapuka-fusen/index.html                   10.63 kB │ gzip: 2.99 kB
+dist/assets/strawberry-DGyyL2Bn.webp             12.59 kB
+dist/assets/leaf-green-Py8ENxeR.webp             16.17 kB
+dist/assets/leaf-teal-BhPN6GyR.webp              16.74 kB
+dist/assets/cone-QAX37hz5.webp                   17.22 kB
+dist/assets/kernel-CW7kSL3p.webp                 18.16 kB
+dist/assets/vanilla-DNsllhPV.webp                19.48 kB
+dist/.vite/manifest.json                         19.57 kB │ gzip: 2.81 kB
+dist/assets/popcorn-Domcjdt2.webp                20.59 kB
+dist/assets/chocolate-CqGjCoia.webp              21.51 kB
+dist/assets/strawberry-21AeUF6J.webp             22.07 kB
+dist/assets/magnet-ChkRaPNe.webp                 24.27 kB
+dist/assets/bear-DKh9oUBS.webp                   26.09 kB
+dist/assets/fukifuki-mado-300-z0za.webp          26.87 kB
+dist/assets/cat-Bx09dbKr.webp                    26.94 kB
+dist/assets/rabbit-C0UJyPth.webp                 28.06 kB
+dist/assets/jelly-C8qWc_x0.webp                  35.69 kB
+dist/assets/ta_ta_hosikuzu01-DWZk-c5h.mp3        47.95 kB
+dist/assets/body-CG9ZF398.webp                   55.35 kB
+dist/assets/guitar-uKzOttHO.webp                 55.90 kB
+dist/assets/train-Bxyl2Jup.webp                  74.19 kB
+dist/assets/leaves-top-left-Bb0QBF2e.webp        75.32 kB
+dist/assets/leaves-bottom-right-BerJaVLu.webp    78.30 kB
+dist/assets/leaves-bottom-left-CapWZIHT.webp     80.10 kB
+dist/assets/leaves-top-right-xFOwLrix.webp       82.62 kB
+dist/assets/shapes-hello-CsWO2TTs.webp           87.51 kB
+dist/assets/house-BnLjevc8.webp                 103.87 kB
+dist/assets/ocean-B73vWr6X.webp                 118.94 kB
+dist/assets/meadow-XErbVMIh.webp                144.49 kB
+dist/assets/shapes-picnic-DunZF76z.webp         152.80 kB
+dist/assets/frog-pond-BABkpTuk.webp             181.80 kB
+dist/assets/forest-Bv3J_zKm.webp                252.86 kB
+dist/assets/underwater-LaMsnFMQ.webp            283.93 kB
+dist/assets/animal-train-DgMP3_QF.webp          319.24 kB
+dist/assets/garden-DM4U-idz.webp                361.86 kB
+dist/assets/index-c9PFRHQ7.css                    0.60 kB │ gzip: 0.36 kB
+dist/assets/index-B3WmeqMK.css                    0.78 kB │ gzip: 0.46 kB
+dist/assets/home-button-tBCoMXyW.css              1.00 kB │ gzip: 0.49 kB
+dist/assets/index-wPJz8IZg.css                    1.16 kB │ gzip: 0.62 kB
+dist/assets/index-BfXNu4ZG.css                    1.33 kB │ gzip: 0.63 kB
+dist/assets/index-BLY7xjQX.css                    1.55 kB │ gzip: 0.75 kB
+dist/assets/index-D18H9d4-.css                    1.91 kB │ gzip: 0.85 kB
+dist/assets/index-DhSiSD95.css                    2.35 kB │ gzip: 1.04 kB
+dist/assets/index-DMzq423C.css                    2.50 kB │ gzip: 1.20 kB
+dist/assets/index-CZebegBn.css                    2.61 kB │ gzip: 1.06 kB
+dist/assets/index-bK6-i984.css                    2.63 kB │ gzip: 1.07 kB
+dist/assets/index-C-MLmtcM.css                    2.72 kB │ gzip: 1.19 kB
+dist/assets/index-CzQLQxxi.css                    2.83 kB │ gzip: 1.13 kB
+dist/assets/index-XdQevHeQ.css                    2.89 kB │ gzip: 1.29 kB
+dist/assets/index-Dow7SBzx.css                    3.39 kB │ gzip: 1.23 kB
+dist/assets/index-RAlGQNP8.css                    3.48 kB │ gzip: 1.39 kB
+dist/assets/index-D73ZzrmT.css                    4.33 kB │ gzip: 1.67 kB
+dist/assets/index-BNp1kn7P.css                    4.37 kB │ gzip: 1.56 kB
+dist/assets/index-BiLcT35o.css                    6.29 kB │ gzip: 2.07 kB
+dist/assets/index-CK-PKCLU.css                   10.29 kB │ gzip: 3.03 kB
+dist/assets/house-Dcbpff-c.js                     0.05 kB │ gzip: 0.07 kB
+dist/assets/jelly-BL0jKAN7.js                     0.05 kB │ gzip: 0.07 kB
+dist/assets/train-Cod7ztsM.js                     0.05 kB │ gzip: 0.07 kB
+dist/assets/guitar-C2U8XKEr.js                    0.05 kB │ gzip: 0.07 kB
+dist/assets/meadow-AIVv8ehl.js                    0.05 kB │ gzip: 0.07 kB
+dist/assets/popcorn-BbL5IKEI.js                   0.08 kB │ gzip: 0.09 kB
+dist/assets/leaf-teal-ConuoY5c.js                 0.09 kB │ gzip: 0.09 kB
+dist/assets/cat-Hj0CLFyn.js                       0.12 kB │ gzip: 0.11 kB
+dist/assets/fish-DiuC16TL.js                      0.12 kB │ gzip: 0.11 kB
+dist/assets/vanilla-CpMCcc3B.js                   0.13 kB │ gzip: 0.12 kB
+dist/assets/carrot-BmCQevCY.js                    0.16 kB │ gzip: 0.14 kB
+dist/assets/dom-BhET2Ipi.js                       0.25 kB │ gzip: 0.19 kB
+dist/assets/home-button-CC0sF9Qc.js               0.46 kB │ gzip: 0.36 kB
+dist/assets/modulepreload-polyfill-P2Xu9kJm.js    0.67 kB │ gzip: 0.38 kB
+dist/assets/index-DhyG3M5l.js                     2.67 kB │ gzip: 1.47 kB
+dist/assets/index-CrNnZsUu.js                     2.68 kB │ gzip: 1.28 kB
+dist/assets/index-MjKC3N5H.js                     2.96 kB │ gzip: 1.32 kB
+dist/assets/index-W5Qvepe_.js                     2.98 kB │ gzip: 1.43 kB
+dist/assets/index-Beew8aEO.js                     3.58 kB │ gzip: 1.69 kB
+dist/assets/index-BHWlyACQ.js                     3.64 kB │ gzip: 1.61 kB
+dist/assets/index-BPhPaQ-r.js                     3.85 kB │ gzip: 1.65 kB
+dist/assets/index-BCHcZ7UX.js                     3.95 kB │ gzip: 1.85 kB
+dist/assets/index-CMwtHbYa.js                     3.97 kB │ gzip: 1.70 kB
+dist/assets/index-CW8I0r2e.js                     4.04 kB │ gzip: 1.97 kB
+dist/assets/index-B7Ru3BWI.js                     4.20 kB │ gzip: 1.86 kB
+dist/assets/index-CgF3aL6T.js                     4.33 kB │ gzip: 1.96 kB
+dist/assets/index-V40gGnuU.js                     4.80 kB │ gzip: 2.23 kB
+dist/assets/index-CJKOWuPX.js                     5.31 kB │ gzip: 2.30 kB
+dist/assets/index-CTx-qquT.js                     5.91 kB │ gzip: 2.56 kB
+dist/assets/triangle-BoJiR6-Q.js                  6.08 kB │ gzip: 1.89 kB
+dist/assets/index-B3LSIQ1T.js                     9.62 kB │ gzip: 4.15 kB
+dist/assets/index-DH9Be5PU.js                    10.62 kB │ gzip: 3.96 kB
+dist/assets/05-octopus-SHufd1vm.js               11.87 kB │ gzip: 4.47 kB
+dist/assets/index-vHIX1qR3.js                    13.94 kB │ gzip: 4.10 kB
+dist/assets/index-CRFDQ0pL.js                    27.29 kB │ gzip: 9.89 kB
+
+✓ built in 205ms
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> build:production
+> npm run typecheck && vite build --mode aws
+
+
+> typecheck
+> tsc --noEmit && tsc --project tsconfig.node.json
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+vite v8.3.4 building client environment for aws...
+transforming...
+✓ 54 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-production/publication.json                            0.10 kB │ gzip: 0.11 kB
+dist-production/404.html                                    0.90 kB │ gzip: 0.56 kB
+dist-production/assets/04-yellow-triangle-DftIzwiC.svg      1.26 kB │ gzip: 0.67 kB
+dist-production/assets/03-purple-circle-Do0qK_i7.svg        1.33 kB │ gzip: 0.70 kB
+dist-production/assets/06-mint-rectangle-CtIYuggT.svg       1.42 kB │ gzip: 0.75 kB
+dist-production/assets/05-coral-star-Dz146y4b.svg           1.42 kB │ gzip: 0.76 kB
+dist-production/assets/02-cyan-circle-CgFFWwX3.svg          1.71 kB │ gzip: 0.89 kB
+dist-production/assets/01-coral-square-DTcQLMqf.svg         2.55 kB │ gzip: 1.38 kB
+dist-production/index.html                                  4.06 kB │ gzip: 1.37 kB
+dist-production/ponpon-stamp/index.html                     4.27 kB │ gzip: 1.53 kB
+dist-production/assets/frog-pond-C7Ph4MFk.webp              4.83 kB
+dist-production/assets/06-crab-J09R4m2k.svg                 4.95 kB │ gzip: 1.77 kB
+dist-production/assets/05-octopus-C1vGjAoV.svg              5.17 kB │ gzip: 2.31 kB
+dist-production/assets/animal-train-CxSsSYRd.webp           5.47 kB
+dist-production/assets/02-clownfish-DWQdueNV.svg            5.55 kB │ gzip: 2.08 kB
+dist-production/assets/garden-DKhwdU6o.webp                 5.72 kB
+dist-production/.vite/manifest.json                         6.25 kB │ gzip: 1.04 kB
+dist-production/assets/underwater-Cml2OwZP.webp             6.30 kB
+dist-production/assets/shapes-picnic-CgUlVmEV.webp          6.32 kB
+dist-production/assets/shapes-hello-0L9OMQ2S.webp           6.61 kB
+dist-production/fukifuki-mado/index.html                    7.48 kB │ gzip: 2.86 kB
+dist-production/assets/fukifuki-mado-300-z0za.webp         26.87 kB
+dist-production/assets/leaves-top-left-Bb0QBF2e.webp       75.32 kB
+dist-production/assets/leaves-bottom-right-BerJaVLu.webp   78.30 kB
+dist-production/assets/shapes-hello-CsWO2TTs.webp          87.51 kB
+dist-production/assets/shapes-picnic-DunZF76z.webp        152.80 kB
+dist-production/assets/frog-pond-BABkpTuk.webp            181.80 kB
+dist-production/assets/underwater-LaMsnFMQ.webp           283.93 kB
+dist-production/assets/animal-train-DgMP3_QF.webp         319.24 kB
+dist-production/assets/garden-DM4U-idz.webp               361.86 kB
+dist-production/assets/home-button-tBCoMXyW.css             1.00 kB │ gzip: 0.49 kB
+dist-production/assets/index-D73ZzrmT.css                   4.33 kB │ gzip: 1.67 kB
+dist-production/assets/index-BiLcT35o.css                   6.29 kB │ gzip: 2.07 kB
+dist-production/assets/index-CK-PKCLU.css                  10.29 kB │ gzip: 3.03 kB
+dist-production/assets/home-button-CC0sF9Qc.js              0.46 kB │ gzip: 0.36 kB
+dist-production/assets/dom-B64pd2V8.js                      0.92 kB │ gzip: 0.51 kB
+dist-production/assets/index-UZAxLOsa.js                    1.30 kB │ gzip: 0.71 kB
+dist-production/assets/index-CA3h-mfh.js                    4.76 kB │ gzip: 2.21 kB
+dist-production/assets/05-octopus-SHufd1vm.js              11.87 kB │ gzip: 4.47 kB
+dist-production/assets/index-DqbNotDb.js                   27.24 kB │ gzip: 9.86 kB
+
+✓ built in 127ms
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> test:publication
+> node --import tsx tests/publication.mjs
+
+Publication PASS: Sites includes all games; production includes only allowlisted pages, code, previews and correct sharing URLs
+
+> test:infra
+> node --import tsx tests/infrastructure.mjs
+
+Infrastructure PASS: offline synth, Tokyo S3, US-East certificate, OAC, HTTPS, DNS, no access logs, removal/pruning and cache invalidation, MPA routes/404
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> build:test
+> vite build --mode test
+
+vite v8.3.4 building client environment for test...
+transforming...
+✓ 170 modules transformed.
+rendering chunks...
+computing gzip size...
+test-results/build/404.html                                     0.90 kB │ gzip: 0.56 kB
+test-results/build/assets/04-yellow-triangle-DftIzwiC.svg       1.26 kB │ gzip: 0.67 kB
+test-results/build/assets/03-purple-circle-Do0qK_i7.svg         1.33 kB │ gzip: 0.70 kB
+test-results/build/assets/06-mint-rectangle-CtIYuggT.svg        1.42 kB │ gzip: 0.75 kB
+test-results/build/assets/05-coral-star-Dz146y4b.svg            1.42 kB │ gzip: 0.76 kB
+test-results/build/assets/02-cyan-circle-CgFFWwX3.svg           1.71 kB │ gzip: 0.89 kB
+test-results/build/pukupuku-shabon/index.html                   2.40 kB │ gzip: 0.97 kB
+test-results/build/hikari-no-oekaki/index.html                  2.53 kB │ gzip: 0.97 kB
+test-results/build/assets/01-coral-square-DTcQLMqf.svg          2.55 kB │ gzip: 1.38 kB
+test-results/build/mizutamari/index.html                        2.71 kB │ gzip: 1.08 kB
+test-results/build/biyoon-jelly/index.html                      2.72 kB │ gzip: 1.07 kB
+test-results/build/pokopoko-popcorn/index.html                  2.72 kB │ gzip: 1.04 kB
+test-results/build/kasanete-iroglass/index.html                 2.78 kB │ gzip: 1.09 kB
+test-results/build/pitatto-magnet/index.html                    2.79 kB │ gzip: 1.10 kB
+test-results/build/dare-no-ouchi/index.html                     3.07 kB │ gzip: 1.13 kB
+test-results/build/kurukuru-kazaguruma/index.html               3.22 kB │ gzip: 1.28 kB
+test-results/build/tsumitsumi-ice/index.html                    3.39 kB │ gzip: 1.20 kB
+test-results/build/poron-guitar/index.html                      3.43 kB │ gzip: 1.10 kB
+test-results/build/kurutto-ehon/index.html                      3.56 kB │ gzip: 1.28 kB
+test-results/build/kotokoto-kisha/index.html                    3.67 kB │ gzip: 1.13 kB
+test-results/build/assets/rotor-0gXr_tbw.svg                    4.09 kB │ gzip: 0.77 kB
+test-results/build/ponpon-stamp/index.html                      4.38 kB │ gzip: 1.55 kB
+test-results/build/assets/frog-pond-C7Ph4MFk.webp               4.83 kB
+test-results/build/assets/06-crab-J09R4m2k.svg                  4.95 kB │ gzip: 1.77 kB
+test-results/build/index.html                                   5.13 kB │ gzip: 1.62 kB
+test-results/build/assets/05-octopus-C1vGjAoV.svg               5.17 kB │ gzip: 2.31 kB
+test-results/build/assets/animal-train-CxSsSYRd.webp            5.47 kB
+test-results/build/assets/02-clownfish-DWQdueNV.svg             5.55 kB │ gzip: 2.08 kB
+test-results/build/mogumogu-tomodachi/index.html                5.62 kB │ gzip: 1.75 kB
+test-results/build/assets/garden-DKhwdU6o.webp                  5.72 kB
+test-results/build/assets/underwater-Cml2OwZP.webp              6.30 kB
+test-results/build/assets/shapes-picnic-CgUlVmEV.webp           6.32 kB
+test-results/build/assets/shapes-hello-0L9OMQ2S.webp            6.61 kB
+test-results/build/assets/banana-B0c56mll.webp                  6.98 kB
+test-results/build/fukifuki-mado/index.html                     7.59 kB │ gzip: 2.89 kB
+test-results/build/korokoro-suberidai/index.html                8.12 kB │ gzip: 2.09 kB
+test-results/build/assets/fish-3mqaGEqc.webp                    8.17 kB
+test-results/build/assets/carrot-CcvqEDui.webp                  9.10 kB
+test-results/build/assets/flower-BJM4XImt.webp                  9.47 kB
+test-results/build/assets/star-CjvDF1Q-.webp                   10.17 kB
+test-results/build/pukapuka-fusen/index.html                   10.63 kB │ gzip: 2.99 kB
+test-results/build/assets/strawberry-DGyyL2Bn.webp             12.59 kB
+test-results/build/assets/leaf-green-Py8ENxeR.webp             16.17 kB
+test-results/build/assets/leaf-teal-BhPN6GyR.webp              16.74 kB
+test-results/build/assets/cone-QAX37hz5.webp                   17.22 kB
+test-results/build/assets/kernel-CW7kSL3p.webp                 18.16 kB
+test-results/build/assets/vanilla-DNsllhPV.webp                19.48 kB
+test-results/build/.vite/manifest.json                         19.57 kB │ gzip: 2.81 kB
+test-results/build/assets/popcorn-Domcjdt2.webp                20.59 kB
+test-results/build/assets/chocolate-CqGjCoia.webp              21.51 kB
+test-results/build/assets/strawberry-21AeUF6J.webp             22.07 kB
+test-results/build/assets/magnet-ChkRaPNe.webp                 24.27 kB
+test-results/build/assets/bear-DKh9oUBS.webp                   26.09 kB
+test-results/build/assets/fukifuki-mado-300-z0za.webp          26.87 kB
+test-results/build/assets/cat-Bx09dbKr.webp                    26.94 kB
+test-results/build/assets/rabbit-C0UJyPth.webp                 28.06 kB
+test-results/build/assets/jelly-C8qWc_x0.webp                  35.69 kB
+test-results/build/assets/ta_ta_hosikuzu01-DWZk-c5h.mp3        47.95 kB
+test-results/build/assets/body-CG9ZF398.webp                   55.35 kB
+test-results/build/assets/guitar-uKzOttHO.webp                 55.90 kB
+test-results/build/assets/train-Bxyl2Jup.webp                  74.19 kB
+test-results/build/assets/leaves-top-left-Bb0QBF2e.webp        75.32 kB
+test-results/build/assets/leaves-bottom-right-BerJaVLu.webp    78.30 kB
+test-results/build/assets/leaves-bottom-left-CapWZIHT.webp     80.10 kB
+test-results/build/assets/leaves-top-right-xFOwLrix.webp       82.62 kB
+test-results/build/assets/shapes-hello-CsWO2TTs.webp           87.51 kB
+test-results/build/assets/house-BnLjevc8.webp                 103.87 kB
+test-results/build/assets/ocean-B73vWr6X.webp                 118.94 kB
+test-results/build/assets/meadow-XErbVMIh.webp                144.49 kB
+test-results/build/assets/shapes-picnic-DunZF76z.webp         152.80 kB
+test-results/build/assets/frog-pond-BABkpTuk.webp             181.80 kB
+test-results/build/assets/forest-Bv3J_zKm.webp                252.86 kB
+test-results/build/assets/underwater-LaMsnFMQ.webp            283.93 kB
+test-results/build/assets/animal-train-DgMP3_QF.webp          319.24 kB
+test-results/build/assets/garden-DM4U-idz.webp                361.86 kB
+test-results/build/assets/index-c9PFRHQ7.css                    0.60 kB │ gzip: 0.36 kB
+test-results/build/assets/index-B3WmeqMK.css                    0.78 kB │ gzip: 0.46 kB
+test-results/build/assets/home-button-tBCoMXyW.css              1.00 kB │ gzip: 0.49 kB
+test-results/build/assets/index-wPJz8IZg.css                    1.16 kB │ gzip: 0.62 kB
+test-results/build/assets/index-BfXNu4ZG.css                    1.33 kB │ gzip: 0.63 kB
+test-results/build/assets/index-BLY7xjQX.css                    1.55 kB │ gzip: 0.75 kB
+test-results/build/assets/index-D18H9d4-.css                    1.91 kB │ gzip: 0.85 kB
+test-results/build/assets/index-DhSiSD95.css                    2.35 kB │ gzip: 1.04 kB
+test-results/build/assets/index-DMzq423C.css                    2.50 kB │ gzip: 1.20 kB
+test-results/build/assets/index-CZebegBn.css                    2.61 kB │ gzip: 1.06 kB
+test-results/build/assets/index-bK6-i984.css                    2.63 kB │ gzip: 1.07 kB
+test-results/build/assets/index-C-MLmtcM.css                    2.72 kB │ gzip: 1.19 kB
+test-results/build/assets/index-CzQLQxxi.css                    2.83 kB │ gzip: 1.13 kB
+test-results/build/assets/index-XdQevHeQ.css                    2.89 kB │ gzip: 1.29 kB
+test-results/build/assets/index-Dow7SBzx.css                    3.39 kB │ gzip: 1.23 kB
+test-results/build/assets/index-RAlGQNP8.css                    3.48 kB │ gzip: 1.39 kB
+test-results/build/assets/index-D73ZzrmT.css                    4.33 kB │ gzip: 1.67 kB
+test-results/build/assets/index-BNp1kn7P.css                    4.37 kB │ gzip: 1.56 kB
+test-results/build/assets/index-BiLcT35o.css                    6.29 kB │ gzip: 2.07 kB
+test-results/build/assets/index-CK-PKCLU.css                   10.29 kB │ gzip: 3.03 kB
+test-results/build/assets/house-Dcbpff-c.js                     0.05 kB │ gzip: 0.07 kB
+test-results/build/assets/jelly-BL0jKAN7.js                     0.05 kB │ gzip: 0.07 kB
+test-results/build/assets/train-Cod7ztsM.js                     0.05 kB │ gzip: 0.07 kB
+test-results/build/assets/guitar-C2U8XKEr.js                    0.05 kB │ gzip: 0.07 kB
+test-results/build/assets/meadow-AIVv8ehl.js                    0.05 kB │ gzip: 0.07 kB
+test-results/build/assets/popcorn-BbL5IKEI.js                   0.08 kB │ gzip: 0.09 kB
+test-results/build/assets/leaf-teal-ConuoY5c.js                 0.09 kB │ gzip: 0.09 kB
+test-results/build/assets/cat-Hj0CLFyn.js                       0.12 kB │ gzip: 0.11 kB
+test-results/build/assets/fish-DiuC16TL.js                      0.12 kB │ gzip: 0.11 kB
+test-results/build/assets/vanilla-CpMCcc3B.js                   0.13 kB │ gzip: 0.12 kB
+test-results/build/assets/carrot-BmCQevCY.js                    0.16 kB │ gzip: 0.14 kB
+test-results/build/assets/dom-BhET2Ipi.js                       0.25 kB │ gzip: 0.19 kB
+test-results/build/assets/home-button-CC0sF9Qc.js               0.46 kB │ gzip: 0.36 kB
+test-results/build/assets/modulepreload-polyfill-P2Xu9kJm.js    0.67 kB │ gzip: 0.38 kB
+test-results/build/assets/index-DhyG3M5l.js                     2.67 kB │ gzip: 1.47 kB
+test-results/build/assets/index-CrNnZsUu.js                     2.68 kB │ gzip: 1.28 kB
+test-results/build/assets/index-MjKC3N5H.js                     2.96 kB │ gzip: 1.32 kB
+test-results/build/assets/index-W5Qvepe_.js                     2.98 kB │ gzip: 1.43 kB
+test-results/build/assets/index-Beew8aEO.js                     3.58 kB │ gzip: 1.69 kB
+test-results/build/assets/index-BHWlyACQ.js                     3.64 kB │ gzip: 1.61 kB
+test-results/build/assets/index-BPhPaQ-r.js                     3.85 kB │ gzip: 1.65 kB
+test-results/build/assets/index-BCHcZ7UX.js                     3.95 kB │ gzip: 1.85 kB
+test-results/build/assets/index-CMwtHbYa.js                     3.97 kB │ gzip: 1.70 kB
+test-results/build/assets/index-CW8I0r2e.js                     4.04 kB │ gzip: 1.97 kB
+test-results/build/assets/index-B7Ru3BWI.js                     4.20 kB │ gzip: 1.86 kB
+test-results/build/assets/index-CgF3aL6T.js                     4.33 kB │ gzip: 1.96 kB
+test-results/build/assets/index-V40gGnuU.js                     4.80 kB │ gzip: 2.23 kB
+test-results/build/assets/index-CJKOWuPX.js                     5.31 kB │ gzip: 2.30 kB
+test-results/build/assets/index-CTx-qquT.js                     5.91 kB │ gzip: 2.56 kB
+test-results/build/assets/triangle-BoJiR6-Q.js                  6.08 kB │ gzip: 1.89 kB
+test-results/build/assets/index-DH9Be5PU.js                    10.62 kB │ gzip: 3.96 kB
+test-results/build/assets/index-D8II4eh-.js                    11.26 kB │ gzip: 4.78 kB
+test-results/build/assets/05-octopus-SHufd1vm.js               11.87 kB │ gzip: 4.47 kB
+test-results/build/assets/index-vHIX1qR3.js                    13.94 kB │ gzip: 4.10 kB
+test-results/build/assets/index-CRFDQ0pL.js                    27.29 kB │ gzip: 9.89 kB
+
+✓ built in 208ms
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+Build PASS: all page/asset references, shared chunks, original media bytes, no production test hooks
+Branding PASS: 19 HTML pages, local references, footer, OGP metadata, PNG dimensions/modes, ICO 16/32/48 frames
+Home button PASS: 18 games / 3 viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS errors
+Characters PASS: 6 shapes + 8 manually revised aquarium SVGs, exact SHA-256, series directories
+Production: hub, hashed assets, drawing/reload, fog wiping, navigation, no test hooks PASS
+iphone-portrait: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+iphone-landscape: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+ipad: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+ipad-landscape: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+desktop: viewport, multitouch, bloom once on up, short tap, cancel and screenshot PASS
+Unchanged initial size; 0/3/6/9s flower factors 1/1.5/2/2; independent 2 fingers; peak once; shared decoded MP3 used during hold PASS
+10 fingers: particles<=220 total voices<=4 MP3 voices<=2 gain<=2.25 each; cancel/hidden restore without stale playback PASS
+Trusted mouse, Web Audio activation, 2,000 taps and 5,000 long-drag moves bounded PASS
+After release: all effects/voices expire and animation stops PASS
+Old segments become particles; petals release particles while remaining shape stays visible PASS
+Resize clears captures; pagehide/pageshow recovery PASS (synthetic lifecycle events)
+Exact overlap pixels: newer yellow line above cyan line; newer pink flower above cyan flower (equal timestamps); older cyan flower above newer yellow line PASS
+MP3 exact bytes and audio/mpeg; single fetch/shared decode; no delayed play after first-load release; release tail bounded; HTTP503 keeps drawing functional PASS
+MP3: transient/continuous HTTP503, rapid-tap cooldown, no automatic hold retry, same-page recovery PASS
+MP3: in-flight request shared; delayed completion after release/hidden/pagehide stays silent; next gesture recovers PASS
+Hub: 320/390/1180px, simplified copy, eighteen cards, 56px controls, lifecycle cleanup, return/re-entry x9, no horizontal overflow PASS
+Window: random first/last selection, all six sharp/fog pairs decode, fog pixels match, wiping, alt text, full cycle and resize preserves scene PASS
+Window: delayed fog, loading input guard, rapid next presses, out-of-order decode, HTTP503 fallback and recovery PASS
+Window: 320/390/820/1180/844 widths, image decode, real CDP touch wiping/re-fog x25, multi-touch/cancel, resize preserves mask, keyboard, return/re-entry x5, reset x100, reduced motion, 56px targets PASS
+No browser JavaScript exceptions PASS
+Browser regression PASS
+Balloon: 320/390/820/844/568/1280 viewports, 56px targets, no overflow, short tap, 2.4s maximum stable, release outside, upward movement and screenshots PASS
+Balloon: trusted CDP touch, two fingers, pointer cancellation, keyboard repeat, blur and resize cancellation PASS
+Balloon: six variants, 200 launches / 18-node cap, 9.5s expiry, idle and held-max RAF stop, synthetic hidden cleanup PASS
+Balloon: reduced motion, pagehide, hub navigation/return, no JavaScript exceptions PASS
+Stamp: 320/390/820/844/568/1280, visible 56px controls, usable paper, six original SVGs, tap placement and screenshots PASS
+Stamp size: original phone range, gradual tablet/desktop enlargement, 1.6x cap, landscape phone and resize recovery PASS
+Charge PASS: 1s threshold, gradual power preview, 10s/8x cap and idle, moved release, clipped giant stamp, cancellation and reduced motion
+Stamp paging: 14 originals, all 8 aquarium selections, mixed art, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS
+Stamp: CDP synthetic two-finger touch, cancel, moved/outside release, blur/hidden, resume, immediate new paper, keyboard and assistive click PASS
+Feedback: native AudioContext starts only after user input, <=3 sine voices / 0.075 gain, legacy OFF preferences ignored, background suspend/resume; <=72 particles and expiry, reduced <=4; Vibration API spy 12ms / >=160ms and unsupported fallback PASS (no physical audio/haptic verification)
+Feedback always enabled: no hub controls, legacy saved OFF ignored by stamp and drawing, blocked storage still plays PASS
+Stamp: 200 placements / 60 cap, no automatic deletion, new paper recovery, idle animations/RAF stop, resize, reduced motion, pagehide/re-entry, hub/footer, no JS errors PASS
+Slide PASS: six viewport sizes, full toy, 56px controls, real CDP touch and screenshots
+Slide PASS: three colors, rolling/bounce/rest, resize, 300 taps/24 cap, idle, keyboard repeat, hidden/pagehide, reduced motion, hub/re-entry, no JS errors
+Pinwheel PASS: seven viewport sizes, portrait/landscape, safe full rotation circle/cardinal-angle screenshots, full 56px controls, asset load, real touch tap, screenshots
+Pinwheel PASS: directions, deceleration, 300 inputs/speed cap, idle RAF, multiple fingers, cancel, keyboard, repeat, blur, resize, hidden/resume, reduced motion, hub/re-entry/pagehide, no JS errors
+Glass PASS: six viewports, 56px controls, no overflow, CDP synthetic touch movement (not physical-device touch), unobstructed hint, re-entry, screenshots
+Glass PASS: green/red/blue/dark pixels, fully overlapping plate retrieval, direct selection, cancel/blur/resize, edge limits, repeated keyboard selection, reduced motion/idle, hub/re-entry, no JS errors
+Pond model PASS: 1000 inputs bounded, finite leaf impulses, convergence, reduced motion
+Pond PASS: six viewports, 56px back, no overflow, image decode, CDP synthetic taps and screenshots
+Pond PASS: multi-touch/drag/cancel, stale move, blur/pagehide, keyboard, resize/DPR, reduced motion, settling/idle, hub and re-entry, no JS errors
+Mogu model PASS: 10000 inputs produce exactly two meals; all interrupted phases reset
+Touch anchor mobile {"label":"mobile","maxXDrift":0.0000152587890625,"maxYDrift":0,"maxFaceDrift":0.000021375260826006546,"minHeightRatio":0.9350516426828489}
+Touch anchor 844x390 {"label":"844x390","maxXDrift":0.0000152587890625,"maxYDrift":0,"maxFaceDrift":0.00002320970549294841,"minHeightRatio":0.9350532504821204}
+Touch anchor 320x568 {"label":"320x568","maxXDrift":0.0000152587890625,"maxYDrift":0,"maxFaceDrift":0.000023459975101502432,"minHeightRatio":0.935052278128409}
+Touch anchor 768x1024 {"label":"768x1024","maxXDrift":0.000030517578125,"maxYDrift":0,"maxFaceDrift":0.000050421442943946364,"minHeightRatio":0.9350516483701509}
+Touch anchor 1280x800 {"label":"1280x800","maxXDrift":0.000030517578125,"maxYDrift":0,"maxFaceDrift":0.000037138237912408364,"minHeightRatio":0.9350507296048678}
+Mogu PASS: body touch, 100 repeats per meal phase, preserved next bite, immediate food acceptance, touch interruptions, Enter/Space, reduced-motion touch; real browser touch simulation, all foods, clipped mouth, closed chewing, bounded repeats, all phase interruptions, resize, reduced motion, keyboard, home/reentry, final asset loading, idle RAF, no JS errors
+Bubbles PASS: six viewports, touch create/pop, 96px+ targets, no overflow, screenshots
+Bubbles PASS: 1000-input cap, multi-touch, keyboard, resize, reduced motion idle, real tab switch and blur/pagehide/hidden pause and resume, hub/re-entry, single quiet voice/cooldown/audio failure fallback, bounded glints/cleanup/reduced motion, non-interactive clouds, zero JS exceptions
+Carry model PASS: progressive/reversible movement, bounded speed/ripples/edges, idle, clear, reduced motion, resize
+Interactions PASS: three-plate tap cycle, unchanged overlap color, lower plate extraction, direct drag, cancel/blur, six viewports, idle; pond persistent transport, blur retention, reduced motion, idle; no JS errors
+Guitar PASS: six viewports, 56px targets, art decode, real CDP touch tap/fast sweep, four voices, idle audio/animation stop, screenshots
+Guitar PASS: multiple fingers, cancel, 10000-input audio/animation caps, blur/hidden/pagehide, keyboard, reduced motion, hub/reentry, audio failure fallback, zero JS exceptions; physical listening unverified
+Train PASS: six sizes, 56px fixed targets, five wave phases / sprite edge occlusion / wagon foreground comparison, images decode, tap and bounded movement, two fixed voices, idle suspend
+Train PASS: 10000-input travel/audio/effect caps, three greetings, keyboard, resize, blur/hidden/pagehide, reduced motion, hub/reentry, audio failure; no JS exceptions. Physical audio/device not verified.
+House 320x568: touch, 10000 taps, automatic close, target/overflow/audio caps PASS
+House 390x844: touch, 10000 taps, automatic close, target/overflow/audio caps PASS
+House 820x1180: touch, 10000 taps, automatic close, target/overflow/audio caps PASS
+House 844x390: touch, 10000 taps, automatic close, target/overflow/audio caps PASS
+House 568x320: touch, 10000 taps, automatic close, target/overflow/audio caps PASS
+House 1280x900: touch, 10000 taps, automatic close, target/overflow/audio caps PASS
+House PASS: 3 guests, keyboard, reduced motion, blur/hidden/pagehide/resize, hub/reentry, decode retry, unavailable audio; no JS errors. Physical audio/device unverified.
+Popcorn 320x568: touch, persistent/repeated pop, 10000 taps, six-node cap, reset, 56px targets, no scroll, bounded audio/animations PASS
+Popcorn 390x844: touch, persistent/repeated pop, 10000 taps, six-node cap, reset, 56px targets, no scroll, bounded audio/animations PASS
+Popcorn 820x1180: touch, persistent/repeated pop, 10000 taps, six-node cap, reset, 56px targets, no scroll, bounded audio/animations PASS
+Popcorn 844x390: touch, persistent/repeated pop, 10000 taps, six-node cap, reset, 56px targets, no scroll, bounded audio/animations PASS
+Popcorn 568x320: touch, persistent/repeated pop, 10000 taps, six-node cap, reset, 56px targets, no scroll, bounded audio/animations PASS
+Popcorn 1280x900: touch, persistent/repeated pop, 10000 taps, six-node cap, reset, 56px targets, no scroll, bounded audio/animations PASS
+Popcorn PASS: keyboard, multitouch/cancel, blur/hidden/pagehide/resize retention, reduced motion, home/reentry, decode retry, unavailable sound, no JS errors. Physical audio/device unverified.
+Ice 320x568: assets, touch, ordered stacking, five-scoop cap/top replacement, repeat response, 1000 inputs, reset, 56px targets, no scroll/cutoff PASS
+Ice 390x844: assets, touch, ordered stacking, five-scoop cap/top replacement, repeat response, 1000 inputs, reset, 56px targets, no scroll/cutoff PASS
+Ice 820x1180: assets, touch, ordered stacking, five-scoop cap/top replacement, repeat response, 1000 inputs, reset, 56px targets, no scroll/cutoff PASS
+Ice 844x390: assets, touch, ordered stacking, five-scoop cap/top replacement, repeat response, 1000 inputs, reset, 56px targets, no scroll/cutoff PASS
+Ice 568x320: assets, touch, ordered stacking, five-scoop cap/top replacement, repeat response, 1000 inputs, reset, 56px targets, no scroll/cutoff PASS
+Ice 1280x900: assets, touch, ordered stacking, five-scoop cap/top replacement, repeat response, 1000 inputs, reset, 56px targets, no scroll/cutoff PASS
+Ice image recovery PASS: injected first decode rejection shows retry, input remains available, retry restores decoded images and preserves existing scoop order. This is fault injection, not a real network outage.
+Ice PASS: keyboard, multitouch/cancel, visibility/blur/pagehide retention and cleanup, resize, reduced motion, home/reentry, no JS errors. Chromium emulation only; physical Safari/device/child usability unverified.
+Jelly 320x568: image decode, 56px controls, real CDP touch drag/release, extreme bounds, multitouch/cancel, repeat response, no overflow PASS
+Jelly 390x844: image decode, 56px controls, real CDP touch drag/release, extreme bounds, multitouch/cancel, repeat response, no overflow PASS
+Jelly 820x1180: image decode, 56px controls, real CDP touch drag/release, extreme bounds, multitouch/cancel, repeat response, no overflow PASS
+Jelly 844x390: image decode, 56px controls, real CDP touch drag/release, extreme bounds, multitouch/cancel, repeat response, no overflow PASS
+Jelly 568x320: image decode, 56px controls, real CDP touch drag/release, extreme bounds, multitouch/cancel, repeat response, no overflow PASS
+Jelly 1280x900: image decode, 56px controls, real CDP touch drag/release, extreme bounds, multitouch/cancel, repeat response, no overflow PASS
+Jelly PASS: held arrow/Space/Enter, 1000 clicks bounded, hidden/blur/pagehide cleanup and recovery, resize, reduced-motion, home/reentry, injected decode rejection/retry, no JS exceptions. Chromium emulation only; physical Safari/device/child usability unverified.
+Magnet model: six layouts, tap acquisition, six captures, extreme bounds, release/reacquire, resize, finite settling, distance PASS
+Magnet 320x568: real tap, six captures, drag/release, scatter/reacquire, multiple touches/cancel, 56px bounds, overflow PASS
+Magnet 390x844: real tap, six captures, drag/release, scatter/reacquire, multiple touches/cancel, 56px bounds, overflow PASS
+Magnet 820x1180: real tap, six captures, drag/release, scatter/reacquire, multiple touches/cancel, 56px bounds, overflow PASS
+Magnet 844x390: real tap, six captures, drag/release, scatter/reacquire, multiple touches/cancel, 56px bounds, overflow PASS
+Magnet 568x320: real tap, six captures, drag/release, scatter/reacquire, multiple touches/cancel, 56px bounds, overflow PASS
+Magnet 1280x900: real tap, six captures, drag/release, scatter/reacquire, multiple touches/cancel, 56px bounds, overflow PASS
+Magnet: keyboard, blur/hidden/pagehide cleanup, reduced motion, resize, home/reentry, image decode retry, zero JS exceptions PASS. Physical devices and independent review not run.
+Ehon 320x568: touch next/previous, short/long drag, cancellation, wrap, target bounds PASS
+Ehon 390x844: touch next/previous, short/long drag, cancellation, wrap, target bounds PASS
+Ehon 820x1180: touch next/previous, short/long drag, cancellation, wrap, target bounds PASS
+Ehon 844x390: touch next/previous, short/long drag, cancellation, wrap, target bounds PASS
+Ehon 568x320: touch next/previous, short/long drag, cancellation, wrap, target bounds PASS
+Ehon 1280x900: touch next/previous, short/long drag, cancellation, wrap, target bounds PASS
+Ehon: keyboard, assistive click, blur/resize cleanup, reduced motion, home/reentry, image retry, zero JS errors PASS; physical devices/child/independent review not run.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

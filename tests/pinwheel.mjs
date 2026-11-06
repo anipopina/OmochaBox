@@ -133,7 +133,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===17"
+        ? "document.querySelectorAll('.game-card').length===18"
         : "document.querySelector('#wheel')?.dataset.active !== undefined",
     );
   };
@@ -394,7 +394,7 @@ try {
   );
   await shot('pinwheel-reduced');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===17");
+  await waitFor("document.querySelectorAll('.game-card').length===18");
   await evaluate(
     'document.querySelector(\'a[href="kurukuru-kazaguruma/"]\').scrollIntoView()',
   );

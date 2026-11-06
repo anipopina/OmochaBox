@@ -35,6 +35,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [ぴたっとマグネット](src/pitatto-magnet/README.md) | 磁石で玩具を引き寄せ、くっつけて離す遊び |
 
+| [くるっとえほん](src/kurutto-ehon/README.md) | ページをめくって景色を行き来する絵本遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。

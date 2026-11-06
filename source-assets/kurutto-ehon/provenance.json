@@ -1,0 +1,35 @@
+[
+  {
+    "name": "meadow",
+    "source": "https://drive.google.com/file/d/15O732wXjVLhLjmPl0Gsi9IK3svEPjIf5/view",
+    "original_sha256": "156733583059fb0c7e6c1dea87ce14845cf65e86a34a006c6b37fc59bbb29908",
+    "webp_sha256": "f835a0f7fe237d97a309a9a6a4ca6bfe90649d449aa2a248b20c16a6d9fefc85",
+    "webp_bytes": 144492,
+    "dimensions": [
+      1200,
+      900
+    ]
+  },
+  {
+    "name": "ocean",
+    "source": "https://drive.google.com/file/d/1uMrzvEJ35RY_5Lc1RrW_35gRyM3yaY4e/view",
+    "original_sha256": "2ceb30b74cff1c24b9c91869f3434543e89a404857046b164c10c87eb95484c6",
+    "webp_sha256": "2d8e4e36e92abe35142054e4725d283dc9bbc1e45195407e90eac715dff38cec",
+    "webp_bytes": 118942,
+    "dimensions": [
+      1200,
+      900
+    ]
+  },
+  {
+    "name": "forest",
+    "source": "https://drive.google.com/file/d/1UXgin2IQ99fFZBoHM_LfP-GoGCjhGd9_/view",
+    "original_sha256": "a86feac1fb67a4cae80d24f8d2f0a542b548e9c29d2c0816e524504114daf3ba",
+    "webp_sha256": "ddc99d84890e42745f24438fdeb3381bb6cdf78206f8c0e7e4819351cdca142d",
+    "webp_bytes": 252868,
+    "dimensions": [
+      1200,
+      900
+    ]
+  }
+]

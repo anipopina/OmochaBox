@@ -100,5 +100,11 @@
     "title": "ぴたっとマグネット",
     "description": "ちかづけて ぴたっ。はなして ぱっ！",
     "href": "pitatto-magnet/"
+  },
+  {
+    "id": "kurutto-ehon",
+    "title": "くるっとえほん",
+    "description": "めくって、もどして。つぎは だれかな？",
+    "href": "kurutto-ehon/"
   }
 ]
