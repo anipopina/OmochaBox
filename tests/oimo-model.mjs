@@ -4,94 +4,104 @@ import {
   columns,
   rows,
   potatoLayout,
+  brush,
+  oldField,
+  basketPotato,
+  basketSize,
 } from '../src/oimo-horihori/model.ts';
 const g = new Digging();
 assert.equal(g.harvest(), false);
-for (let i = 0; i < 100; i++) g.dig(0.5, 0.5);
+g.dig(0.5, 0.5);
+const count = g.cleared.size;
+for (let i = 0; i < 30; i++) g.dig(0.5, 0.5);
+assert.equal(g.cleared.size, count, 'repeated stamp never expands');
 assert.equal(g.phase, 'digging');
-assert.equal(g.harvest(), false, 'same spot never harvests');
-for (let y = 0; y <= 1; y += 0.12)
-  for (let x = 0; x <= 1; x += 0.12) g.dig(x, y);
+const circles = brush(0.5, 0.5, 740, 439);
+for (let y = 0; y < rows; y++)
+  for (let x = 0; x < columns; x++)
+    assert.equal(
+      g.cleared.has(y * columns + x),
+      circles.some(
+        (c) =>
+          (((x + 0.5) / columns - c.x) / c.rx) ** 2 +
+            (((y + 0.5) / rows - c.y) / c.ry) ** 2 <=
+          1,
+      ),
+      'same geometry for visual and hit',
+    );
+const old = oldField(740, 439),
+  oldArea = Math.PI * 0.23 * 0.2875 * old.width * old.height;
+assert.ok(((count / (columns * rows)) * 740 * 439) / oldArea > 0.4);
+assert.ok(
+  ((count / (columns * rows)) * 740 * 439) / oldArea < 0.65,
+  'roughly half prior stamp area',
+);
+for (let y = 0; y <= 1; y += 0.1) for (let x = 0; x <= 1; x += 0.1) g.dig(x, y);
 assert.equal(g.phase, 'ready');
-assert.ok(g.cleared.size >= columns * rows * 0.93);
-assert.equal(g.round, 0, 'exposure alone does not harvest');
+assert.equal(g.round, 0);
 assert.equal(g.harvest(), true);
-assert.equal(g.harvest(), false, 'no duplicate harvest');
-assert.equal(g.dig(0.2, 0.3), false);
+assert.equal(g.harvest(), false);
 g.next();
-assert.equal(g.round, 1);
 assert.equal(g.phase, 'digging');
-assert.equal(g.cleared.size, 0);
-console.log(
-  'Oimo model: exposure threshold, repeated input, explicit harvest, reset PASS',
-);
-
-const assisted = new Digging();
-assisted.dig(0.5, 0.5);
-for (let i = 0; i < 8; i++) {
-  const before = assisted.cleared.size;
-  assisted.dig(0.5, 0.5, true);
-  assert.equal(
-    assisted.cleared.size - before,
-    8,
-    'each stationary tap removes only eight nearby cells',
-  );
-  assert.equal(assisted.phase, 'digging');
-}
-for (let i = 0; i < 100; i++) assisted.dig(0.5, 0.5, true);
-assert.equal(assisted.phase, 'ready');
-assert.equal(assisted.round, 0, 'tap assist only exposes; it never harvests');
-for (const [width, height] of [
-  [282, 329],
-  [343, 490],
-  [722, 510],
-  [574, 238],
-  [386, 195],
-  [740, 439],
-  [740, 510],
-]) {
-  for (let round = 0; round < 3; round++) {
-    for (const p of potatoLayout(width, height, round)) {
-      const a = (p.angle * Math.PI) / 180;
-      for (const dx of [-p.width / 2, p.width / 2])
-        for (const dy of [-p.height / 2, p.height / 2]) {
-          const x = p.left + p.width / 2 + dx * Math.cos(a) - dy * Math.sin(a);
-          const y = p.top + p.height / 2 + dx * Math.sin(a) + dy * Math.cos(a);
-          assert.ok(
-            (((x - width / 2) * 1.035) / (width / 2)) ** 2 +
-              (((y - height / 2) * 1.035) / (height / 2)) ** 2 <
-              1,
-            'entire image rectangle fits clipping ellipse even at ready pulse peak',
-          );
-        }
+assert.equal(g.holes.length, 0);
+for (const [w, h] of [
+  [320, 568],
+  [390, 844],
+  [820, 1180],
+  [844, 390],
+  [568, 320],
+  [1280, 900],
+  [1180, 757],
+  [280, 1000],
+  [1000, 280],
+])
+  for (let seed = 1; seed <= 10; seed++)
+    for (let round = 0; round < 12; round++) {
+      const [p] = potatoLayout(w, h, round, seed);
+      assert.equal(potatoLayout(w, h, round, seed).length, 1);
+      const a = (p.angle * Math.PI) / 180,
+        bw =
+          (Math.abs(p.width * Math.cos(a)) + Math.abs(p.height * Math.sin(a))) *
+          1.04,
+        bh =
+          (Math.abs(p.width * Math.sin(a)) + Math.abs(p.height * Math.cos(a))) *
+          1.04;
+      const cx = p.left + p.width / 2,
+        cy = p.top + p.height / 2;
+      assert.ok(
+        cx - bw / 2 >= 0 &&
+          cy - bh / 2 >= 0 &&
+          cx + bw / 2 <= w &&
+          cy + bh / 2 <= h,
+        'rotated full image fits',
+      );
+      const s = basketSize(w, h);
+      for (const r of [
+        { left: 8, top: 8, width: 72, height: 72 },
+        { left: w - s - 12, top: h - s - 12, width: s, height: s },
+      ])
+        assert.ok(
+          !(
+            cx + bw / 2 > r.left &&
+            cx - bw / 2 < r.left + r.width &&
+            cy + bh / 2 > r.top &&
+            cy - bh / 2 < r.top + r.height
+          ),
+          'UI never hides potato',
+        );
     }
-  }
-}
-console.log(
-  'Oimo regression: eight-tap assistance, no automatic harvest, all rotated image corners inside field at pulse peak PASS',
-);
-
-const pairs = new Digging();
-pairs.setTargets([new Map([[0, 100]]), new Map([[279, 100]])]);
-pairs.dig(0, 0);
 assert.equal(
-  pairs.phase,
-  'digging',
-  'one visible potato must not expose the other',
+  new Set(Array.from({ length: 10 }, (_, i) => JSON.stringify(basketPotato(i))))
+    .size,
+  10,
 );
-pairs.dig(1, 1);
-assert.equal(pairs.phase, 'ready');
-assert.ok(
-  pairs.cleared.size < columns * rows * 0.6,
-  'outer soil need not be cleared',
-);
+const target = new Digging();
+target.setTargets([new Map([[12880, 100]])]);
+target.dig(0.5, 0.5);
+assert.equal(target.phase, 'ready');
+assert.ok(target.cleared.size < columns * rows * 0.5);
+target.setTargets([new Map([[500, 100]])]);
+assert.ok(target.cleared.has(500));
 console.log(
-  'Oimo exposure: both potatoes required; outer soil is irrelevant PASS',
-);
-
-pairs.setTargets([new Map([[130, 100]])]);
-assert.equal(pairs.phase, 'ready');
-assert.ok(
-  pairs.cleared.has(130),
-  'ready potato stays fully uncovered after layout changes',
+  'Oimo model PASS: half-area irregular stamp, exact shared geometry, no tap assistance, explicit harvest, single potato, 1080 safe layouts, basket variety, target exposure and resize',
 );

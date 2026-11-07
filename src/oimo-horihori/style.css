@@ -12,7 +12,7 @@ body {
   overscroll-behavior: none;
 }
 body {
-  background: #bd783c;
+  background: #b77a43;
   font-family: system-ui, sans-serif;
   user-select: none;
 }
@@ -21,46 +21,14 @@ body {
   width: 100%;
   height: 100dvh;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 60%, #dc9b55, #b66a32);
   touch-action: none;
-}
-.sky {
-  position: absolute;
-  inset: 0 0 78%;
-  background: #77d9f4;
-  overflow: hidden;
-}
-.sun {
-  position: absolute;
-  width: 75px;
-  height: 75px;
-  right: 10%;
-  top: -12px;
-  border-radius: 50%;
-  background: #ffe261;
-  box-shadow: 0 0 0 12px #ffe26155;
-}
-.hills {
-  position: absolute;
-  inset: 64% -10% -100%;
-  background: #66b940;
-  border-radius: 50% 55% 0 0;
-  border-top: 12px solid #94d552;
 }
 #patch {
   position: absolute;
-  width: min(88vw, 740px);
-  height: min(58dvh, 510px);
-  left: 50%;
-  top: 49%;
-  transform: translate(-50%, -50%);
-  border-radius: 42% 44% 38% 40%;
-  background: #633a28;
-  box-shadow:
-    inset 0 10px 14px #3d251a66,
-    0 14px 0 #e6a461;
-  outline-offset: 8px;
+  inset: 0;
+  background: radial-gradient(ellipse, #815438, #67432d);
   cursor: grab;
+  outline-offset: -5px;
 }
 #roots,
 #soil {
@@ -68,20 +36,15 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
-  border-radius: inherit;
 }
 #roots {
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  pointer-events: none;
 }
 .potato {
-  width: 88%;
-  height: 86%;
   object-fit: contain;
   pointer-events: none;
-  filter: drop-shadow(0 12px 5px #321e1960);
+  filter: drop-shadow(0 6px 4px #321e1960);
 }
 #roots .potato {
   position: absolute;
@@ -92,115 +55,91 @@ body {
 }
 .leaves {
   position: absolute;
-  left: 50%;
-  top: 17%;
-  width: 100px;
-  height: 65px;
-  transform: translateX(-50%);
-}
-.leaves i {
-  position: absolute;
-  width: 63px;
-  height: 42px;
-  border-radius: 70% 0 70% 0;
-  background: #25853a;
-  border-bottom: 5px solid #14612b;
-  transform: rotate(-25deg);
-}
-.leaves i:nth-child(2) {
-  left: 42px;
-  transform: rotate(70deg);
-  background: #53ae39;
-}
-.leaves i:nth-child(3) {
-  left: 23px;
-  top: -20px;
-  transform: rotate(-65deg);
-}
-#sparkles {
-  display: none;
-  position: absolute;
-  inset: -12px;
-  border: 5px dashed #ffe96c;
-  border-radius: inherit;
-  color: #fff39a;
-  font-size: 56px;
+  inset: 0;
   pointer-events: none;
+  overflow: hidden;
 }
-#patch[data-phase='ready'] #sparkles {
-  display: block;
-  animation: ready 1.4s ease-in-out infinite;
+.leaves img {
+  position: absolute;
+  width: clamp(130px, 27vmin, 310px);
+  filter: drop-shadow(5px 8px 5px #30431f60);
 }
-#patch[data-phase='ready'] #roots {
+.leaves img:nth-child(1) {
+  left: -9vmin;
+  top: -10vmin;
+  rotate: 65deg;
+}
+.leaves img:nth-child(2) {
+  right: -10vmin;
+  top: -8vmin;
+  rotate: 150deg;
+}
+.leaves img:nth-child(3) {
+  left: -14vmin;
+  top: 44%;
+  rotate: -35deg;
+}
+.leaves img:nth-child(4) {
+  left: 18%;
+  bottom: -15vmin;
+  rotate: -85deg;
+}
+.leaves img:nth-child(5) {
+  right: -18vmin;
+  top: 42%;
+  rotate: 170deg;
+}
+#patch[data-phase='ready'] #roots .potato {
   animation: ready 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 7px #ffec75) drop-shadow(0 7px 5px #321e1960);
 }
 #patch[data-phase='harvesting'] #roots {
-  z-index: 2;
-  animation: lift 850ms ease-in-out forwards;
+  z-index: 3;
+  overflow: visible;
 }
 #basket {
   position: absolute;
+  right: max(12px, env(safe-area-inset-right));
   bottom: max(12px, env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  height: 85px;
-  width: min(82vw, 460px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 6px solid #f7cb78;
-  border-top: 0;
-  border-radius: 12px 12px 35px 35px;
-  background: repeating-linear-gradient(0deg, #a35b2c 0 8px, #c38546 8px 14px);
-}
-#basket button {
-  border: 0;
-  background: none;
-  padding: 0;
-  width: 72px;
-  height: 72px;
-  flex: 0 1 72px;
-  min-width: 56px;
+  width: clamp(104px, min(28vw, 27dvh), 190px);
+  aspect-ratio: 1;
+  z-index: 4;
+  border: 10px ridge #e8b862;
+  border-radius: 50%;
+  background:
+    repeating-linear-gradient(90deg, #d6a25a66 0 5px, #8b542b55 5px 10px),
+    repeating-linear-gradient(0deg, #c68d47 0 6px, #a56936 6px 12px);
+  box-shadow:
+    inset 0 0 14px 5px #70421f,
+    0 7px 7px #4d301c66;
   cursor: pointer;
 }
-#basket img {
-  width: 100%;
-  height: 100%;
+#basket .potato {
+  position: absolute;
   object-fit: contain;
-  pointer-events: none;
+  filter: drop-shadow(2px 3px 2px #512b3477);
 }
 #cheer {
   position: absolute;
-  top: 23%;
-  width: 100%;
-  text-align: center;
-  color: #fff8ce;
-  font-weight: 900;
-  font-size: clamp(32px, 7vw, 60px);
-  text-shadow: 0 3px #643623;
+  left: 50%;
+  top: 50%;
   pointer-events: none;
+  font-size: 48px;
 }
 .clod {
   position: absolute;
-  width: 16px;
-  height: 12px;
-  border-radius: 45%;
+  width: 14px;
+  height: 10px;
+  border-radius: 40% 65% 45% 55%;
   background: #704025;
   pointer-events: none;
+  z-index: 5;
   animation: scatter 500ms ease-out forwards;
 }
 @keyframes ready {
   50% {
     scale: 1.035;
-  }
-}
-@keyframes lift {
-  40% {
-    transform: translateY(-17%) scale(1.12) rotate(-8deg);
-  }
-  100% {
-    transform: translateY(65%) scale(0.25);
-    opacity: 0;
+    translate: 0 -3px;
   }
 }
 @keyframes scatter {
@@ -209,56 +148,11 @@ body {
     opacity: 0;
   }
 }
-@media (max-height: 480px) {
-  .sky {
-    bottom: 84%;
-  }
-  .leaves {
-    top: 10%;
-  }
-  #patch {
-    width: min(68vw, 620px);
-    height: 61dvh;
-    top: 47%;
-  }
-  #basket {
-    left: auto;
-    right: 12px;
-    bottom: 12px;
-    transform: none;
-    width: 72px;
-    height: auto;
-    min-height: 70px;
-    flex-direction: column;
-  }
-  #basket button {
-    width: 56px;
-    height: 56px;
-    flex-basis: 56px;
-  }
-  #cheer {
-    top: 17%;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  #patch[data-phase] #roots,
-  #patch[data-phase] #sparkles {
+  #patch[data-phase] #roots .potato {
     animation: none;
   }
   .clod {
     animation-duration: 100ms;
   }
-}
-
-#roots.cluster::before {
-  content: '';
-  position: absolute;
-  width: 38%;
-  height: 22%;
-  top: 18%;
-  left: 32%;
-  border: 7px solid #66923c;
-  border-bottom: 0;
-  border-radius: 50% 50% 0 0;
-  transform: rotate(-10deg);
 }

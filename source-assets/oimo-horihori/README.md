@@ -7,4 +7,11 @@ https://drive.google.com/file/d/1nRj9rrWgZG-ySlFgqfyZQISvjcbavn1N/view
 
 用途: 掘ることで現れるサツマイモ、収穫物、入口カード。鮮やかな紫の皮、土の小さな付着、先細りの自然な形、顔や文字なし、透過背景、絵本のガッシュ・粘土風という指定で生成しました。
 
-Pillowで透明余白をbbox (32,48,1508,994)まで除去し、800×600内へ縮小（実寸800×513）、WebP quality=85/method=6。生成原本は変更していません。形状変化は表示時の回転・拡縮と2本の組み合わせです。SHA-256・サイズは `provenance.json`。
+Pillowで透明余白をbbox (32,48,1508,994)まで除去し、800×600内へ縮小（実寸800×513）、WebP quality=85/method=6。生成原本は変更していません。形状変化は表示時の回転・拡縮です。SHA-256・サイズは `provenance.json`。
+
+
+## 葉
+
+親の制作スレッドが2026-11-07にOpenAI built-in image generationで生成した、真上視点のハート形のサツマイモ葉クラスタ。`leaves-original.png` は提供原本（1312×1199 RGBA）をそのまま保持します。既存芋に合わせた鮮やかな緑、絵筆の色面、立体感、短い赤緑の茎、透過背景、文字・背景なしという指定。Libraryの正式materialize手順で取得し、提供ハッシュとの一致を確認しました。
+
+配信用 `leaves.webp` は透過余白のみcropし720px内へ縮小、WebP quality=85/method=6。配置の見切れ・回転はCSSで行います。原本・配信のハッシュとLibrary識別子、変換寸法は `leaves-provenance.json`。

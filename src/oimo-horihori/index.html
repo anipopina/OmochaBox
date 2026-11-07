@@ -40,11 +40,6 @@
   </head>
   <body>
     <main id="scene" aria-label="おいもほりほり">
-      <div class="sky">
-        <div class="sun"></div>
-        <div class="hills"></div>
-      </div>
-      <div class="leaves" aria-hidden="true"><i></i><i></i><i></i></div>
       <div
         id="patch"
         role="button"
@@ -54,9 +49,14 @@
       >
         <div id="roots"></div>
         <canvas id="soil" aria-hidden="true"></canvas>
-        <div id="sparkles" aria-hidden="true">✦</div>
       </div>
-      <div id="basket" aria-label="とれた おいも"></div>
+      <div class="leaves" aria-hidden="true"></div>
+      <div
+        id="basket"
+        role="button"
+        tabindex="0"
+        aria-label="とれた おいも"
+      ></div>
       <div id="cheer" aria-live="polite"></div>
       <a id="back" data-home-button href="../"></a>
     </main>

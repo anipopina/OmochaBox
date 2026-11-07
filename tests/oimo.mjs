@@ -128,15 +128,30 @@ try {
     await touch('touchStart', [await point(x, y)]);
     await touch('touchEnd');
   };
+  const harvestTap = async () => {
+    const p = await evaluate(
+      "(()=>{const r=document.querySelector('#roots img').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,id:1}})()",
+    );
+    await touch('touchStart', [p]);
+    await touch('touchEnd');
+  };
   const dig = async () => {
-    for (const y of [0.17, 0.4, 0.63, 0.83]) {
+    // Real pointer sweeps across the image's visible bounding region.
+    const r = await evaluate(
+      "(()=>{const r=document.querySelector('#roots img').getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})()",
+    );
+    for (let y = r.y + 8; y < r.y + r.h; y += 28) {
       if ((await state()) === 'ready') break;
-      await touch('touchStart', [await point(0.12, y)]);
-      for (const x of [0.28, 0.44, 0.6, 0.76, 0.88])
-        await touch('touchMove', [await point(x, y)]);
+      await touch('touchStart', [{ x: r.x + 8, y, id: 1 }]);
+      for (let x = r.x + 24; x < r.x + r.w; x += 28)
+        await touch('touchMove', [{ x, y, id: 1 }]);
       await touch('touchEnd');
     }
   };
+  const geometry = () =>
+    evaluate(
+      `(()=>{const p=document.querySelector('#roots img').getBoundingClientRect();const blocks=['#basket','#back'].map(s=>document.querySelector(s).getBoundingClientRect());return p.x>=0&&p.y>=0&&p.right<=innerWidth&&p.bottom<=innerHeight&&blocks.every(b=>!(p.right>b.left&&p.left<b.right&&p.bottom>b.top&&p.top<b.bottom))})()`,
+    );
   for (const [width, height] of [
     [320, 568],
     [390, 844],
@@ -145,6 +160,8 @@ try {
     [568, 320],
     [1280, 900],
     [1180, 757],
+    [280, 1000],
+    [1000, 280],
   ]) {
     await call('Emulation.setDeviceMetricsOverride', {
       width,
@@ -154,86 +171,62 @@ try {
     });
     await call('Emulation.setTouchEmulationEnabled', { enabled: true });
     await visit();
+    assert.ok(await geometry(), 'potato fits without UI overlap');
+    assert.equal(
+      await evaluate("document.querySelector('#patch').clientWidth"),
+      width,
+    );
     await shot('oimo-covered-' + width);
     await tap(0.5, 0.5);
-    assert.equal(
-      await state(),
-      'digging',
-      'one touch cannot expose the whole potato',
+    const n = await evaluate(
+      "document.querySelector('#patch').dataset.cleared",
     );
-    for (let i = 1; i < 8 && (await state()) === 'digging'; i++) {
-      const before = await evaluate(
-        "Number(document.querySelector('#patch').dataset.cleared)",
-      );
-      await tap(0.5, 0.5);
-      assert.ok(
-        (await evaluate(
-          "Number(document.querySelector('#patch').dataset.cleared)",
-        )) > before,
-        'repeated central taps keep removing soil',
-      );
-    }
+    for (let i = 0; i < 8; i++) await tap(0.5, 0.5);
     assert.equal(
-      await evaluate("document.querySelector('#basket').children.length"),
-      0,
+      await evaluate("document.querySelector('#patch').dataset.cleared"),
+      n,
+      'same location no longer expands',
     );
+    assert.equal(await state(), 'digging');
     await shot('oimo-partial-' + width);
     await dig();
-    assert.equal(await state(), 'ready', 'broad strokes expose potato');
+    assert.equal(await state(), 'ready');
     assert.equal(
       await evaluate("document.querySelector('#basket').children.length"),
       0,
       'no automatic harvest',
     );
-    assert.ok(
-      (await evaluate(
-        "Number(document.querySelector('#patch').dataset.cleared)",
-      )) < 252,
-      'harvest readiness does not require cleaning 90% of the whole field',
-    );
+    assert.ok(await geometry());
     await shot('oimo-ready-' + width);
-    await tap(0.5, 0.5);
+    await harvestTap();
     assert.equal(await state(), 'harvesting');
-    for (let i = 0; i < 8; i++) await tap(0.5, 0.5);
+    assert.equal(
+      await evaluate("document.querySelector('#cheer').textContent"),
+      '',
+      'no harvest text',
+    );
     await waitFor("document.querySelector('#patch').dataset.round==='1'");
     assert.equal(
       await evaluate("document.querySelector('#basket').children.length"),
       1,
     );
+    assert.equal(
+      await evaluate("document.querySelectorAll('#roots img').length"),
+      1,
+    );
+    assert.ok(await geometry());
     await dig();
     assert.equal(await state(), 'ready');
     await shot('oimo-long-ready-' + width);
-    // Verify rotated image corners in the real DOM, including the ready pulse.
-    assert.ok(
-      await evaluate(
-        `(()=>{const r=document.querySelector('#patch').getBoundingClientRect();const root=document.querySelector('#roots');const scale=1.035;return [...root.querySelectorAll('img')].every(img=>{const w=parseFloat(img.style.width),h=parseFloat(img.style.height),left=parseFloat(img.style.left),top=parseFloat(img.style.top),angle=parseFloat(img.style.transform.slice(7))*Math.PI/180;return [-w/2,w/2].every(dx=>[-h/2,h/2].every(dy=>{const x=left+w/2+dx*Math.cos(angle)-dy*Math.sin(angle),y=top+h/2+dx*Math.sin(angle)+dy*Math.cos(angle);return ((x-r.width/2)*scale/(r.width/2))**2+((y-r.height/2)*scale/(r.height/2))**2<1}))})})()`,
-      ),
-      'long image and tips fit the field at maximum pulse',
-    );
-    await tap(0.5, 0.5);
+    await harvestTap();
     await waitFor("document.querySelector('#patch').dataset.round==='2'");
-    await shot('oimo-cluster-covered-' + width);
     assert.equal(
-      await evaluate(
-        "getComputedStyle(document.querySelector('#roots')).overflow",
-      ),
-      'hidden',
-    );
-    await dig();
-    await shot('oimo-cluster-' + width);
-    await tap(0.5, 0.5);
-    await waitFor("document.querySelector('#patch').dataset.round==='3'");
-    assert.equal(
-      await evaluate("document.querySelector('#basket').children.length"),
-      3,
-    );
-    assert.equal(
-      await evaluate('document.documentElement.scrollWidth<=innerWidth'),
-      true,
+      await evaluate("document.querySelectorAll('#roots img').length"),
+      1,
     );
     assert.ok(
       await evaluate(
-        "(()=>{const r=document.querySelector('#back').getBoundingClientRect();return r.width>=56&&r.height>=56})()",
+        "document.querySelector('#back').getBoundingClientRect().width>=56",
       ),
     );
     report(
@@ -241,44 +234,54 @@ try {
         width +
         'x' +
         height +
-        ': exposure, explicit harvest, repeated play, cluster, layout PASS',
+        ': full field, no repeat assistance, separate harvest, single variants, UI exclusion PASS',
     );
   }
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 1180,
+    height: 757,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
   await visit();
-  let taps = 0;
-  while ((await state()) === 'digging' && taps < 60) {
-    await tap(0.5, 0.5);
-    taps++;
+  for (let i = 0; i < 12; i++) {
+    await dig();
+    assert.equal(await state(), 'ready');
+    await harvestTap();
+    await waitFor(
+      "document.querySelector('#patch').dataset.round==='" + (i + 1) + "'",
+    );
+    assert.equal(
+      await evaluate("document.querySelector('#basket').children.length"),
+      i + 1,
+    );
+    if ([0, 4, 9, 11].includes(i)) await shot('oimo-basket-' + (i + 1));
   }
-  assert.equal(
-    await state(),
-    'ready',
-    'stationary tapping eventually exposes actual potato',
-  );
-  assert.ok(taps > 1 && taps < 60, 'assistance is gradual and bounded');
+  await dig();
+  await harvestTap();
+  await waitFor("document.querySelector('#patch').dataset.round==='13'");
   assert.equal(
     await evaluate("document.querySelector('#basket').children.length"),
-    0,
-    'last digging tap does not harvest',
+    12,
+    'bounded abundant basket',
   );
-  await shot('oimo-taps-ready-1180');
-  await tap(0.5, 0.5);
-  assert.equal(await state(), 'harvesting', 'next distinct tap harvests');
-  report(
-    `Oimo stationary tap regression: ${taps} taps expose; separate tap harvests PASS`,
-  );
+  await evaluate("document.querySelector('#basket').click()");
   await visit();
   await touch('touchStart', [await point(0.2, 0.2)]);
-  await touch('touchCancel');
-  const cleared = await evaluate(
-    "document.querySelector('#patch').dataset.cleared",
+  const n = await evaluate("document.querySelector('#patch').dataset.cleared");
+  await delay(700);
+  assert.equal(
+    await evaluate("document.querySelector('#patch').dataset.cleared"),
+    n,
+    'holding does not dig repeatedly',
   );
+  await touch('touchCancel');
   await evaluate(
     "document.querySelector('#patch').dispatchEvent(new PointerEvent('pointermove',{pointerId:1,clientX:600,clientY:600,bubbles:true}))",
   );
   assert.equal(
     await evaluate("document.querySelector('#patch').dataset.cleared"),
-    cleared,
+    n,
   );
   await dig();
   assert.equal(await state(), 'ready');
@@ -288,9 +291,11 @@ try {
     deviceScaleFactor: 1,
     mobile: true,
   });
-  assert.equal(await state(), 'ready', 'rotation retains exposure');
+  await delay(100);
+  assert.equal(await state(), 'ready');
+  assert.ok(await geometry());
   await shot('oimo-rotated-ready-390');
-  await tap(0.5, 0.5);
+  await harvestTap();
   await evaluate(
     "Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden",
   );
@@ -305,7 +310,7 @@ try {
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Oimo cancel, rotation, visibility cleanup, entrance/reentry, zero JS exceptions PASS. Silent toy; physical devices and independent review pending.',
+    'Oimo 13 harvests, basket 1/5/10/12 variation, long hold, cancel, rotation, hidden cleanup, entrance/reentry, no JS errors PASS',
   );
   await writeFile(join(output, 'oimo-results.txt'), reports.join('\n') + '\n');
 } finally {

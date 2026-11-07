@@ -1,0 +1,29 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "date": "2026-11-07",
+  "provided_by": "parent review thread",
+  "purpose": "Top-down heart-shaped sweet potato leaves in existing potato painterly style",
+  "library_file_id": "libfile_b034d2a5e07881919516ddd314b380ea",
+  "file_id": "file_00000000bfec8212bd44a1af85860252",
+  "version": 0,
+  "original": "leaves-original.png",
+  "original_sha256": "bc8284ac160f8c40d71b1ca3896e870d44905b1b9afe9c0a27ee76ccef4d9322",
+  "web": "src/oimo-horihori/assets/leaves.webp",
+  "web_sha256": "3c52ceea0007da2adc473d05917bf8f51fea57d7bf1ce7504b280d4bc593b1f3",
+  "conversion": {
+    "alpha_crop": [
+      0,
+      8,
+      1296,
+      1199
+    ],
+    "size": [
+      720,
+      662
+    ],
+    "format": "WebP",
+    "quality": 85,
+    "method": 6
+  },
+  "background": "transparent"
+}

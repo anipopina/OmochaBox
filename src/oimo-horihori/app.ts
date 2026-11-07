@@ -1,6 +1,7 @@
 import '../shared/home-button';
 import potatoUrl from './assets/sweet-potato.webp';
-import { Digging, columns, rows, potatoLayout } from './model';
+import leavesUrl from './assets/leaves.webp';
+import { Digging, columns, rows, potatoLayout, basketPotato } from './model';
 import { requireElement } from '../shared/dom';
 
 const patch = requireElement('#patch', HTMLDivElement);
@@ -17,8 +18,14 @@ let timer = 0;
 const artwork = new Image();
 artwork.src = potatoUrl;
 let artworkReady = false;
-let moved = false;
-let tapStartCleared = 0;
+const seed = Math.floor(Math.random() * 1000000);
+for (let i = 0; i < 5; i++) {
+  const leaf = new Image();
+  leaf.src = leavesUrl;
+  leaf.alt = '';
+  leaf.draggable = false;
+  document.querySelector('.leaves')!.append(leaf);
+}
 
 function paint() {
   const w = canvas.width,
@@ -46,19 +53,28 @@ function paint() {
     ctx.fill();
   }
   ctx.globalCompositeOperation = 'destination-out';
-  for (const index of game.cleared) {
+  for (const hole of game.holes) {
     ctx.beginPath();
     ctx.ellipse(
-      ((index % columns) + 0.5) * cw,
-      (Math.floor(index / columns) + 0.5) * ch,
-      cw * 0.84,
-      ch * 0.84,
+      hole.x * w,
+      hole.y * h,
+      hole.rx * w,
+      hole.ry * h,
       0,
       0,
       Math.PI * 2,
     );
     ctx.fill();
   }
+  if (game.phase !== 'digging')
+    for (const index of game.readyRim) {
+      ctx.fillRect(
+        (index % columns) * cw,
+        Math.floor(index / columns) * ch,
+        cw + 1,
+        ch + 1,
+      );
+    }
   ctx.globalCompositeOperation = 'source-over';
 }
 function update() {
@@ -80,9 +96,8 @@ function image() {
   return img;
 }
 function plant() {
-  roots.className = ['', 'long', 'cluster'][game.round % 3]!;
+  roots.className = game.round % 2 ? 'long' : '';
   roots.replaceChildren(image());
-  if (game.round % 3 === 2) roots.append(image());
   cheer.textContent = '';
   layout();
   update();
@@ -100,9 +115,11 @@ function scatter(x: number, y: number) {
     scene.append(clod);
   }
 }
-function dig(x: number, y: number, assist = false) {
+function dig(x: number, y: number) {
   const r = patch.getBoundingClientRect();
-  if (game.dig((x - r.left) / r.width, (y - r.top) / r.height, assist)) {
+  if (
+    game.dig((x - r.left) / r.width, (y - r.top) / r.height, r.width, r.height)
+  ) {
     scatter(x, y);
     update();
   }
@@ -111,28 +128,41 @@ function finish() {
   clearTimeout(timer);
   timer = 0;
   if (game.phase !== 'harvesting') return;
-  const saved = document.createElement('button');
-  saved.setAttribute('aria-label', 'とれた おいも');
-  saved.append(image());
-  saved.addEventListener('click', () =>
-    saved.animate(
-      [
-        { transform: 'rotate(-15deg) scale(1.1)' },
-        { transform: 'rotate(15deg)' },
-        { transform: 'none' },
-      ],
-      { duration: 350 },
-    ),
-  );
-  if (basket.children.length === 4) basket.firstElementChild?.remove();
+  const saved = image();
+  const p = basketPotato(game.round);
+  Object.assign(saved.style, {
+    left: `${p.x}%`,
+    top: `${p.y}%`,
+    width: `${p.size}%`,
+    height: `${p.size}%`,
+    transform: `translate(-50%,-50%) rotate(${p.angle}deg)`,
+  });
+  if (basket.children.length === 12) basket.firstElementChild?.remove();
   basket.append(saved);
+  basket.dataset.count = String(game.round + 1);
+  basket.animate([{ scale: '1.1' }, { scale: '1' }], { duration: 300 });
   game.next();
   plant();
 }
 function harvest() {
   if (!game.harvest()) return;
   stopInput();
-  cheer.textContent = 'すぽん！';
+  const img = roots.querySelector('img')!,
+    r = img.getBoundingClientRect(),
+    b = basket.getBoundingClientRect();
+  scatter(r.x + r.width / 2, r.y + r.height / 2);
+  img.animate(
+    [
+      { translate: '0 0', scale: '1' },
+      { translate: '0 -24px', scale: '1.16', offset: 0.35 },
+      {
+        translate: `${b.x + b.width / 2 - r.x - r.width / 2}px ${b.y + b.height / 2 - r.y - r.height / 2}px`,
+        scale: '.2',
+        opacity: 0,
+      },
+    ],
+    { duration: 850, fill: 'forwards', easing: 'ease-in-out' },
+  );
   update();
   timer = window.setTimeout(finish, 900);
 }
@@ -145,6 +175,14 @@ patch.addEventListener('pointerdown', (e) => {
   if (pointer !== null || e.button !== 0 || document.hidden || !artworkReady)
     return;
   if (game.phase === 'ready') {
+    const r = roots.querySelector('img')!.getBoundingClientRect();
+    if (
+      e.clientX < r.left - 20 ||
+      e.clientX > r.right + 20 ||
+      e.clientY < r.top - 20 ||
+      e.clientY > r.bottom + 20
+    )
+      return;
     harvest();
     return;
   }
@@ -152,15 +190,12 @@ patch.addEventListener('pointerdown', (e) => {
   pointer = e.pointerId;
   patch.setPointerCapture(pointer);
   previous = { x: e.clientX, y: e.clientY };
-  moved = false;
-  tapStartCleared = game.cleared.size;
   dig(e.clientX, e.clientY);
 });
 patch.addEventListener('pointermove', (e) => {
   if (e.pointerId !== pointer || game.phase !== 'digging') return;
   const distance = Math.hypot(e.clientX - previous.x, e.clientY - previous.y);
   if (distance < 12) return;
-  moved = true;
   const steps = Math.min(40, Math.ceil(distance / 16));
   for (let i = 1; i <= steps; i++)
     dig(
@@ -171,8 +206,6 @@ patch.addEventListener('pointermove', (e) => {
 });
 patch.addEventListener('pointerup', (e) => {
   if (e.pointerId !== pointer) return;
-  if (!moved && game.cleared.size === tapStartCleared)
-    dig(e.clientX, e.clientY, true);
   stopInput();
 });
 for (const event of ['pointercancel', 'lostpointercapture'])
@@ -190,6 +223,8 @@ patch.addEventListener('keydown', (e) => {
       game.dig(
         ((remaining % columns) + 0.5) / columns,
         (Math.floor(remaining / columns) + 0.5) / rows,
+        patch.clientWidth,
+        patch.clientHeight,
       );
       update();
     }
@@ -214,7 +249,11 @@ window.addEventListener('resize', () => {
 });
 function layout() {
   const { width, height } = patch.getBoundingClientRect();
-  const positions = potatoLayout(width, height, game.round);
+  const blocked = [document.querySelector('#back')!, basket].map((el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, top: r.top, width: r.width, height: r.height };
+  });
+  const positions = potatoLayout(width, height, game.round, seed, blocked);
   roots.querySelectorAll<HTMLImageElement>('.potato').forEach((img, index) => {
     const p = positions[index]!;
     Object.assign(img.style, {
@@ -227,8 +266,8 @@ function layout() {
   });
   if (!artworkReady) return;
   const sample = document.createElement('canvas');
-  sample.width = columns * 8;
-  sample.height = rows * 8;
+  sample.width = columns * 2;
+  sample.height = rows * 2;
   const context = sample.getContext('2d', { willReadFrequently: true })!;
   const targets = positions.map((p) => {
     context.resetTransform();
@@ -243,7 +282,7 @@ function layout() {
       for (let x = 0; x < sample.width; x++) {
         const alpha = pixels[(y * sample.width + x) * 4 + 3]!;
         if (alpha < 32) continue;
-        const index = Math.floor(y / 8) * columns + Math.floor(x / 8);
+        const index = Math.floor(y / 2) * columns + Math.floor(x / 2);
         weights.set(index, (weights.get(index) ?? 0) + alpha);
       }
     return weights;
@@ -259,6 +298,18 @@ function resize() {
   canvas.height = Math.round(r.height * dpr);
   paint();
 }
+basket.addEventListener('click', () =>
+  basket.animate(
+    [{ rotate: '-5deg' }, { rotate: '5deg' }, { rotate: '0deg' }],
+    { duration: 350 },
+  ),
+);
+basket.addEventListener('keydown', (e) => {
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    basket.click();
+  }
+});
 plant();
 resize();
 
