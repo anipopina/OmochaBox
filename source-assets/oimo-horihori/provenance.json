@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-07",
+  "generator": "OpenAI image generation",
+  "files": [
+    {
+      "path": "source-assets/oimo-horihori/original.png",
+      "sha256": "aa17c11ab7bf351f698681418dede4dc8495c4743b3ec8d1387fee1732d6fd4f",
+      "bytes": 2216737
+    },
+    {
+      "path": "src/oimo-horihori/assets/sweet-potato.webp",
+      "sha256": "5672e58db9fd454141725eaced26f4f48fb3e38621f981c0cf3f6b22a8f80b52",
+      "bytes": 56394
+    }
+  ]
+}

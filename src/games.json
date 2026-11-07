@@ -106,5 +106,11 @@
     "title": "くるっとえほん",
     "description": "めくって、もどして。つぎは だれかな？",
     "href": "kurutto-ehon/"
+  },
+  {
+    "id": "oimo-horihori",
+    "title": "おいもほりほり",
+    "description": "つちを ほりほり。おいもが すぽん！",
+    "href": "oimo-horihori/"
   }
 ]

@@ -37,6 +37,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [くるっとえほん](src/kurutto-ehon/README.md) | ページをめくって景色を行き来する絵本遊び |
 
+| [おいもほりほり](src/oimo-horihori/README.md) | 土をどけてサツマイモを見つけ、すぽんと収穫する遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。
