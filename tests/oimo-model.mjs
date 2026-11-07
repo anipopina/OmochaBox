@@ -105,3 +105,33 @@ assert.ok(target.cleared.has(500));
 console.log(
   'Oimo model PASS: half-area irregular stamp, exact shared geometry, no tap assistance, explicit harvest, single potato, 1080 safe layouts, basket variety, target exposure and resize',
 );
+
+const rim = new Digging();
+const diagonal = new Map(
+  Array.from({ length: 100 }, (_, i) => [(i + 25) * columns + i + 25, 100]),
+);
+for (const index of [...diagonal.keys()].slice(0, 92)) rim.cleared.add(index);
+rim.setTargets([diagonal], 1180, 757);
+assert.equal(rim.phase, 'digging', '92% remains covered');
+rim.cleared.add([...diagonal.keys()][92]);
+const beforeRim = new Set(rim.cleared);
+rim.setTargets([diagonal], 1180, 757);
+assert.equal(rim.phase, 'ready');
+assert.ok(rim.readyRim.length > 0);
+for (const index of diagonal.keys()) assert.ok(rim.cleared.has(index));
+for (const index of rim.cleared)
+  if (!beforeRim.has(index)) {
+    const x = ((index % columns) + 0.5) / columns,
+      y = (Math.floor(index / columns) + 0.5) / rows;
+    assert.ok(
+      rim.readyRim.some(
+        (c) => ((x - c.x) / c.rx) ** 2 + ((y - c.y) / c.ry) ** 2 <= 1,
+      ),
+      'rim cell must be inside a drawn curve',
+    );
+  }
+rim.setTargets([new Map([[150, 100]])], 390, 844);
+assert.ok(rim.cleared.has(150), 'rotated ready target revealed by new curves');
+console.log(
+  'Oimo rim regression PASS: threshold unchanged; entire target visible; every added cell lies inside the curved mask; resize preserves readiness',
+);

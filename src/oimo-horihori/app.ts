@@ -31,8 +31,6 @@ function paint() {
   const w = canvas.width,
     h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  const cw = w / columns,
-    ch = h / rows;
   ctx.fillStyle = '#b77a43';
   ctx.fillRect(0, 0, w, h);
   // Stable irregular grains, so rotating the screen does not shuffle the soil.
@@ -53,7 +51,7 @@ function paint() {
     ctx.fill();
   }
   ctx.globalCompositeOperation = 'destination-out';
-  for (const hole of game.holes) {
+  for (const hole of [...game.holes, ...game.readyRim]) {
     ctx.beginPath();
     ctx.ellipse(
       hole.x * w,
@@ -66,15 +64,6 @@ function paint() {
     );
     ctx.fill();
   }
-  if (game.phase !== 'digging')
-    for (const index of game.readyRim) {
-      ctx.fillRect(
-        (index % columns) * cw,
-        Math.floor(index / columns) * ch,
-        cw + 1,
-        ch + 1,
-      );
-    }
   ctx.globalCompositeOperation = 'source-over';
 }
 function update() {
@@ -287,7 +276,7 @@ function layout() {
       }
     return weights;
   });
-  game.setTargets(targets);
+  game.setTargets(targets, width, height);
   update();
 }
 function resize() {

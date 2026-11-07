@@ -3,13 +3,17 @@ export const rows = 160;
 export type Phase = 'digging' | 'ready' | 'harvesting';
 export class Digging {
   cleared = new Set<number>();
-  readyRim = new Set<number>();
+  readyRim: Circle[] = [];
+  private width = 740;
+  private height = 439;
   phase: Phase = 'digging';
   round = 0;
   private targets = [
     new Map(Array.from({ length: columns * rows }, (_, i) => [i, 1])),
   ];
-  setTargets(targets: Map<number, number>[]) {
+  setTargets(targets: Map<number, number>[], width = 740, height = 439) {
+    this.width = width;
+    this.height = height;
     this.targets = targets;
     this.checkExposure();
   }
@@ -28,43 +32,39 @@ export class Digging {
       });
     if (!exposed) return;
     this.phase = 'ready';
-    // Uncover the last small rim around each potato, including the ready pulse.
-    // Unrelated outer soil stays in place.
-    for (const target of this.targets)
-      for (const index of target.keys()) {
-        const col = index % columns,
-          row = Math.floor(index / columns);
-        for (let dy = -1; dy <= 1; dy++)
-          for (let dx = -1; dx <= 1; dx++) {
-            if (
-              col + dx >= 0 &&
-              col + dx < columns &&
-              row + dy >= 0 &&
-              row + dy < rows
-            ) {
-              const cell = (row + dy) * columns + col + dx;
-              if (!this.cleared.has(cell)) this.readyRim.add(cell);
-              this.cleared.add(cell);
-            }
-          }
-      }
+    // Rebuild after rotation so the cells describe the current curved mask.
+    this.cleared.clear();
+    this.clearCircles(this.holes);
+    // Dilate the potato silhouette with overlapping, gently varying round cuts.
+    // Drawing and cell clearing use these same curves, never cell rectangles.
+    this.readyRim = rimCircles(this.targets, this.width, this.height);
+    this.clearCircles(this.readyRim);
+  }
+  private clearCircles(circles: Circle[]) {
+    for (const c of circles) {
+      const left = Math.max(0, Math.floor((c.x - c.rx) * columns));
+      const right = Math.min(columns - 1, Math.ceil((c.x + c.rx) * columns));
+      const top = Math.max(0, Math.floor((c.y - c.ry) * rows));
+      const bottom = Math.min(rows - 1, Math.ceil((c.y + c.ry) * rows));
+      for (let row = top; row <= bottom; row++)
+        for (let col = left; col <= right; col++) {
+          if (
+            (((col + 0.5) / columns - c.x) / c.rx) ** 2 +
+              (((row + 0.5) / rows - c.y) / c.ry) ** 2 <=
+            1
+          )
+            this.cleared.add(row * columns + col);
+        }
+    }
   }
   holes: Circle[] = [];
   dig(x: number, y: number, width = 740, height = 439) {
     if (this.phase !== 'digging') return false;
     const circles = brush(x, y, width, height);
     const before = this.cleared.size;
-    for (let row = 0; row < rows; row++)
-      for (let col = 0; col < columns; col++) {
-        const cx = (col + 0.5) / columns,
-          cy = (row + 0.5) / rows;
-        if (
-          circles.some(
-            (c) => ((cx - c.x) / c.rx) ** 2 + ((cy - c.y) / c.ry) ** 2 <= 1,
-          )
-        )
-          this.cleared.add(row * columns + col);
-      }
+    this.width = width;
+    this.height = height;
+    this.clearCircles(circles);
     if (this.cleared.size === before) return false;
     this.holes.push(...circles);
     this.checkExposure();
@@ -79,7 +79,7 @@ export class Digging {
     if (this.phase !== 'harvesting') return;
     this.round++;
     this.cleared.clear();
-    this.readyRim.clear();
+    this.readyRim = [];
     this.holes = [];
     this.phase = 'digging';
   }
@@ -201,4 +201,28 @@ export function basketPotato(index: number) {
     angle: rng() * 160 - 80,
     size: 42 + rng() * 15,
   };
+}
+
+export function rimCircles(
+  targets: Map<number, number>[],
+  width: number,
+  height: number,
+): Circle[] {
+  const centers = new Map<number, Circle>();
+  const radius = Math.max(12, Math.min(24, Math.min(width, height) * 0.028));
+  for (const target of targets)
+    for (const index of target.keys()) {
+      const col = Math.floor((index % columns) / 2) * 2 + 1;
+      const row = Math.floor(Math.floor(index / columns) / 2) * 2 + 1;
+      const key = row * columns + col;
+      if (centers.has(key)) continue;
+      const r = radius * (1 + 0.12 * Math.sin(col * 0.19 + row * 0.13));
+      centers.set(key, {
+        x: col / columns,
+        y: row / rows,
+        rx: r / width,
+        ry: r / height,
+      });
+    }
+  return [...centers.values()];
 }

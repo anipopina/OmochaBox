@@ -87,6 +87,9 @@ try {
   };
   await call('Runtime.enable');
   await call('Page.enable');
+  await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `window.__rectangularCuts=0;const fillRect=CanvasRenderingContext2D.prototype.fillRect;CanvasRenderingContext2D.prototype.fillRect=function(...args){if(this.globalCompositeOperation==='destination-out')window.__rectangularCuts++;return fillRect.apply(this,args);};`,
+  });
   const waitFor = async (expression) => {
     for (let i = 0; i < 100; i++) {
       try {
@@ -197,6 +200,18 @@ try {
       'no automatic harvest',
     );
     assert.ok(await geometry());
+    assert.equal(
+      await evaluate('window.__rectangularCuts'),
+      0,
+      'ready reveal never erases cell rectangles',
+    );
+    const rasterDifference = await evaluate(
+      `(()=>{const canvas=document.querySelector('#soil'),ctx=canvas.getContext('2d'),data=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparent=0;for(let y=0;y<160;y++)for(let x=0;x<160;x++){const px=Math.floor((x+.5)*canvas.width/160),py=Math.floor((y+.5)*canvas.height/160);if(data[(py*canvas.width+px)*4+3]<128)transparent++;}return Math.abs(transparent-Number(document.querySelector('#patch').dataset.cleared))/(160*160)})()`,
+    );
+    assert.ok(
+      rasterDifference < 0.02,
+      'rendered mask and cell coverage agree within raster sampling tolerance',
+    );
     await shot('oimo-ready-' + width);
     await harvestTap();
     assert.equal(await state(), 'harvesting');
@@ -243,6 +258,36 @@ try {
     deviceScaleFactor: 1,
     mobile: true,
   });
+  await visit();
+  const diagonal = await evaluate(
+    `(()=>{const img=document.querySelector('#roots img');return {x:parseFloat(img.style.left),y:parseFloat(img.style.top),w:parseFloat(img.style.width),h:parseFloat(img.style.height),a:parseFloat(img.style.transform.slice(7))*Math.PI/180}})()`,
+  );
+  for (const offset of [0, 0.1, -0.1, 0.2, -0.2]) {
+    if ((await state()) === 'ready') break;
+    const points = Array.from({ length: 25 }, (_, i) => {
+      const dx = diagonal.w * (-0.42 + (0.84 * i) / 24),
+        dy = diagonal.h * (0.3 - (0.6 * i) / 24 + offset);
+      return {
+        x:
+          diagonal.x +
+          diagonal.w / 2 +
+          dx * Math.cos(diagonal.a) -
+          dy * Math.sin(diagonal.a),
+        y:
+          diagonal.y +
+          diagonal.h / 2 +
+          dx * Math.sin(diagonal.a) +
+          dy * Math.cos(diagonal.a),
+        id: 1,
+      };
+    });
+    await touch('touchStart', [points[0]]);
+    for (const p of points.slice(1)) await touch('touchMove', [p]);
+    await touch('touchEnd');
+  }
+  assert.equal(await state(), 'ready', 'diagonal strokes reveal potato');
+  assert.equal(await evaluate('window.__rectangularCuts'), 0);
+  await shot('oimo-diagonal-ready-1180');
   await visit();
   for (let i = 0; i < 12; i++) {
     await dig();
