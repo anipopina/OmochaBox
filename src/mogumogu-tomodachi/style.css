@@ -171,8 +171,8 @@ body {
 }
 #foods button {
   position: relative;
-  width: clamp(80px, 25vw, 148px);
-  height: clamp(80px, 25vw, 148px);
+  width: clamp(80px, min(25vw, 24dvh), 240px);
+  height: clamp(80px, min(25vw, 24dvh), 240px);
   border: 0;
   border-radius: 50%;
   background: transparent;
@@ -186,17 +186,6 @@ body {
   height: 100%;
   object-fit: contain;
   pointer-events: none;
-}
-#foods .next {
-  filter: drop-shadow(0 0 8px #f29932);
-}
-#foods .next::after {
-  content: '♥';
-  color: #df6550;
-  position: absolute;
-  right: -3px;
-  top: -12px;
-  font-size: 28px;
 }
 button:focus-visible,
 a:focus-visible {
@@ -287,7 +276,7 @@ a:focus-visible {
   height: 100%;
   pointer-events: none;
 }
-#foods [data-eaten='true'] img {
+#foods [data-away='true'] img {
   visibility: hidden;
 }
 #foods [aria-disabled='true'] {
@@ -330,4 +319,19 @@ a:focus-visible {
 }
 #friend[data-art-state='ready'] .friend-message {
   display: none;
+}
+
+.bear-nose {
+  display: none;
+}
+#friend[data-character='bear'] .bear-nose {
+  display: block;
+}
+#friend[data-character='bear'] .eyes-open,
+#friend[data-character='bear'] .eyes-happy {
+  transform: translateY(-40px);
+}
+
+#friend[data-character='bear'] .friend-art {
+  inset: 0;
 }

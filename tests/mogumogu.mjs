@@ -4,7 +4,7 @@ import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
-import { Friend } from '../src/mogumogu-tomodachi/model.ts';
+import { Friend, friends } from '../src/mogumogu-tomodachi/model.ts';
 import { createStaticServer } from './static-server.mjs';
 const assetValidation = JSON.parse(
   await readFile(
@@ -22,10 +22,22 @@ for (const kind of ['bear', 'ghost']) {
       import.meta.url,
     ),
   );
-  assert.equal(bytes.length, assetValidation[kind].bytes);
+  const expected =
+    kind === 'bear'
+      ? JSON.parse(
+          await readFile(
+            new URL(
+              '../source-assets/mogumogu-tomodachi/bear-v3/validation.json',
+              import.meta.url,
+            ),
+            'utf8',
+          ),
+        )
+      : assetValidation[kind];
+  assert.equal(bytes.length, expected.bytes);
   assert.equal(
     createHash('sha256').update(bytes).digest('hex'),
-    assetValidation[kind].sha256,
+    expected.sha256,
   );
 }
 const advance = (model, phase) => {
@@ -39,17 +51,23 @@ for (const random of [0, 0.49, 0.99]) {
     const previous = model.character;
     model.offer('strawberry');
     for (let i = 0; i < 10000; i++) model.offer(i % 2 ? 'carrot' : 'banana');
-    assert.equal(model.next, 'carrot');
-    assert.equal(model.available.size, 3, 'Reservations do not consume food');
+    assert.equal(model.food, 'strawberry');
+    assert.equal(
+      model.available.size,
+      3,
+      'Busy taps do not consume other food',
+    );
     for (let i = 0; i < 160; i++) model.step(80);
-    assert.deepEqual([...model.available], ['banana']);
+    assert.deepEqual([...model.available], ['banana', 'carrot']);
+    model.offer('carrot');
+    advance(model, 'idle');
     assert.equal(model.phase, 'idle');
     model.offer('banana');
     advance(model, 'changing');
     assert.equal(model.available.size, 0);
     if (round % 2) model.reset();
     else advance(model, 'idle');
-    assert.notEqual(model.character, previous);
+    assert.equal(model.character, (previous + 1) % 3);
     assert.equal(model.available.size, 3);
   }
 }
@@ -70,26 +88,19 @@ for (const phase of [
   model.offer('strawberry');
   advance(model, phase);
   model.offer('carrot');
-  const before = [
-    model.phase,
-    model.elapsed,
-    model.food,
-    model.next,
-    model.meals,
-  ];
+  const before = [model.phase, model.elapsed, model.food, model.meals];
   for (let i = 0; i < 10000; i++) model.touch();
   assert.deepEqual(
-    [model.phase, model.elapsed, model.food, model.next, model.meals],
+    [model.phase, model.elapsed, model.food, model.meals],
     before,
   );
   model.reset();
   assert.equal(model.phase, 'idle');
-  assert.equal(model.next, null);
   assert.equal(model.touchRemaining, 0);
   assert.equal(model.available.has('strawberry'), phase !== 'happy');
 }
 console.log(
-  'Mogu model PASS: inventory, latest reservation, interruptions, 27 handovers, random first friend, no consecutive duplicates',
+  'Mogu model PASS: inventory, no reservation or automatic feeding, interruptions, 27 fixed-order handovers, random first friend',
 );
 const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'mogu-browser-'));
@@ -353,6 +364,26 @@ try {
     '1 1',
   );
   await shot('mogu-touch-idle-mobile');
+  const departure = await evaluate(`(() => {
+    const button=document.querySelector('#foods [data-food="banana"]');
+    const rect=button.querySelector('img').getBoundingClientRect();
+    button.click();
+    const flight=document.querySelector('#flying-food').getBoundingClientRect();
+    return {visibility:getComputedStyle(button.querySelector('img')).visibility,
+      visible:!document.querySelector('#flying-food').hidden,
+      drift:Math.max(Math.abs(rect.x-flight.x),Math.abs(rect.y-flight.y),Math.abs(rect.width-flight.width))};
+  })()`);
+  assert.equal(departure.visibility, 'hidden');
+  assert.equal(departure.visible, true);
+  assert.ok(departure.drift < 1, JSON.stringify(departure));
+  await shot('mogu-food-departure');
+  await evaluate(`window.dispatchEvent(new Event('blur'))`);
+  assert.equal(
+    await evaluate(
+      `getComputedStyle(document.querySelector('#foods [data-food="banana"] img')).visibility`,
+    ),
+    'visible',
+  );
   await choose('banana');
   assert.equal(await phase(), 'offering');
   assert.equal(
@@ -372,8 +403,8 @@ try {
     );
     assert.equal(await phase(), state);
     assert.equal(
-      await evaluate(`document.querySelector('button.next').dataset.food`),
-      'carrot',
+      await evaluate(`document.querySelectorAll('button.next').length`),
+      0,
     );
     assert.equal(
       await evaluate(
@@ -394,8 +425,19 @@ try {
       );
       await shot('mogu-touch-chewing-mobile');
     }
-    await waitFor(`document.querySelector('#friend').dataset.food==='carrot'`);
     await waitFor(`document.querySelector('#friend').dataset.phase==='idle'`);
+    await delay(150);
+    assert.equal(await phase(), 'idle');
+    assert.equal(
+      await evaluate(`document.querySelector('#friend').dataset.food`),
+      'strawberry',
+    );
+    assert.equal(
+      await evaluate(
+        `getComputedStyle(document.querySelector('#foods [data-food="carrot"] img')).visibility`,
+      ),
+      'visible',
+    );
     assert.equal(
       await evaluate(`document.querySelector('#friend').dataset.touched`),
       'false',
@@ -468,18 +510,23 @@ try {
   );
   assert.equal(
     await evaluate(`document.querySelectorAll('button.next').length`),
-    1,
+    0,
   );
   assert.equal(
-    await evaluate(`document.querySelector('button.next').dataset.food`),
-    'carrot',
+    await evaluate(`document.querySelector('#friend').dataset.food`),
+    'strawberry',
   );
   assert.ok(
     await evaluate(`document.getAnimations().length<=3`),
     'Repeated input animations bounded',
   );
-  await shot('mogu-next-bite');
-  await waitFor(`document.querySelector('#friend').dataset.food==='carrot'`);
+  assert.ok(
+    await evaluate(
+      `document.querySelector('#foods [data-food="carrot"]').getAnimations().length>0`,
+    ),
+    'Busy food visibly bounces',
+  );
+  await shot('mogu-busy-food-bounce');
   await waitFor(`document.querySelector('#friend').dataset.phase==='idle'`);
   assert.equal(
     await evaluate(`document.querySelectorAll('button.next').length`),
@@ -493,6 +540,12 @@ try {
     );
     await evaluate(`window.dispatchEvent(new Event('blur'))`);
     assert.equal(await phase(), 'idle');
+    assert.equal(
+      await evaluate(
+        `getComputedStyle(document.querySelector('#foods [data-food="banana"] img')).visibility`,
+      ),
+      state === 'happy' ? 'hidden' : 'visible',
+    );
     assert.equal(
       await evaluate(`document.querySelector('#flying-food').hidden`),
       true,
@@ -609,8 +662,8 @@ try {
   // Use browser-only deterministic seeds to exercise every real body asset.
   for (const [seed, kind] of [
     [0, 'monster'],
-    [0.4, 'ghost'],
-    [0.8, 'bear'],
+    [0.4, 'bear'],
+    [0.8, 'ghost'],
   ]) {
     const script = await call('Page.addScriptToEvaluateOnNewDocument', {
       source: `Math.random = () => ${seed};`,
@@ -621,6 +674,7 @@ try {
       [844, 390],
       [768, 1024],
       [1280, 800],
+      [1920, 1080],
     ]) {
       await call('Emulation.setDeviceMetricsOverride', {
         width,
@@ -641,6 +695,12 @@ try {
           `[...document.querySelectorAll('button')].every(b => {const r=b.getBoundingClientRect();return r.width>=56 && r.height>=56 && r.left>=0 && r.right<=innerWidth && r.bottom<=innerHeight})`,
         ),
       );
+      if (width >= 1280)
+        assert.ok(
+          (await evaluate(
+            `document.querySelector('#foods button').getBoundingClientRect().width`,
+          )) > 180,
+        );
       await shot(`mogu-${kind}-${width}x${height}`);
     }
     for (const food of ['strawberry', 'banana', 'carrot']) {
@@ -649,9 +709,17 @@ try {
         `document.querySelector('#friend').dataset.phase==='offering' && document.querySelector('#flying-food').hidden`,
       );
       if (food === 'strawberry') await shot(`mogu-${kind}-mouth`);
+      if (kind === 'bear') {
+        await shot(`mogu-bear-${food}-mouth`);
+        await waitFor(
+          `document.querySelector('#friend').dataset.phase==='chewing'`,
+        );
+        await shot(`mogu-bear-${food}-chewing`);
+      }
       await waitFor(
         `document.querySelector('#friend').dataset.phase==='happy'`,
       );
+      if (kind === 'bear') await shot(`mogu-bear-${food}-happy`);
       assert.equal(
         await evaluate(
           `document.querySelector('#foods [data-food="${food}"]').dataset.eaten`,
@@ -674,9 +742,9 @@ try {
       }
       await waitFor(`document.querySelector('#friend').dataset.phase==='idle'`);
     }
-    assert.notEqual(
+    assert.equal(
       await evaluate(`document.querySelector('#friend').dataset.character`),
-      kind,
+      friends[(friends.indexOf(kind) + 1) % 3],
     );
     assert.equal(
       await evaluate(
@@ -733,7 +801,7 @@ try {
   // A decoded network image is still not presentable until decode() resolves.
   const delayedDecode = await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `const decode=HTMLImageElement.prototype.decode;
-      HTMLImageElement.prototype.decode=function(){return decode.call(this).then(()=>this.src.includes('/ghost-body-')?new Promise(resolve=>{window.releaseBodyDecode=resolve}):undefined)};`,
+      HTMLImageElement.prototype.decode=function(){return decode.call(this).then(()=>this.src.includes('/bear-body-')?new Promise(resolve=>{window.releaseBodyDecode=resolve}):undefined)};`,
   });
   await visit();
   await waitFor(`typeof window.releaseBodyDecode==='function'`);
@@ -756,12 +824,12 @@ try {
     await evaluate(
       `document.querySelector('#friend').getAttribute('aria-label')`,
     ),
-    'おばけに ふれる',
+    'くまに ふれる',
   );
   await shot('mogu-delayed-handover');
   await evaluate('window.releaseBodyDecode()');
   await waitFor(
-    `document.querySelector('#friend').dataset.artState==='ready' && document.querySelector('#friend').dataset.character==='ghost'`,
+    `document.querySelector('#friend').dataset.artState==='ready' && document.querySelector('#friend').dataset.character==='bear'`,
   );
   assert.deepEqual(await evaluate('window.syncFailures'), []);
   await shot('mogu-decoded-handover');
@@ -770,7 +838,7 @@ try {
   });
   // Failure of the initially selected body falls back to a decoded friend.
   const ghostSeed = await call('Page.addScriptToEvaluateOnNewDocument', {
-    source: 'Math.random=()=>.4;',
+    source: 'Math.random=()=>.8;',
   });
   imagePolicy = 'fail-ghost';
   await call('Network.clearBrowserCache');
@@ -813,7 +881,7 @@ try {
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Mogu PASS: three decoded bodies at five sizes, three complete rounds and no repeated friend, inventory/refill; body touch, 100 repeats per meal phase, preserved next bite, immediate food acceptance, touch interruptions, Enter/Space, reduced-motion touch; real browser touch simulation, all foods, clipped mouth, closed chewing, bounded repeats, all phase interruptions, resize, reduced motion, keyboard, home/reentry, final asset loading, idle RAF, no JS errors',
+    'Mogu PASS: three decoded bodies at six sizes, three complete rounds in fixed order, inventory/refill; body touch, 100 repeats per meal phase, no queued bite, immediate food acceptance, touch interruptions, Enter/Space, reduced-motion touch; real browser touch simulation, all foods, clipped mouth, closed chewing, bounded repeats, all phase interruptions, resize, reduced motion, keyboard, home/reentry, final asset loading, idle RAF, no JS errors',
   );
   await writeFile(join(output, 'mogu-results.txt'), reports.join('\n') + '\n');
 } finally {

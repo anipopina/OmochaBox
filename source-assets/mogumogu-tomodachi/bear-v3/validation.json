@@ -1,0 +1,20 @@
+{
+  "source_size": [
+    1254,
+    1254
+  ],
+  "web_size": [
+    768,
+    768
+  ],
+  "web_mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "web_bytes": 62698,
+  "source_bytes": 1984075,
+  "checks": "WebP reopened; alpha preserved; actual-size preview 500px and160px",
+  "bytes": 62698,
+  "sha256": "3d2be9e0d42b26d62a7213ae2491501326afb7d97da468d6771f7bc4460ae2ef"
+}

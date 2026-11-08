@@ -125,6 +125,9 @@ function render() {
     const food = button.dataset.food as Food;
     const eaten = !friend.available.has(food);
     button.dataset.eaten = String(eaten);
+    button.dataset.away = String(
+      eaten || (friend.phase !== 'idle' && friend.food === food),
+    );
     // Keep the focused native button in the tab order when its food disappears.
     button.setAttribute(
       'aria-disabled',
@@ -139,7 +142,6 @@ function render() {
       'aria-label',
       eaten ? `${names[food]}は たべたよ` : `${names[food]}を あげる`,
     );
-    button.classList.toggle('next', button.dataset.food === friend.next);
   }
   const phaseKey = `${friend.phase}:${friend.food}:${friend.character}`;
   if (phaseKey !== previous) {
@@ -161,6 +163,7 @@ function render() {
   const p = Math.min(1, friend.elapsed / 650);
   const source = buttons
     .find((button) => button.dataset.food === friend.food)!
+    .querySelector('img')!
     .getBoundingClientRect();
   const target = artwork.getBoundingClientRect();
   const start = {
@@ -174,7 +177,7 @@ function render() {
   // Food crosses the lip at 72%; thereafter it is rendered INSIDE the mouth clip.
   const travel = Math.min(1, p / 0.72);
   const eased = 1 - Math.pow(1 - travel, 2);
-  const size = target.width * 0.176;
+  const size = source.width + (target.width * 0.176 - source.width) * eased;
   flying.style.width = `${size}px`;
   flying.style.left = `${start.x + (end.x - start.x) * eased}px`;
   flying.style.top = `${start.y + (end.y - start.y) * eased - (reduced.matches ? 0 : Math.sin(travel * Math.PI) * 65)}px`;
@@ -218,17 +221,20 @@ for (const button of buttons) {
   button.querySelector('img')!.src = assets[food];
   button.addEventListener('click', () => {
     if (button.getAttribute('aria-disabled') === 'true') return;
-    button.getAnimations().forEach((animation) => animation.cancel());
-    button.animate(
-      reduced.matches
-        ? [{ opacity: 0.65 }, { opacity: 1 }]
-        : [
-            { transform: 'scale(1)' },
-            { transform: 'translateY(-12px) scale(1.14)' },
-            { transform: 'scale(1)' },
-          ],
-      { duration: 300 },
-    );
+    if (friend.phase !== 'idle') {
+      button.getAnimations().forEach((animation) => animation.cancel());
+      button.animate(
+        reduced.matches
+          ? [{ opacity: 0.65 }, { opacity: 1 }]
+          : [
+              { transform: 'scale(1)' },
+              { transform: 'translateY(-12px) scale(1.14)' },
+              { transform: 'scale(1)' },
+            ],
+        { duration: 300 },
+      );
+      return;
+    }
     friend.offer(food);
     render();
     if (!frame) frame = requestAnimationFrame(tick);
