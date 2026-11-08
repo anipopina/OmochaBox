@@ -1,0 +1,46 @@
+{
+  "bear": {
+    "original_size": [
+      1254,
+      1254
+    ],
+    "web_size": [
+      768,
+      768
+    ],
+    "bytes": 53060,
+    "alpha_range": [
+      0,
+      255
+    ],
+    "bbox_alpha_gt_128": [
+      11,
+      125,
+      757,
+      708
+    ],
+    "sha256": "18aed4c6604183994bb402cad3b2f7c05a54d963d15cb32e7bd9ea685163b499"
+  },
+  "ghost": {
+    "original_size": [
+      1254,
+      1254
+    ],
+    "web_size": [
+      768,
+      768
+    ],
+    "bytes": 54978,
+    "alpha_range": [
+      0,
+      255
+    ],
+    "bbox_alpha_gt_128": [
+      9,
+      127,
+      759,
+      704
+    ],
+    "sha256": "c7752fb673b16a0ba2d60d874db8380fb2b8459d573d19c5d3baacf60842f65c"
+  }
+}

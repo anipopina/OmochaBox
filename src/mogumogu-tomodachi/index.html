@@ -40,6 +40,21 @@
   </head>
   <body>
     <main id="play" aria-label="もぐもぐともだち">
+      <svg
+        class="plants"
+        viewBox="0 0 1000 600"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <g fill="#a0b87e" opacity=".5">
+          <path
+            d="M70 480Q50 370 40 330Q14 280 8 320Q0 355 51 391Q4 355 2 398Q8 424 59 425L65 480ZM66 435Q55 352 88 329Q121 318 106 356Q97 383 66 399Z"
+          />
+          <path
+            d="M919 480Q942 376 956 343Q982 299 991 336Q995 367 943 397Q994 367 999 409Q981 436 934 431L926 480ZM938 411Q951 350 916 329Q883 321 900 363Q912 390 938 411Z"
+          />
+        </g>
+      </svg>
       <a
         id="back"
         data-home-button
@@ -122,6 +137,7 @@
           >
         </span>
       </button>
+      <div class="table" aria-hidden="true"></div>
       <img id="flying-food" alt="" draggable="false" hidden />
       <div id="foods" role="group" aria-label="たべものを どうぞ">
         <button data-food="strawberry" aria-label="いちごを あげる">

@@ -1,11 +1,15 @@
 import '../shared/home-button';
-import { Friend, type Food } from './model';
+import { Friend, friends, type Food } from './model';
 import body from './assets/body.webp';
+import ghost from './assets/ghost-body.webp';
+import bear from './assets/bear-body.webp';
 import strawberry from './assets/strawberry.webp';
 import banana from './assets/banana.webp';
 import carrot from './assets/carrot.webp';
 
 const assets = { strawberry, banana, carrot };
+const bodies = { monster: body, ghost, bear };
+const friendNames = { monster: 'かいじゅう', ghost: 'おばけ', bear: 'くま' };
 const names = { strawberry: 'いちご', banana: 'バナナ', carrot: 'にんじん' };
 const friend = new Friend();
 const character = document.querySelector<HTMLButtonElement>('#friend')!;
@@ -17,30 +21,68 @@ const buttons = [
   ...document.querySelectorAll<HTMLButtonElement>('#foods [data-food]'),
 ];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-document.querySelector<HTMLImageElement>('.body-art')!.src = body;
+const bodyArtwork = document.querySelector<HTMLImageElement>('.body-art')!;
+// Warm the three small image assets before the first handover.
+for (const source of Object.values(bodies)) new Image().src = source;
+let shownCharacter = -1;
 let frame = 0;
 let last = 0;
 let previous = '';
 
 function render() {
+  if (shownCharacter !== friend.character) {
+    shownCharacter = friend.character;
+    const kind = friends[friend.character]!;
+    bodyArtwork.src = bodies[kind];
+    character.setAttribute('aria-label', `${friendNames[kind]}に ふれる`);
+  }
   character.dataset.phase = friend.phase;
   character.dataset.touched = String(friend.touchRemaining > 0);
+  character.dataset.character = friends[friend.character];
+  character.dataset.touchReaction = String(friend.touchReaction);
   const touchProgress = 1 - friend.touchRemaining / 520;
   const squeeze =
     friend.phase === 'idle' && !reduced.matches
       ? Math.sin(touchProgress * Math.PI) * 0.065
       : 0;
   artwork.style.scale = `${1 - squeeze * 0.45} ${1 - squeeze}`;
+  artwork.style.translate =
+    friend.touchReaction === 1 ? `0 ${-squeeze * 420}px` : '0 0';
+  artwork.style.rotate =
+    friend.touchReaction === 2
+      ? `${Math.sin(touchProgress * Math.PI * 2) * squeeze * 90}deg`
+      : '0deg';
   character.dataset.food = friend.food;
   character.dataset.reaction = String(friend.reaction);
   character.style.setProperty('--chew', String(Math.sin(friend.elapsed / 115)));
-  for (const button of buttons)
+  for (const button of buttons) {
+    const food = button.dataset.food as Food;
+    const eaten = !friend.available.has(food);
+    button.dataset.eaten = String(eaten);
+    // Keep the focused native button in the tab order when its food disappears.
+    button.setAttribute(
+      'aria-disabled',
+      String(
+        eaten ||
+          friend.phase === 'changing' ||
+          (friend.phase !== 'idle' && friend.food === food),
+      ),
+    );
+    button.setAttribute(
+      'aria-label',
+      eaten ? `${names[food]}は たべたよ` : `${names[food]}を あげる`,
+    );
     button.classList.toggle('next', button.dataset.food === friend.next);
-  const phaseKey = `${friend.phase}:${friend.food}`;
+  }
+  const phaseKey = `${friend.phase}:${friend.food}:${friend.character}`;
   if (phaseKey !== previous) {
     previous = phaseKey;
     if (friend.phase === 'happy')
       status.textContent = `${names[friend.food]}、おいしい！`;
+    if (friend.phase === 'changing')
+      status.textContent = 'ごちそうさま！ つぎの おともだち';
+    if (friend.phase === 'idle' && friend.available.size === 3)
+      status.textContent = 'たべものを どうぞ';
     if (friend.phase === 'offering') {
       flying.src = assets[friend.food];
       mouthFood.setAttribute('href', assets[friend.food]);
@@ -53,7 +95,7 @@ function render() {
   const source = buttons
     .find((button) => button.dataset.food === friend.food)!
     .getBoundingClientRect();
-  const target = character.getBoundingClientRect();
+  const target = artwork.getBoundingClientRect();
   const start = {
     x: source.x + source.width / 2,
     y: source.y + source.height / 2,
@@ -99,6 +141,7 @@ for (const button of buttons) {
   const food = button.dataset.food as Food;
   button.querySelector('img')!.src = assets[food];
   button.addEventListener('click', () => {
+    if (button.getAttribute('aria-disabled') === 'true') return;
     button.getAnimations().forEach((animation) => animation.cancel());
     button.animate(
       reduced.matches
