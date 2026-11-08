@@ -317,3 +317,17 @@ a:focus-visible {
     top: 72%;
   }
 }
+
+#friend:not([data-art-state='ready']) .friend-art {
+  visibility: hidden;
+}
+.friend-message {
+  display: block;
+  font:
+    700 clamp(18px, 4vw, 28px) system-ui,
+    sans-serif;
+  color: #633e34;
+}
+#friend[data-art-state='ready'] .friend-message {
+  display: none;
+}

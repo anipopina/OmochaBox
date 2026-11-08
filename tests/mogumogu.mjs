@@ -95,7 +95,25 @@ const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'mogu-browser-'));
 const output = join(root, 'test-results');
 await mkdir(output, { recursive: true });
-const server = createStaticServer(join(root, 'dist'));
+let imagePolicy = 'normal';
+const releaseImages = [];
+const server = createStaticServer(
+  join(root, 'dist'),
+  async (request, response, path) => {
+    if (!/\/(?:body|bear-body|ghost-body)-[^/]+\.webp$/.test(path))
+      return false;
+    if (imagePolicy === 'hold-all')
+      await new Promise((resolve) => releaseImages.push(resolve));
+    if (
+      imagePolicy === 'fail-all' ||
+      (imagePolicy === 'fail-ghost' && path.includes('/ghost-body-'))
+    ) {
+      response.writeHead(503).end('Injected image failure');
+      return true;
+    }
+    return false;
+  },
+);
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const chrome = spawn(
@@ -670,6 +688,129 @@ try {
       identifier: script.identifier,
     });
   }
+  await call('Network.enable');
+  await call('Network.setCacheDisabled', { cacheDisabled: true });
+  const syncScript = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `Math.random=()=>0; window.syncFailures=[];
+      const check=()=>{
+        const friend=document.querySelector('#friend'), image=document.querySelector('.body-art');
+        if(friend && getComputedStyle(document.querySelector('.friend-art')).visibility!=='hidden') {
+          const kind=friend.dataset.character;
+          const expected={monster:'/body-',ghost:'/ghost-body-',bear:'/bear-body-'}[kind];
+          const label={monster:'かいじゅう',ghost:'おばけ',bear:'くま'}[kind];
+          if(!image.complete || image.naturalWidth!==768 || !image.src.includes(expected) || !friend.getAttribute('aria-label').startsWith(label)) window.syncFailures.push({kind,src:image.src});
+        }
+        requestAnimationFrame(check);
+      }; requestAnimationFrame(check);`,
+  });
+  // Initial entry and re-entry with all body network responses held back.
+  for (let round = 0; round < 2; round++) {
+    await call('Network.clearBrowserCache');
+    imagePolicy = 'hold-all';
+    await call('Page.navigate', { url: origin + '/mogumogu-tomodachi/' });
+    await waitFor(
+      `document.querySelector('#friend')?.dataset.artState==='loading'`,
+    );
+    await delay(200);
+    assert.equal(
+      await evaluate(
+        `getComputedStyle(document.querySelector('.friend-art')).visibility`,
+      ),
+      'hidden',
+    );
+    await choose('strawberry');
+    assert.equal(await phase(), 'idle');
+    await shot(`mogu-loading-entry-${round}`);
+    imagePolicy = 'normal';
+    releaseImages.splice(0).forEach((release) => release());
+    await waitFor(
+      `document.querySelector('#friend')?.dataset.artState==='ready'`,
+    );
+    assert.deepEqual(await evaluate('window.syncFailures'), []);
+    await evaluate(`document.querySelector('#back').click()`);
+    await waitFor(`document.querySelectorAll('.game-card').length===19`);
+  }
+  // A decoded network image is still not presentable until decode() resolves.
+  const delayedDecode = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `const decode=HTMLImageElement.prototype.decode;
+      HTMLImageElement.prototype.decode=function(){return decode.call(this).then(()=>this.src.includes('/ghost-body-')?new Promise(resolve=>{window.releaseBodyDecode=resolve}):undefined)};`,
+  });
+  await visit();
+  await waitFor(`typeof window.releaseBodyDecode==='function'`);
+  for (const food of ['strawberry', 'banana', 'carrot']) {
+    await choose(food);
+    await waitFor(`document.querySelector('#friend').dataset.phase==='happy'`);
+    await waitFor(`document.querySelector('#friend').dataset.phase==='idle'`);
+  }
+  assert.equal(
+    await evaluate(`document.querySelector('#friend').dataset.artState`),
+    'loading',
+  );
+  assert.equal(
+    await evaluate(
+      `getComputedStyle(document.querySelector('.friend-art')).visibility`,
+    ),
+    'hidden',
+  );
+  assert.notEqual(
+    await evaluate(
+      `document.querySelector('#friend').getAttribute('aria-label')`,
+    ),
+    'おばけに ふれる',
+  );
+  await shot('mogu-delayed-handover');
+  await evaluate('window.releaseBodyDecode()');
+  await waitFor(
+    `document.querySelector('#friend').dataset.artState==='ready' && document.querySelector('#friend').dataset.character==='ghost'`,
+  );
+  assert.deepEqual(await evaluate('window.syncFailures'), []);
+  await shot('mogu-decoded-handover');
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: delayedDecode.identifier,
+  });
+  // Failure of the initially selected body falls back to a decoded friend.
+  const ghostSeed = await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: 'Math.random=()=>.4;',
+  });
+  imagePolicy = 'fail-ghost';
+  await call('Network.clearBrowserCache');
+  await visit();
+  assert.notEqual(
+    await evaluate(`document.querySelector('#friend').dataset.character`),
+    'ghost',
+  );
+  await choose('banana');
+  assert.equal(await phase(), 'offering');
+  assert.deepEqual(await evaluate('window.syncFailures'), []);
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: ghostSeed.identifier,
+  });
+  // All assets failing exposes an operable retry instead of a floating face.
+  imagePolicy = 'fail-all';
+  await call('Network.clearBrowserCache');
+  await call('Page.navigate', { url: origin + '/mogumogu-tomodachi/' });
+  await waitFor(
+    `document.querySelector('#friend')?.dataset.artState==='error'`,
+  );
+  assert.equal(
+    await evaluate(
+      `getComputedStyle(document.querySelector('.friend-art')).visibility`,
+    ),
+    'hidden',
+  );
+  await shot('mogu-image-retry');
+  imagePolicy = 'normal';
+  await evaluate(`document.querySelector('#friend').click()`);
+  await waitFor(`document.querySelector('#friend').dataset.artState==='ready'`);
+  await choose('carrot');
+  assert.equal(await phase(), 'offering');
+  assert.deepEqual(await evaluate('window.syncFailures'), []);
+  await call('Page.removeScriptToEvaluateOnNewDocument', {
+    identifier: syncScript.identifier,
+  });
+  report(
+    'Mogu image sync PASS: delayed network first entry/re-entry, delayed decode handover, synchronized body/face/label, failed selected image fallback, all-image HTTP503 retry and resumed feeding; frame-by-frame DOM invariant',
+  );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
     'Mogu PASS: three decoded bodies at five sizes, three complete rounds and no repeated friend, inventory/refill; body touch, 100 repeats per meal phase, preserved next bite, immediate food acceptance, touch interruptions, Enter/Space, reduced-motion touch; real browser touch simulation, all foods, clipped mouth, closed chewing, bounded repeats, all phase interruptions, resize, reduced motion, keyboard, home/reentry, final asset loading, idle RAF, no JS errors',

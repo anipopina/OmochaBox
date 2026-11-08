@@ -21,24 +21,90 @@ const buttons = [
   ...document.querySelectorAll<HTMLButtonElement>('#foods [data-food]'),
 ];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-const bodyArtwork = document.querySelector<HTMLImageElement>('.body-art')!;
-// Warm the three small image assets before the first handover.
-for (const source of Object.values(bodies)) new Image().src = source;
+let bodyArtwork = document.querySelector<HTMLImageElement>('.body-art')!;
+const message = document.querySelector<HTMLSpanElement>('.friend-message')!;
+const bodyLoads = new Map<number, Promise<HTMLImageElement>>();
 let shownCharacter = -1;
+let requestedCharacter = -1;
+let artState: 'loading' | 'ready' | 'error' = 'loading';
+
+function loadBody(index: number) {
+  let pending = bodyLoads.get(index);
+  if (!pending) {
+    const image = new Image();
+    image.className = 'body-art';
+    image.alt = '';
+    image.draggable = false;
+    image.src = bodies[friends[index]!];
+    pending = image.decode().then(() => image);
+    bodyLoads.set(index, pending);
+  }
+  return pending;
+}
+function preloadBodies() {
+  return Promise.allSettled(friends.map((_, index) => loadBody(index)));
+}
+void preloadBodies();
+
+function showBody(index: number, image: HTMLImageElement) {
+  // Insert the already decoded node; never change src on the visible image.
+  bodyArtwork.replaceWith(image);
+  bodyArtwork = image;
+  shownCharacter = requestedCharacter = friend.character = index;
+  artState = 'ready';
+  character.dataset.artState = artState;
+  character.dataset.character = friends[index];
+  character.dataset.ready = 'true';
+  character.setAttribute(
+    'aria-label',
+    `${friendNames[friends[index]!]}に ふれる`,
+  );
+  message.textContent = '';
+  render();
+}
+function prepareCharacter() {
+  if (requestedCharacter === friend.character) return;
+  const target = friend.character;
+  requestedCharacter = target;
+  artState = 'loading';
+  character.dataset.artState = artState;
+  character.dataset.ready = 'false';
+  character.setAttribute('aria-label', 'おともだちを よんでいるよ');
+  message.textContent = 'おともだちを よんでいるよ';
+  void loadBody(target).then(
+    (image) => {
+      if (requestedCharacter === target && friend.character === target)
+        showBody(target, image);
+    },
+    async () => {
+      const results = await preloadBodies();
+      if (requestedCharacter !== target || friend.character !== target) return;
+      // A failed asset must not prevent playing with the decoded friends.
+      const available = results.flatMap((result, index) =>
+        result.status === 'fulfilled' ? [{ index, image: result.value }] : [],
+      );
+      const fallback =
+        available.find(({ index }) => index !== shownCharacter) ?? available[0];
+      if (fallback) showBody(fallback.index, fallback.image);
+      else {
+        artState = 'error';
+        character.dataset.artState = artState;
+        character.setAttribute('aria-label', 'もういちど おともだちを よぶ');
+        message.textContent = 'もういちど あう';
+        status.textContent =
+          'おともだちを よべなかったよ。もういちど あう を おしてね';
+      }
+    },
+  );
+}
 let frame = 0;
 let last = 0;
 let previous = '';
 
 function render() {
-  if (shownCharacter !== friend.character) {
-    shownCharacter = friend.character;
-    const kind = friends[friend.character]!;
-    bodyArtwork.src = bodies[kind];
-    character.setAttribute('aria-label', `${friendNames[kind]}に ふれる`);
-  }
+  prepareCharacter();
   character.dataset.phase = friend.phase;
   character.dataset.touched = String(friend.touchRemaining > 0);
-  character.dataset.character = friends[friend.character];
   character.dataset.touchReaction = String(friend.touchReaction);
   const touchProgress = 1 - friend.touchRemaining / 520;
   const squeeze =
@@ -63,7 +129,8 @@ function render() {
     button.setAttribute(
       'aria-disabled',
       String(
-        eaten ||
+        artState !== 'ready' ||
+          eaten ||
           friend.phase === 'changing' ||
           (friend.phase !== 'idle' && friend.food === food),
       ),
@@ -133,6 +200,15 @@ function tick(time: number) {
   else last = 0;
 }
 character.addEventListener('click', () => {
+  if (artState !== 'ready') {
+    if (artState === 'error') {
+      bodyLoads.clear();
+      requestedCharacter = -1;
+      void preloadBodies();
+      render();
+    }
+    return;
+  }
   friend.touch();
   render();
   if (!frame) frame = requestAnimationFrame(tick);
@@ -177,4 +253,3 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('resize', reset);
 reduced.addEventListener('change', reset);
 render();
-character.dataset.ready = 'true';
