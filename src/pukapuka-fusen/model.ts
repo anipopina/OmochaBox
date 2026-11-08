@@ -6,6 +6,7 @@ export interface Flight {
   born: number;
   size: number;
   lane: number;
+  // Anchors are viewport fractions so resizing never leaves stale pixel positions.
   kick?: { at: number; x: number; y: number; vx: number; vy: number };
 }
 
@@ -20,49 +21,54 @@ export function flightPosition(
   height: number,
   reduced: boolean,
 ) {
-  const progress = Math.min(1, Math.max(0, (now - flight.born) / FLIGHT_MS));
-  const offset = kickOffset(flight, now);
-  const baseX =
-    width / 2 + flight.lane * width * 0.32 * Math.min(1, progress * 3);
+  const progress = Math.max(0, (now - flight.born) / FLIGHT_MS);
+  let x = width / 2 + flight.lane * width * 0.32 * Math.min(1, progress * 3);
+  let y = height - progress * (height + flight.size * 1.6);
+  if (flight.kick && !reduced) {
+    const k = flight.kick;
+    const seconds = Math.max(0, (now - k.at) / 1000);
+    const travel = (1 - Math.exp(-3 * seconds)) / 3;
+    x = k.x * width + k.vx * travel;
+    y = k.y * height - riseSpeed(flight, height) * seconds + k.vy * travel;
+    x = Math.max(flight.size / 2, Math.min(width - flight.size / 2, x));
+    y = Math.min(height, y);
+  }
   return {
-    x:
-      flight.kick && !reduced
-        ? Math.max(
-            flight.size / 2,
-            Math.min(width - flight.size / 2, baseX + offset.x),
-          )
-        : width / 2 + flight.lane * width * 0.32 * Math.min(1, progress * 3),
-    y:
-      height -
-      progress * (height + flight.size * 1.6) +
-      (reduced ? 0 : offset.y),
+    x,
+    y,
     tilt: reduced ? 0 : Math.sin(progress * 9 + flight.lane) * 7,
-    done: progress >= 1,
+    // Each accepted touch buys another quiet flight; abandoned balloons still expire.
+    done:
+      now - (reduced ? flight.born : (flight.kick?.at ?? flight.born)) >=
+      FLIGHT_MS,
   };
 }
 
-function kickOffset(flight: Flight, now: number) {
-  if (!flight.kick) return { x: 0, y: 0 };
-  const k = flight.kick;
-  const travel = (1 - Math.exp(-3 * Math.max(0, (now - k.at) / 1000))) / 3;
-  return {
-    x: Math.max(-120, Math.min(120, k.x + k.vx * travel)),
-    y: Math.max(-80, Math.min(80, k.y + k.vy * travel)),
-  };
+function riseSpeed(flight: Flight, height: number) {
+  return (height + flight.size * 1.6) / (FLIGHT_MS / 1000);
 }
+
 export function kickFlight(
   flight: Flight,
   now: number,
-  direction: number,
+  directionX: number,
+  directionY: number,
   reduced: boolean,
+  width: number,
+  height: number,
+  random = Math.random(),
 ) {
   if (flight.kick && now - flight.kick.at < 120) return;
-  const offset = kickOffset(flight, now);
+  const position = flightPosition(flight, now, width, height, reduced);
+  const strength = 0.9 + Math.max(0, Math.min(1, random)) * 0.2;
   flight.kick = {
     at: now,
-    x: offset.x,
-    y: offset.y,
-    vx: reduced ? 0 : direction < 0 ? -150 : 150,
-    vy: reduced ? 0 : -105,
+    x: position.x / width,
+    y: position.y / height,
+    vx: reduced ? 0 : Math.sign(directionX) * 150 * strength,
+    // Compensate for buoyancy so an upper tap actually nudges down at every size.
+    vy: reduced
+      ? 0
+      : Math.sign(directionY) * (riseSpeed(flight, height) + 150) * strength,
   };
 }

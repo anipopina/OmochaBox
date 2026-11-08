@@ -108,7 +108,7 @@ function finish(launch: boolean) {
     sky.append(element);
     const flight = { element, born: now, size: currentSize, lane };
     flights.push(flight);
-    const kick = (clientX?: number) => {
+    const kick = (clientX?: number, clientY?: number) => {
       if (document.hidden) return;
       const r = element.getBoundingClientRect();
       const direction =
@@ -119,14 +119,25 @@ function finish(launch: boolean) {
           : clientX < r.x + r.width / 2
             ? 1
             : -1;
-      kickFlight(flight, performance.now(), direction, motion.matches);
+      const directionY =
+        clientY !== undefined && clientY < r.y + r.height / 2 ? 1 : -1;
+      const { width, height } = dimensions();
+      kickFlight(
+        flight,
+        performance.now(),
+        direction,
+        directionY,
+        motion.matches,
+        width,
+        height,
+      );
       status.textContent = 'ふうせんを はじいたよ';
       wake();
     };
     element.addEventListener('pointerdown', (event) => {
       if (event.button !== 0) return;
       event.preventDefault();
-      kick(event.clientX);
+      kick(event.clientX, event.clientY);
     });
     element.addEventListener('keydown', (event) => {
       if (event.code === 'Enter' || event.code === 'Space') {

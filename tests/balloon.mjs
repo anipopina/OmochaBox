@@ -22,19 +22,59 @@ for (const reduced of [false, true]) {
   );
 }
 
+for (const width of [320, 820, 1280]) {
+  for (const height of [320, 844, 1180]) {
+    for (const dx of [-1, 1])
+      for (const dy of [-1, 1]) {
+        for (const random of [0, 0.5, 1]) {
+          const f = { born: 0, size: 220, lane: 0 };
+          const before = flightPosition(f, 3000, width, height, false);
+          kickFlight(f, 3000, dx, dy, false, width, height, random);
+          assert.deepEqual(
+            flightPosition(f, 3000, width, height, false),
+            before,
+            'No jump on touch',
+          );
+          const after = flightPosition(f, 3100, width, height, false);
+          assert.ok(
+            (after.x - before.x) * dx > 0,
+            'Horizontal quadrant direction',
+          );
+          assert.ok(
+            (after.y - before.y) * dy > 0,
+            'Vertical quadrant direction',
+          );
+          const kick = f.kick;
+          kickFlight(f, 3050, -dx, -dy, false, width, height);
+          assert.equal(f.kick, kick, 'Rapid duplicates ignored');
+        }
+      }
+  }
+}
 const nudged = { born: 0, size: 100, lane: 0 };
-kickFlight(nudged, 100, 1, false);
-assert.ok(flightPosition(nudged, 400, 390, 600, false).x > 195);
-kickFlight(nudged, 500, -1, false);
-assert.ok(
-  flightPosition(nudged, 800, 390, 600, false).x <
-    flightPosition(nudged, 500, 390, 600, false).x,
-);
-for (let i = 0; i < 1000; i++) kickFlight(nudged, 1000 + i, 1, false);
+for (let t = 3000; t <= 16000; t += 150) {
+  kickFlight(nudged, t, 1, 1, false, 390, 600, 0.5);
+  const pos = flightPosition(nudged, t + 149, 390, 600, false);
+  assert.equal(pos.done, false, 'Repeated touches keep the same balloon alive');
+  assert.ok(
+    pos.x <= 340 && pos.y <= 600,
+    'Repeated pushes stay inside side and bottom bounds',
+  );
+}
 assert.equal(nudged.size, 100);
 assert.equal(nudged.born, 0);
-assert.ok(flightPosition(nudged, 8000, 390, 600, false).x <= 340);
-assert.equal(flightPosition(nudged, FLIGHT_MS, 390, 600, false).done, true);
+assert.equal(
+  flightPosition(nudged, nudged.kick.at + FLIGHT_MS, 390, 600, false).done,
+  true,
+);
+const reducedFlight = { born: 0, size: 100, lane: 0 };
+const resting = flightPosition(reducedFlight, 1000, 390, 600, true);
+kickFlight(reducedFlight, 1000, 1, 1, true, 390, 600);
+assert.deepEqual(flightPosition(reducedFlight, 1000, 390, 600, true), resting);
+assert.equal(
+  flightPosition(reducedFlight, FLIGHT_MS, 390, 600, true).done,
+  true,
+);
 const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'balloon-browser-'));
 const output = join(root, 'test-results');
@@ -324,6 +364,50 @@ try {
       `document.querySelector('#pump').getAttribute('aria-pressed')`,
     ),
     'false',
+  );
+  for (const [fx, fy, dx, dy] of [
+    [0.25, 0.25, 1, 1],
+    [0.25, 0.75, 1, -1],
+    [0.75, 0.25, -1, 1],
+    [0.75, 0.75, -1, -1],
+  ]) {
+    await visit();
+    await call('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ ...p, id: 1 }],
+    });
+    await call('Input.dispatchTouchEvent', {
+      type: 'touchEnd',
+      touchPoints: [],
+    });
+    await delay(1500);
+    const before = await evaluate(
+      `(()=>{const e=document.querySelector('.balloon'),r=e.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(e).transform);return {x:r.x+r.width*${fx},y:r.y+r.height*${fy},tx:m.m41,ty:m.m42}})()`,
+    );
+    await call('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ x: before.x, y: before.y, id: 2 }],
+    });
+    await call('Input.dispatchTouchEvent', {
+      type: 'touchEnd',
+      touchPoints: [],
+    });
+    await delay(100);
+    const after = await evaluate(
+      `(()=>{const e=document.querySelector('.balloon'),m=new DOMMatrix(getComputedStyle(e).transform);return {tx:m.m41,ty:m.m42,tapped:e.dataset.tapped}})()`,
+    );
+    assert.equal(after.tapped, 'true');
+    assert.ok(
+      (after.tx - before.tx) * dx > 0,
+      'Trusted quadrant touch horizontal direction',
+    );
+    assert.ok(
+      (after.ty - before.ty) * dy > 0,
+      'Trusted quadrant touch vertical direction',
+    );
+  }
+  report(
+    'Balloon: all four quadrants through trusted touch events redirect horizontally and vertically PASS',
   );
   await call('Emulation.setTouchEmulationEnabled', { enabled: false });
   await evaluate(`document.querySelector('#pump').focus()`);
