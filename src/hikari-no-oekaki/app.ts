@@ -59,6 +59,7 @@ type Voice = FlowerVoice | SampleVoice;
   const canvas = requireElement('canvas', HTMLCanvasElement);
   const ctx = requireContext2d(canvas, { alpha: false });
   const palette = ['#76ddff', '#ffe276', '#ffb7d6', '#b4aaff'];
+  const petalShades = ['#22b9ee', '#f4b82c', '#f26aa7', '#8271ed'];
   const LIMIT = 480,
     FLOWERS = 24,
     PARTICLES = 220,
@@ -131,12 +132,13 @@ type Voice = FlowerVoice | SampleVoice;
     y: number,
     size: number,
     color: string,
+    points = 4,
   ) {
     g.fillStyle = color;
     g.beginPath();
-    for (let i = 0; i < 8; i++) {
-      const a = (i * Math.PI) / 4,
-        r = i % 2 ? size * 0.3 : size;
+    for (let i = 0; i < points * 2; i++) {
+      const a = (i * Math.PI) / points - Math.PI / 2,
+        r = i % 2 ? size * (points === 5 ? 0.46 : 0.3) : size;
       g.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
     }
     g.closePath();
@@ -172,15 +174,21 @@ type Voice = FlowerVoice | SampleVoice;
         );
     });
     g.globalAlpha = 1;
-    // Quiet stationary pinpoints, never pulsing or competing with the gesture.
-    for (let i = 0; i < 16; i++)
-      circle(
-        g,
-        (i * 137 + 31) % Math.max(1, width),
-        height * (0.22 + ((i * 7) % 11) / 17),
-        i % 3 ? 0.7 : 1.2,
-        '#536770',
-      );
+    // A stationary mix of points and stars: no flicker, no extra animation loop.
+    for (let i = 0; i < 24; i++) {
+      const x = (i * 137 + 31) % Math.max(1, width);
+      const y = height * (0.18 + ((i * 7) % 17) / 25);
+      if (i % 3 === 0) circle(g, x, y, 1.15, '#8ba5b2');
+      else
+        star(
+          g,
+          x,
+          y,
+          i % 2 ? 3.2 : 2.6,
+          i % 2 ? '#91adb9' : '#b7b699',
+          i % 3 === 1 ? 5 : 4,
+        );
+    }
   }
   function background() {
     ctx.globalAlpha = 1;
@@ -299,31 +307,68 @@ type Voice = FlowerVoice | SampleVoice;
         ctx.save();
         ctx.translate(f.x, f.y);
         ctx.rotate(a);
-        ctx.fillStyle = palette[f.color];
-        ctx.shadowColor = palette[f.color] + '70';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.ellipse(
-          radius * 0.57 * (1 - dissolve * 0.45),
+        const px = radius * 0.57 * (1 - dissolve * 0.45);
+        const rx = radius * 0.42 * (1 - dissolve);
+        const ry = radius * 0.36 * (1 - dissolve * 0.65);
+        const sheen = ctx.createRadialGradient(
+          px + rx * 0.2,
+          -ry * 0.28,
           0,
-          radius * 0.42 * (1 - dissolve),
-          radius * 0.36 * (1 - dissolve * 0.65),
+          px,
           0,
-          0,
-          Math.PI * 2,
+          Math.max(rx, ry),
         );
+        sheen.addColorStop(0, '#fff8ef');
+        sheen.addColorStop(0.26, palette[f.color]);
+        sheen.addColorStop(0.76, palette[f.color]);
+        sheen.addColorStop(1, petalShades[f.color]);
+        ctx.fillStyle = sheen;
+        ctx.shadowColor = palette[f.color] + '65';
+        ctx.shadowBlur = 10 * sceneScale();
+        ctx.beginPath();
+        ctx.ellipse(px, 0, rx, ry, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
+        ctx.clip();
+        ctx.strokeStyle = '#fff8ef55';
+        ctx.lineWidth = 1.1 * sceneScale();
+        ctx.beginPath();
+        ctx.ellipse(
+          px,
+          0,
+          rx * 0.91,
+          ry * 0.9,
+          0,
+          Math.PI * 1.05,
+          Math.PI * 1.8,
+        );
+        ctx.stroke();
         ctx.restore();
       }
       const center = age > 4750 ? 1 - clamp((age - 4750) / 350, 0, 1) : 1;
-      circle(
-        ctx,
+      const coreRadius = radius * 0.29 * center;
+      const core = ctx.createRadialGradient(
+        f.x - coreRadius * 0.3,
+        f.y - coreRadius * 0.35,
+        0,
         f.x,
         f.y,
-        radius * 0.29 * center,
-        f.color === 1 ? '#efb93f' : '#ffe471',
+        coreRadius,
       );
+      core.addColorStop(0, '#fff9ce');
+      core.addColorStop(0.5, '#ffe471');
+      core.addColorStop(1, f.color === 1 ? '#dd9425' : '#f2b83c');
+      circle(ctx, f.x, f.y, coreRadius, core);
+      for (let seed = 0; seed < 7; seed++) {
+        const angle = (seed * Math.PI * 2) / 7;
+        circle(
+          ctx,
+          f.x + Math.cos(angle) * coreRadius * 0.65,
+          f.y + Math.sin(angle) * coreRadius * 0.65,
+          coreRadius * 0.055,
+          '#fff6bd',
+        );
+      }
       circle(
         ctx,
         f.x - radius * 0.055 * center,
