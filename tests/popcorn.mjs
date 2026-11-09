@@ -130,7 +130,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===19"
+        ? "document.querySelectorAll('.game-card').length===20"
         : "document.querySelector('#scene')?.dataset.ready === 'true'",
     );
   };
@@ -268,7 +268,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
   await delay(250);
   assert.equal(await evaluate('document.getAnimations().length'), 0);
   await click('#back');
-  await waitFor("document.querySelectorAll('.game-card').length===19");
+  await waitFor("document.querySelectorAll('.game-card').length===20");
   await evaluate(
     'document.querySelector(\'a[href="pokopoko-popcorn/"]\').click()',
   );

@@ -23,6 +23,7 @@ for (const path of [
   'pitatto-magnet/index.html',
   'kurutto-ehon/index.html',
   'oimo-horihori/index.html',
+  'munyutto-nendo/index.html',
 ]) {
   const html = await readFile(new URL(path, root), 'utf8');
   assert.equal(
@@ -77,5 +78,5 @@ assert.deepEqual(
   [16, 32, 48],
 );
 console.log(
-  'Branding PASS: 20 HTML pages, local references, footer, OGP metadata, PNG dimensions/modes, ICO 16/32/48 frames',
+  'Branding PASS: 21 HTML pages, local references, footer, OGP metadata, PNG dimensions/modes, ICO 16/32/48 frames',
 );

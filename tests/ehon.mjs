@@ -286,7 +286,7 @@ try {
   await settled();
   assert.equal(await page(), 0);
   await click('#back');
-  await waitFor("document.querySelectorAll('.game-card').length===19");
+  await waitFor("document.querySelectorAll('.game-card').length===20");
   assert.ok(
     await evaluate(
       '!!document.querySelector(\'a[href="https://anipopina.com/"]\')',

@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-09",
+  "provider": "OpenAI image_gen via parent Kurumi",
+  "source_archive": "https://drive.google.com/file/d/1cMKunhJJhd7HeKEpKQ2tL1H2QxhtV2kO/view",
+  "usage": "material reference for procedural height field; unchanged WebP ball for reset and entrance",
+  "files": {
+    "validation.json": "365aecaaecd253c18bbb4bc09a13e903ee1e75f8f54c37b3d8903758f6d6dc4e",
+    "README.md": "dff21ba651a33a5411493ba0cb9d7a7392fb48c2974a7ee217034d8f74c171bf",
+    "preview.png": "6d625e3b2079c3abf384d607532b244051325de3473cb188e7c79e2c39cc16ce",
+    "web/clay-material-reference.webp": "a2b4ad1364cf833bdcbbd2dc1c98837cd253564f3395a0c98bd44dcb4383f896",
+    "web/clay-ball.webp": "aaedf20ca2d0de90d45392d99c9dbaae50b204ee2ac499be60ddfa8693339dae",
+    "source/clay-ball.png": "e7db99b57c82937e0f7c5bd6a0fec017f3ca6dedebb76c722b7a6a95ccace8cf",
+    "source/clay-material-reference.png": "1989388f817fd26b10f3d67e026476b0878868ba75cc508d4ec974dcea381d9e"
+  }
+}

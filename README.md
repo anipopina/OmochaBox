@@ -39,6 +39,8 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 | [おいもほりほり](src/oimo-horihori/README.md) | 土をどけてサツマイモを見つけ、すぽんと収穫する遊び |
 
+| [むにゅっとねんど](src/munyutto-nendo/README.md) | 押したくぼみとなぞった溝を残し、丸め直せるねんど遊び |
+
 ## 開発を始める
 
 Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。

@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+}
+body {
+  background: #bce6d9;
+  font-family: system-ui, sans-serif;
+  color: #673715;
+}
+#scene {
+  width: 100%;
+  height: 100dvh;
+  position: relative;
+  overflow: clip;
+  background: radial-gradient(ellipse at 50% 40%, #e8f8e4, #bce6d9);
+}
+#stage {
+  position: absolute;
+  inset: 80px 8px 12px;
+  display: grid;
+  place-items: center;
+}
+#clay {
+  width: min(94vw, calc(100dvh - 96px), 800px);
+  height: min(94vw, calc(100dvh - 96px), 800px);
+  touch-action: none;
+  cursor: pointer;
+  filter: drop-shadow(0 14px 9px #573b293b);
+  -webkit-tap-highlight-color: transparent;
+}
+#clay:focus-visible {
+  outline: 4px dashed #14635d;
+  border-radius: 30%;
+  outline-offset: -10px;
+}
+#reset {
+  position: absolute;
+  z-index: 5;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 92px;
+  height: 68px;
+  border: 3px solid #8b521e;
+  border-radius: 26px;
+  background: #fff6d9;
+  color: #7b451d;
+  font-size: 38px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 3px 0 #75501e33;
+}
+#reset:active {
+  transform: translateY(2px);
+}
+#reset:focus-visible {
+  outline: 4px solid #14635d;
+  outline-offset: 3px;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  #stage {
+    inset: 4px 100px 4px 80px;
+  }
+  #clay {
+    width: min(calc(100vw - 188px), 98dvh);
+    height: min(calc(100vw - 188px), 98dvh);
+  }
+}
+
+#reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  font-size: 32px;
+}
+#reset img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  pointer-events: none;
+}
+#reset img[hidden] {
+  display: none;
+}

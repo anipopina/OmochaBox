@@ -1,0 +1,22 @@
+[
+  {
+    "name": "clay-ball.webp",
+    "size": [
+      512,
+      512
+    ],
+    "mode": "RGBA",
+    "bytes": 19428,
+    "sha256": "aaedf20ca2d0de90d45392d99c9dbaae50b204ee2ac499be60ddfa8693339dae"
+  },
+  {
+    "name": "clay-material-reference.webp",
+    "size": [
+      1536,
+      512
+    ],
+    "mode": "RGB",
+    "bytes": 38464,
+    "sha256": "a2b4ad1364cf833bdcbbd2dc1c98837cd253564f3395a0c98bd44dcb4383f896"
+  }
+]

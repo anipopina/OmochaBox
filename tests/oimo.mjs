@@ -346,7 +346,7 @@ try {
   );
   assert.equal(await state(), 'digging');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===19");
+  await waitFor("document.querySelectorAll('.game-card').length===20");
   await evaluate(`document.querySelector('a[href="oimo-horihori/"]').click()`);
   await waitFor("document.querySelector('#patch')?.dataset.round==='0'");
   assert.equal(
