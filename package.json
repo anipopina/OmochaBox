@@ -15,7 +15,7 @@
     "build:test": "vite build --mode test",
     "test:home-button": "node tests/home-button.mjs",
     "test:stamp-boundaries": "node tests/stamp-pagination-boundaries.mjs",
-    "test": "npm run build && npm run build:production && npm run test:publication && npm run test:infra && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/home-button.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs && node tests/pond.mjs && node tests/mogumogu.mjs && node tests/bubbles.mjs && node tests/toy-interactions.mjs && node tests/guitar.mjs && node tests/train.mjs && node tests/house.mjs && node tests/popcorn.mjs && node tests/ice.mjs && node tests/jelly.mjs && node --import tsx tests/magnet-model.mjs && node tests/magnet.mjs && node tests/ehon.mjs && node --import tsx tests/oimo-model.mjs && node tests/oimo.mjs && node --import tsx tests/clay-model.mjs && node tests/clay.mjs",
+    "test": "npm run build && npm run build:production && npm run test:publication && npm run test:infra && npm run build:test && node tests/build.mjs && node tests/branding.mjs && node tests/home-button.mjs && node tests/characters.mjs && node tests/browser.mjs && node tests/balloon.mjs && node tests/stamp.mjs && node tests/slide.mjs && node tests/pinwheel.mjs && node tests/glass.mjs && node tests/pond.mjs && node tests/mogumogu.mjs && node tests/bubbles.mjs && node tests/toy-interactions.mjs && node tests/guitar.mjs && node tests/train.mjs && node tests/house.mjs && node tests/popcorn.mjs && node tests/ice.mjs && node tests/jelly.mjs && node --import tsx tests/magnet-model.mjs && node tests/magnet.mjs && node tests/ehon.mjs && node --import tsx tests/oimo-model.mjs && node tests/oimo.mjs && node --import tsx tests/clay-model.mjs && node tests/clay.mjs && node --import tsx tests/ouchi-model.mjs && node tests/ouchi.mjs",
     "build:production": "npm run typecheck && vite build --mode aws",
     "preview:production": "vite preview --mode aws",
     "infra:synth": "npm run build:production && node infra/cli.mjs synth",
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^22.20.5",
+    "@types/three": "^0.187.0",
     "aws-cdk": "2.1146.1",
     "aws-cdk-lib": "2.275.0",
     "constructs": "10.8.1",
@@ -41,5 +42,9 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0",
     "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "cannon-es": "^0.20.0",
+    "three": "^0.187.0"
   }
 }

@@ -1,0 +1,5 @@
+three.js (Three.js Authors)
+License: MIT (see LICENSE in this directory)
+Package: three@0.187.0 from the npm registry
+Repository: https://github.com/mrdoob/three.js
+Bundled, minified and unmodified into the おうちバラバラ page script.

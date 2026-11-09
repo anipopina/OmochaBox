@@ -1,0 +1,54 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+}
+body {
+  background: #a9e6ff;
+  font-family: system-ui, sans-serif;
+  color: #17396b;
+}
+#scene {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: clip;
+}
+#field {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#field:focus-visible {
+  outline: 5px dashed #17396b;
+  outline-offset: -10px;
+}
+#fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+#fallback[hidden] {
+  display: none;
+}
+#fallback span {
+  font-size: 72px;
+}

@@ -1,0 +1,5 @@
+cannon-es (cannon.js Authors, pmndrs)
+License: MIT (see LICENSE in this directory)
+Package: cannon-es@0.20.0 from the npm registry
+Repository: https://github.com/pmndrs/cannon-es
+Bundled, minified and unmodified into the おうちバラバラ page script.

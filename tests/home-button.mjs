@@ -118,6 +118,7 @@ try {
     'kurutto-ehon',
     'oimo-horihori',
     'munyutto-nendo',
+    'ouchi-barabara',
   ];
   for (const [width, height] of [
     [320, 568],
@@ -198,7 +199,7 @@ try {
   assert.equal(license.status, 200);
   assert.match(await license.text(), /Apache License/);
   console.log(
-    'Home button PASS: 20 games / 3 viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS errors',
+    'Home button PASS: 21 games / 3 viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS errors',
   );
 } finally {
   ws?.close();

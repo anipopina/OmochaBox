@@ -24,6 +24,7 @@ for (const path of [
   'kurutto-ehon/index.html',
   'oimo-horihori/index.html',
   'munyutto-nendo/index.html',
+  'ouchi-barabara/index.html',
 ]) {
   const html = await readFile(new URL(path, root), 'utf8');
   assert.equal(
