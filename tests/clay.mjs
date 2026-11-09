@@ -217,6 +217,57 @@ try {
       `Clay touch/reset/cancel/keyboard/geometry ${width}x${height}: PASS`,
     );
   }
+
+  // Reproduce the independent QA paths at its actual desktop viewport.
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 1180,
+    height: 757,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  await visit();
+  await settle();
+  async function line(ax, ay, bx, by, steps) {
+    await touch('touchStart', [{ x: ax, y: ay, id: 1 }]);
+    for (let n = 1; n <= steps; n++) {
+      await touch('touchMove', [
+        {
+          x: ax + ((bx - ax) * n) / steps,
+          y: ay + ((by - ay) * n) / steps,
+          id: 1,
+        },
+      ]);
+      await delay(17);
+    }
+    await touch('touchEnd');
+    await settle();
+  }
+  await line(450, 490, 735, 500, 24);
+  await shot('clay-qa-horizontal-1180x757');
+  await line(580, 360, 1030, 650, 32);
+  await shot('clay-qa-crossing-1180x757');
+  const crossing = await canvasData();
+  await delay(500);
+  assert.equal(await canvasData(), crossing);
+  await click('#reset');
+  await settle();
+  await line(580, 360, 1030, 650, 5);
+  await shot('clay-qa-fast-diagonal-1180x757');
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  await visit();
+  await settle();
+  const clayHeight = await evaluate(
+    `(()=>{const c=document.querySelector('#clay'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let lo=c.height,hi=0;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(d[(y*c.width+x)*4+3]>128){lo=Math.min(lo,y);hi=Math.max(hi,y);}return (hi-lo)/c.height*c.getBoundingClientRect().height})()`,
+  );
+  assert.ok(clayHeight > 540, 'Portrait mound must use the vertical play area');
+  report(
+    `Clay QA paths and portrait visible height ${Math.round(clayHeight)} CSS px: PASS`,
+  );
   await call('Emulation.setEmulatedMedia', {
     features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
   });

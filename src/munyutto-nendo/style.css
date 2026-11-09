@@ -28,7 +28,7 @@ body {
 }
 #clay {
   width: min(94vw, calc(100dvh - 96px), 800px);
-  height: min(94vw, calc(100dvh - 96px), 800px);
+  height: min(calc(100dvh - 96px), 800px);
   touch-action: none;
   cursor: pointer;
   filter: drop-shadow(0 14px 9px #573b293b);

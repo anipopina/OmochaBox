@@ -16,6 +16,8 @@ reset.prepend(ball);
 const ctx = canvas.getContext('2d')!;
 const clay = new Clay();
 const displayed = new Float32Array(clay.height);
+const smooth = new Float32Array(clay.height.length);
+const temporary = new Float32Array(clay.height.length);
 const raster = document.createElement('canvas');
 raster.width = raster.height = SIZE;
 const paint = raster.getContext('2d')!;
@@ -29,25 +31,46 @@ let cursor: [number, number] = [0, 0];
 let active = true;
 let keyboard = false;
 function render() {
+  // Smooth the height before normals, so crossing paths have a soft join.
+  // Fixed buffers and a compact binomial filter keep frame cost bounded.
   for (let y = 0; y < SIZE; y++)
     for (let x = 0; x < SIZE; x++) {
       const i = y * SIZE + x;
-      const h = displayed[i];
+      temporary[i] =
+        (displayed[y * SIZE + Math.max(0, x - 1)] +
+          2 * displayed[i] +
+          displayed[y * SIZE + Math.min(SIZE - 1, x + 1)]) /
+        4;
+    }
+  for (let y = 0; y < SIZE; y++)
+    for (let x = 0; x < SIZE; x++) {
+      const i = y * SIZE + x;
+      smooth[i] =
+        (temporary[Math.max(0, y - 1) * SIZE + x] +
+          2 * temporary[i] +
+          temporary[Math.min(SIZE - 1, y + 1) * SIZE + x]) /
+        4;
+    }
+
+  for (let y = 0; y < SIZE; y++)
+    for (let x = 0; x < SIZE; x++) {
+      const i = y * SIZE + x;
+      const h = smooth[i];
       const offset = i * 4;
       if (h < 0.001) {
         pixels.data[offset + 3] = 0;
         continue;
       }
       const dx =
-        ((displayed[y * SIZE + Math.min(SIZE - 1, x + 1)] -
-          displayed[y * SIZE + Math.max(0, x - 1)]) *
+        ((smooth[y * SIZE + Math.min(SIZE - 1, x + 1)] -
+          smooth[y * SIZE + Math.max(0, x - 1)]) *
           SIZE) /
         4;
       const dy =
-        ((displayed[Math.min(SIZE - 1, y + 1) * SIZE + x] -
-          displayed[Math.max(0, y - 1) * SIZE + x]) *
+        ((smooth[Math.min(SIZE - 1, y + 1) * SIZE + x] -
+          smooth[Math.max(0, y - 1) * SIZE + x]) *
           SIZE) /
-        4;
+        (4 * clay.aspect);
       const light = (-dx * -0.48 - dy * -0.6 + 0.64) / Math.hypot(dx, dy, 1);
       const grain =
         Math.sin(x * 17.13 + y * 39.7) * Math.cos(x * 4.11 - y * 13.4) * 1.3;
@@ -209,9 +232,14 @@ window.addEventListener('pageshow', () => {
 motion.addEventListener('change', settle);
 new ResizeObserver(() => {
   const box = canvas.getBoundingClientRect();
-  canvas.width = canvas.height = Math.min(
+  clay.aspect = box.height / box.width;
+  canvas.width = Math.min(
     900,
     Math.max(192, Math.round(box.width * Math.min(devicePixelRatio, 2))),
+  );
+  canvas.height = Math.min(
+    1200,
+    Math.max(192, Math.round(box.height * Math.min(devicePixelRatio, 2))),
   );
   settle();
 }).observe(canvas);

@@ -24,6 +24,7 @@ export class Clay {
   }
   reset() {
     this.height.set(this.base);
+    this.distance.fill(Infinity);
   }
   contains(u: number, v: number) {
     const x = Math.round(((u + 1) * (SIZE - 1)) / 2);
@@ -36,59 +37,59 @@ export class Clay {
       this.base[y * SIZE + x] > 0.035
     );
   }
+  // Distance to the whole swept path, not a list of overlapping round stamps.
+  // Keeping the minimum makes the surface independent of event frequency.
+  private readonly distance = new Float32Array(SIZE * SIZE).fill(Infinity);
+  aspect = 1;
   press(u: number, v: number) {
     if (!Number.isFinite(u) || !Number.isFinite(v) || !this.contains(u, v))
       return false;
-    const cx = ((u + 1) * (SIZE - 1)) / 2;
-    const cy = ((v + 1) * (SIZE - 1)) / 2;
-    const r = (RADIUS * (SIZE - 1)) / 2;
-    const bounds = [
-      Math.max(1, Math.floor(cx - r * 1.85)),
-      Math.min(SIZE - 2, Math.ceil(cx + r * 1.85)),
-      Math.max(1, Math.floor(cy - r * 1.85)),
-      Math.min(SIZE - 2, Math.ceil(cy + r * 1.85)),
-    ];
-    let removed = 0,
-      capacity = 0;
-    for (let y = bounds[2]; y <= bounds[3]; y++)
-      for (let x = bounds[0]; x <= bounds[1]; x++) {
-        const i = y * SIZE + x;
-        if (this.base[i] < 0.025) continue;
-        const d = Math.hypot(x - cx, y - cy) / r;
-        if (d < 1) {
-          const bowl = (1 - d * d) ** 2;
-          const target = Math.max(0.035, this.base[i] - 0.155 * bowl);
-          const change = Math.max(0, this.height[i] - target) * bowl;
-          this.height[i] -= change;
-          removed += change;
-        } else if (d < 1.85) {
-          capacity +=
-            Math.sin(((d - 1) / 0.85) * Math.PI) ** 2 *
-            Math.max(0, 0.34 - this.height[i]);
-        }
-      }
-    if (capacity > 0)
-      for (let y = bounds[2]; y <= bounds[3]; y++)
-        for (let x = bounds[0]; x <= bounds[1]; x++) {
-          const i = y * SIZE + x;
-          if (this.base[i] < 0.025) continue;
-          const d = Math.hypot(x - cx, y - cy) / r;
-          if (d >= 1 && d < 1.85)
-            this.height[i] +=
-              Math.min(1, removed / capacity) *
-              Math.sin(((d - 1) / 0.85) * Math.PI) ** 2 *
-              Math.max(0, 0.34 - this.height[i]);
-        }
-    return removed > 0;
+    return this.stroke(u, v, u, v);
   }
   stroke(ax: number, ay: number, bx: number, by: number) {
-    const distance = Math.hypot(bx - ax, by - ay);
-    if (!Number.isFinite(distance)) return;
-    const steps = Math.min(
-      80,
-      Math.max(1, Math.ceil(distance / (RADIUS * 0.26))),
+    if (![ax, ay, bx, by].every(Number.isFinite)) return false;
+    const aspect = clamp(this.aspect, 0.5, 3);
+    // Clip work bounds, never the actual segment: entering/leaving the mound
+    // must not invent a line along its edge.
+    const reach = RADIUS * 3.5;
+    const pixel = (v: number) => ((v + 1) * (SIZE - 1)) / 2;
+    const left = Math.max(1, Math.floor(pixel(Math.min(ax, bx) - reach)));
+    const right = Math.min(
+      SIZE - 2,
+      Math.ceil(pixel(Math.max(ax, bx) + reach)),
     );
-    for (let n = 1; n <= steps; n++)
-      this.press(ax + ((bx - ax) * n) / steps, ay + ((by - ay) * n) / steps);
+    const top = Math.max(
+      1,
+      Math.floor(pixel(Math.min(ay, by) - reach / aspect)),
+    );
+    const bottom = Math.min(
+      SIZE - 2,
+      Math.ceil(pixel(Math.max(ay, by) + reach / aspect)),
+    );
+    const dx = bx - ax,
+      dy = (by - ay) * aspect;
+    const length2 = dx * dx + dy * dy;
+    let changed = false;
+    for (let y = top; y <= bottom; y++)
+      for (let x = left; x <= right; x++) {
+        const i = y * SIZE + x;
+        if (this.base[i] < 0.025) continue;
+        const px = (x / (SIZE - 1)) * 2 - 1 - ax;
+        const py = ((y / (SIZE - 1)) * 2 - 1 - ay) * aspect;
+        const t = length2 ? clamp((px * dx + py * dy) / length2, 0, 1) : 0;
+        const d2 = ((px - t * dx) ** 2 + (py - t * dy) ** 2) / RADIUS ** 2;
+        if (d2 >= 12.25 || d2 >= this.distance[i]) continue;
+        this.distance[i] = d2;
+        // A single smooth bowl-to-rim profile for the union of the entire path.
+        // Overlaps no longer accumulate a new ridge at every input sample.
+        const relief = -0.155 * (1 - d2) * Math.exp(-0.75 * d2);
+        this.height[i] = clamp(
+          this.base[i] + relief * Math.min(1, this.base[i] / 0.16),
+          0.035,
+          0.34,
+        );
+        changed = true;
+      }
+    return changed;
   }
 }
