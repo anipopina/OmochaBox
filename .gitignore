@@ -5,3 +5,10 @@ tmp/
 *.zip
 dist-production/
 cdk.out/
+tmp/
+
+# ローカルの環境変数（秘密値を含まない共有サンプルは管理する）
+.env
+.env.*
+!.env.example
+!.env.*.example

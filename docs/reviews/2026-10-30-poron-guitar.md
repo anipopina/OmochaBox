@@ -1,13 +1,15 @@
 # ぽろんギター・独立レビュー
 
+この文書は制作・レビュー時点の記録です。版・検証結果・未確認事項は当時のもので、現在の手順は [開発ガイド](../development.md) を参照してください。
+
 基点: `c0ca467a0045af9ea3db7e315bedead6107c4a6f`。作業ブランチ: `review/poron-guitar`。
 既存10遊びと初期候補を確認し、もぐもぐともだち・ぷくぷくシャボンの重複制作を避け、未実装の「ぽろんギター」を追加しました。保留中の既存遊び改善は変更していません。
 
-参照: [初期候補](https://drive.google.com/file/d/1wbo-tsw3UAUMhd5js01xDBQXoStcx89o/view)、[クルミ看板](https://app.notion.com/p/40799535a51a81c993efde8f675f13dc)、README・AGENTS・開発／ブランド文書。関連ローカル `.agents/skills` はありませんでした。
+参照: [初期企画メモ](https://drive.google.com/file/d/1wbo-tsw3UAUMhd5js01xDBQXoStcx89o/view)。
 
 ## 開き方
 
-確認用ZIPを空のフォルダへ展開し、`python3 -m http.server 8000` を実行して `http://localhost:8000/` を開きます。入口の「ぽろんギター」、または `/poron-guitar/`。Sitesは検証用環境なので別試作モード・クエリは設けていません。今回はpush・Sites公開を保留しています。
+確認用ZIPを空のフォルダへ展開し、`python3 -m http.server 8000` を実行して `http://localhost:8000/` を開きます。入口の「ぽろんギター」、または `/poron-guitar/`。Sitesは検証用環境なので別試作モード・クエリは設けていません。このレビュー時点では未公開です。
 
 ## 操作と確認点
 

@@ -1,6 +1,6 @@
 # びよーんゼリーの素材
 
-親タスクのクルミが2026-11-04にOpenAIの画像生成で制作し、本タスクへ提供したイチゴゼリーです。
+2026-11-04に本プロジェクト用にOpenAIの画像生成で制作したイチゴゼリーです。
 
 - [Drive原本](https://drive.google.com/file/d/1dqPcHgX-zejQEoD-3ssbuz0YMbitaLC4/view)
 - `original.png` は受領した1536×1024の原本を変更せず保持します。

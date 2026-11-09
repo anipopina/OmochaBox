@@ -1,5 +1,7 @@
 # シャボン：フォーカス保持・線削除の確認候補
 
+この文書は制作・レビュー時点の記録です。版・検証結果・未確認事項は当時のもので、現在の手順は [開発ガイド](development.md) を参照してください。
+
 基点 main: `6460b88ba48a169afea039451d56edaa0647b194`。ブランチ `fix/shabon-preserve-focus`。push・公開は行わない。
 
 ## 変更
@@ -12,14 +14,12 @@
 
 ## 独立レビュー
 
-保存済み環境の `http://localhost:4173/pukupuku-shabon/` で確認。停止している場合:
+リポジトリ直下で以下を実行し、`http://localhost:4173/pukupuku-shabon/` を開きます。過去版の再現には対象版のチェックアウトが必要です。
 
 ```sh
-cd /workspace/OmochaBox
-npm run preview -- --host 0.0.0.0
+npm run build
+npm run preview
 ```
-
-ポートにアクセスできない場合はレビューZIPを展開し、展開先で `python3 -m http.server 4173` を実行して `http://localhost:4173/pukupuku-shabon/` を開く。公開中のSitesは旧版のままなので今回の確認には使わない。
 
 1. 泡を3つ以上作り、位置・大小・色を覚える。
 2. 別ウィンドウをクリックして数秒待つ。見えている泡が消えずに止まること。

@@ -2,30 +2,30 @@
 
 ## 現在の開発資料
 
-- [全体README](../README.md)：概要・環境構築・コマンド・公開
+- [全体README](../README.md)：概要・遊び一覧・環境構築・公開
+- [共通方針](../AGENTS.md)：制作・開発・文書・検証のルール
 - [開発ガイド](development.md)：ページと素材の追加・テストの仕組み
 - [キャラクターと共有素材](branding.md)：なかまたち・favicon・OGP
-- [ひかりのおえかき](../src/hikari-no-oekaki/README.md)：現在の仕様・固有の確認項目
-- [ふきふき、まど](../src/fukifuki-mado/README.md)：現在の仕様・固有の確認項目
-- [ぷかぷか、ふうせん](../src/pukapuka-fusen/README.md)：現在の仕様・固有の確認項目
+- [AWS本番公開](../infra/README.md)：本番構成と公開手順
+- [素材原本と出典](../source-assets/)：原本・利用条件・変換記録
 
-- [ぽんぽん、スタンプ](../src/ponpon-stamp/README.md)：6体のなかまを選んで紙面に置く創作遊び
-
-- [ころころ、すべりだい](../src/korokoro-suberidai/README.md)：3段の斜面をころがるたまの遊び
-
-- [くるくる、かざぐるま](../src/kurukuru-kazaguruma/README.md)：指で払って回す折り紙風の風車
-
-素材原本・出典・変換記録は [source-assets/](../source-assets/) を参照してください。
-
-- [かさねて、いろガラス](../src/kasanete-iroglass/README.md)：3枚の色板を動かす色の重なり遊び
+各遊びの仕様・固有の確認項目は、全体READMEの遊び一覧から参照してください。
 
 ## 過去の実装・検証記録
 
-以下は2026-10-20時点の記録です。件数・環境・公開手順などには当時の情報が含まれます。現在の開発には上記の資料を使ってください。
+以下は各記録に示した版・日付の履歴です。現在の仕様・公開状態・作業手順を示すものではありません。現在の開発には上記の資料を使ってください。
 
-- [初期導入・検証の記録](history/initial-release.md)
-- [初期のおえかき・入口のテスト結果](verification.txt)
-- [葉画像の比較](leaf-comparison.png)
-- [ふきふき、まどの実装・検証記録](fukifuki-verification.md)
-- [ふきふき、まど追加時の全体テスト結果](fukifuki-test-results.txt)
-- [モバイル画面](fukifuki-mobile.png)・[タブレット画面](fukifuki-tablet.png)
+- [だれのおうち？ 確認用（2026-11-01）](dare-no-ouchi-review-2026-11-01.md)
+- [ふきふき、まど — 2026-10-20](fukifuki-verification.md)
+- [初期導入・検証の記録（2026-10-20）](history/initial-release.md)
+- [ぷくぷくシャボン 操作レビュー](pukupuku-shabon-review.md)
+- [ぽろんギター・独立レビュー](reviews/2026-10-30-poron-guitar.md)
+- [ことこと汽車・独立レビュー](reviews/2026-10-31-kotokoto-kisha.md)
+- [ぽこぽこポップコーン：独立レビュー用](reviews/2026-11-02-pokopoko-popcorn.md)
+- [つみつみアイス：実装と独立レビュー](reviews/2026-11-03-tsumitsumi-ice.md)
+- [ぴたっとマグネット — 完成確認記録](reviews/2026-11-05-pitatto-magnet.md)
+- [くるっとえほん — 完成確認記録](reviews/2026-11-06-kurutto-ehon.md)
+- [おいもほりほり — 完成確認記録](reviews/2026-11-07-oimo-horihori.md)
+- [シャボン：フォーカス保持・線削除の確認候補](shabon-focus-review.md)
+
+関連するテストログとスクリーンショットは、各記録から参照してください。初期の記録には [検証ログ](verification.txt)、[葉画像の比較](leaf-comparison.png)、[窓の検証ログ](fukifuki-test-results.txt)、[モバイル画面](fukifuki-mobile.png)・[タブレット画面](fukifuki-tablet.png) があります。

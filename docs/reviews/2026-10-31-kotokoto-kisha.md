@@ -1,12 +1,14 @@
 # ことこと汽車・独立レビュー
 
-基点：`3b9edae26506dd0982713d38e48ffe079993b15c`。作業ブランチ：`review/kotokoto-kisha`。今回commit・push・Sites更新・AWS変更は行いません。
+この文書は制作・レビュー時点の記録です。版・検証結果・未確認事項は当時のもので、現在の手順は [開発ガイド](../development.md) を参照してください。
+
+基点：`3b9edae26506dd0982713d38e48ffe079993b15c`。作業ブランチ：`review/kotokoto-kisha`。このレビュー時点では未公開。
 
 ## 選定と確認資料
 
-最新main、各作業ツリー、README・AGENTS・開発／ブランド文書・package.jsonを確認。もぐもぐ・シャボン・ギターは実装済み。古い比較試作ツリーの未コミット変更はそのまま保護。今回の競合や再開すべき承認済み未完了作業は見当たらず、乗り物が未収録のため「ことこと汽車」を選定しました。保留中のすべりだい・風車・ひかり読み込み改善は変更していません。関連 `.agents/skills` はありません。
+乗り物の遊びが未収録だったため、「ことこと汽車」を選定しました。
 
-参照：[さいしょの６案.md](https://drive.google.com/file/d/1wbo-tsw3UAUMhd5js01xDBQXoStcx89o/view)（取得本文は5案）、[改善案正本](https://docs.google.com/document/d/1t2CEGuf1eCBetBMUOEpiN0WyS_s2rknAPDtpl8k-BLU/edit)、[クルミ看板](https://app.notion.com/p/40799535a51a81c993efde8f675f13dc)。親スレッドの独立調査でも「やる」0件。
+参照：[初期企画メモ](https://drive.google.com/file/d/1wbo-tsw3UAUMhd5js01xDBQXoStcx89o/view)、[改善案](https://docs.google.com/document/d/1t2CEGuf1eCBetBMUOEpiN0WyS_s2rknAPDtpl8k-BLU/edit)。
 
 ## 確認方法
 

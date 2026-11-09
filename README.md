@@ -5,41 +5,28 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 ## 遊び
 
-| 遊び                                                      | 内容                                            |
-| --------------------------------------------------------- | ----------------------------------------------- |
-| [ひかりのおえかき](src/hikari-no-oekaki/README.md)        | 指先から光の花や道が生まれるおえかき            |
-| [ふきふき、まど](src/fukifuki-mado/README.md)             | 曇った窓を拭いて、庭のどうぶつを見つける遊び    |
-| [ぷかぷか、ふうせん](src/pukapuka-fusen/README.md)        | ポンプでふくらませ、空へ見送る風船遊び          |
-| [ぽんぽん、スタンプ](src/ponpon-stamp/README.md)          | 図形・水族館のスタンプを紙面に置く創作遊び      |
-| [ころころ、すべりだい](src/korokoro-suberidai/README.md)  | たまが3段の曲線斜面をころがり、受け皿で弾む遊び |
-| [くるくる、かざぐるま](src/kurukuru-kazaguruma/README.md) | 指で払うと方向と速さが変わる折り紙風の風車      |
-
-| [かさねて、いろガラス](src/kasanete-iroglass/README.md) | 3枚の色板を動かして重なる色を楽しむ遊び |
-
-| [みずたまり](src/mizutamari/README.md) | 水面を触って波紋を重ね、浮き葉を少しずつ運ぶ遊び |
-
-| [もぐもぐともだち](src/mogumogu-tomodachi/README.md) | たべものをあげて、もぐもぐと笑顔を楽しむ遊び |
-
-| [ぷくぷくシャボン](src/pukupuku-shabon/README.md) | 空いたところに泡を作り、触ってぽこんと割る遊び |
-
-| [ぽろんギター](src/poron-guitar/README.md) | 太い弦を触って、なでて音を鳴らす楽器遊び |
-
-| [だれのおうち？](src/dare-no-ouchi/README.md) | 扉をこんこん、動物にごあいさつ |
-| [ことこと汽車](src/kotokoto-kisha/README.md) | 汽車を触って走り、動物の乗客にごあいさつ |
-
-| [ぽこぽこポップコーン](src/pokopoko-popcorn/README.md) | つぶを触ってポップコーンに変え、もう一度はずませる遊び |
-
-| [つみつみアイス](src/tsumitsumi-ice/README.md) | アイスを選んで重ね、自分の組み合わせを作る遊び |
-
-| [びよーんゼリー](src/biyoon-jelly/README.md) | ひっぱって伸ばし、離すとぷるんと戻る弾力遊び |
-
-| [ぴたっとマグネット](src/pitatto-magnet/README.md) | 磁石で玩具を引き寄せ、くっつけて離す遊び |
-
-| [くるっとえほん](src/kurutto-ehon/README.md) | ページをめくって景色を行き来する絵本遊び |
-
-| [おいもほりほり](src/oimo-horihori/README.md) | 土をどけてサツマイモを見つけ、すぽんと収穫する遊び |
-
-| [むにゅっとねんど](src/munyutto-nendo/README.md) | 押したくぼみとなぞった溝を残し、丸め直せるねんど遊び |
+| 遊び                                                      | 内容                                                   |
+| --------------------------------------------------------- | ------------------------------------------------------ |
+| [ひかりのおえかき](src/hikari-no-oekaki/README.md)        | 指先から光の花や道が生まれるおえかき                   |
+| [ふきふき、まど](src/fukifuki-mado/README.md)             | 曇った窓を拭いて、庭のどうぶつを見つける遊び           |
+| [ぷかぷか、ふうせん](src/pukapuka-fusen/README.md)        | ポンプでふくらませ、空へ見送る風船遊び                 |
+| [ぽんぽん、スタンプ](src/ponpon-stamp/README.md)          | 図形・水族館のスタンプを紙面に置く創作遊び             |
+| [ころころ、すべりだい](src/korokoro-suberidai/README.md)  | たまが3段の曲線斜面をころがり、受け皿で弾む遊び        |
+| [くるくる、かざぐるま](src/kurukuru-kazaguruma/README.md) | 指で払うと方向と速さが変わる折り紙風の風車             |
+| [かさねて、いろガラス](src/kasanete-iroglass/README.md)   | 3枚の色板を動かして重なる色を楽しむ遊び                |
+| [みずたまり](src/mizutamari/README.md)                    | 水面を触って波紋を重ね、浮き葉を少しずつ運ぶ遊び       |
+| [もぐもぐともだち](src/mogumogu-tomodachi/README.md)      | たべものをあげて、もぐもぐと笑顔を楽しむ遊び           |
+| [ぷくぷくシャボン](src/pukupuku-shabon/README.md)         | 空いたところに泡を作り、触ってぽこんと割る遊び         |
+| [ぽろんギター](src/poron-guitar/README.md)                | 太い弦を触って、なでて音を鳴らす楽器遊び               |
+| [だれのおうち？](src/dare-no-ouchi/README.md)             | 扉をこんこん、動物にごあいさつ                         |
+| [ことこと汽車](src/kotokoto-kisha/README.md)              | 汽車を触って走り、動物の乗客にごあいさつ               |
+| [ぽこぽこポップコーン](src/pokopoko-popcorn/README.md)    | つぶを触ってポップコーンに変え、もう一度はずませる遊び |
+| [つみつみアイス](src/tsumitsumi-ice/README.md)            | アイスを選んで重ね、自分の組み合わせを作る遊び         |
+| [びよーんゼリー](src/biyoon-jelly/README.md)              | ひっぱって伸ばし、離すとぷるんと戻る弾力遊び           |
+| [ぴたっとマグネット](src/pitatto-magnet/README.md)        | 磁石で玩具を引き寄せ、くっつけて離す遊び               |
+| [くるっとえほん](src/kurutto-ehon/README.md)              | ページをめくって景色を行き来する絵本遊び               |
+| [おいもほりほり](src/oimo-horihori/README.md)             | 土をどけてサツマイモを見つけ、すぽんと収穫する遊び     |
+| [むにゅっとねんど](src/munyutto-nendo/README.md)          | 押したくぼみとなぞった溝を残し、丸め直せるねんど遊び   |
 
 ## 開発を始める
 

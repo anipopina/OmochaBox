@@ -27,7 +27,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
 - 共有キャラクターSVGは `src/assets/characters/<series>/` に置き、出典とSHA-256は `source-assets/characters/` に記録します。原本SVGを整形・最適化せず、ゲームへの採用は別途判断します。
-- 素材原本と出典・変換記録は `source-assets/<slug>/` に保存します。`dist/` を直接編集しません。
+- 素材原本と出典・利用条件・変換記録は `source-assets/<slug>/` に保存します。確認すべき利用条件は [AGENTS.md](../AGENTS.md) を参照してください。`dist/` を直接編集しません。
 
 ## ブラウザーテスト
 
@@ -37,9 +37,11 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 CHROME_PATH=/path/to/chromium npm test
 ```
 
-`npm test` はビルド、[出力検査](../tests/build.mjs)、[ブランド素材検査](../tests/branding.mjs)、[シリーズ別SVGの原本一致検査](../tests/characters.mjs)、[ブラウザーテスト](../tests/browser.mjs) に加え、[風船](../tests/balloon.mjs)・[スタンプ](../tests/stamp.mjs)・[すべりだい](../tests/slide.mjs)・[風車](../tests/pinwheel.mjs)・[いろガラス](../tests/glass.mjs)・[みずたまり](../tests/pond.mjs)・[もぐもぐともだち](../tests/mogumogu.mjs)の専用テストを実行します。結果とスクリーンショットは `test-results/` に保存します。
+`npm test` はビルド、公開範囲・インフラ・素材の検査、共通および各遊びのブラウザーテストを実行します。実行対象は [package.json](../package.json)、テストの実装は [tests/](../tests/) を参照してください。結果とスクリーンショットは `test-results/` に保存します。
 
 専用一時プロファイルと自動選択ポートを使い、終了時にブラウザーとHTTPサーバーを停止します。ヘッドレス検証では `--no-sandbox` を指定するため、対象はこのローカルコードだけにしてください。エミュレーションとは別に、実機iPhone/iPadのSafari、OSジェスチャー、音の聴感も確認します。
+
+見た目・操作を変更した場合は、通常時と「動きを減らす」設定時の操作結果、およびページ終了・非表示・復帰時の入力・音声・描画の後始末を、変更に応じて確認します。検証結果の報告方法は [AGENTS.md](../AGENTS.md) に従います。
 
 ### テスト用ビルド
 
@@ -49,6 +51,6 @@ CHROME_PATH=/path/to/chromium npm test
 
 ## 音と振動
 
-音と振動は常時有効で、設定UI・ブラウザストレージへの保存はありません。旧設定も参照しません。音量・消音は端末やブラウザで調整します。
+音と振動は常時有効で、設定UI・ブラウザストレージへの保存はありません。音量・消音は端末やブラウザで調整します。
 
 スタンプの粒子・音・触覚の上限と対応状況は [スタンプREADME](../src/ponpon-stamp/README.md#配置フィードバック) を参照してください。

@@ -1,15 +1,17 @@
 # ぷくぷくシャボン 操作レビュー
 
+この文書は制作・レビュー時点の記録です。版・検証結果・未確認事項は当時のもので、現在の手順は [開発ガイド](development.md) を参照してください。
+
 ## 起動
 
-保存済み OmochaBox Codex Web 環境で:
+リポジトリ直下で以下を実行します。過去版の再現には対象版のチェックアウトが必要です。
 
 ```sh
-cd /workspace/OmochaBox
-npm run preview -- --host 0.0.0.0
+npm run build
+npm run preview
 ```
 
-ローカル `http://localhost:4173/` の「ぷくぷくシャボン」カード、または `/pukupuku-shabon/` を開きます。外部公開はしていません。環境のポート転送がない場合は、この環境内ブラウザーかソースを取得したローカルで確認してください。
+ローカル `http://localhost:4173/` の「ぷくぷくシャボン」カード、または `/pukupuku-shabon/` を開きます。
 
 ## 操作レビュー
 

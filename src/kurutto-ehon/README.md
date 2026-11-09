@@ -8,4 +8,4 @@
 - 動きを減らす設定では紙の折り返しを短いクロスフェードに変更。音・点滅・得点・失敗・時間制限・設定UI・ストレージ・外部通信はありません。
 - 画像を事前読込みし、失敗時は再読込みボタンを表示。
 
-素材の出典は `source-assets/kurutto-ehon/`。公開v49を親がクラウドChromeで独立操作確認済み。最終check・npm testも通しで成功。実機Safari・幼児確認は未実施です。詳細は[完成確認記録](../../docs/reviews/2026-11-06-kurutto-ehon.md)を参照してください。
+素材の出典は [素材記録](../../source-assets/kurutto-ehon/README.md) を参照してください。固有の検証対象は `node tests/ehon.mjs`。制作時の検証結果は [完成確認記録](../../docs/reviews/2026-11-06-kurutto-ehon.md) にまとめています。
