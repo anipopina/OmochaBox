@@ -29,6 +29,11 @@ export interface AttackSpec {
   /** Where the bucket teeth land. Always on the surface of a standing piece. */
   target: Point3;
   final?: boolean;
+  /**
+   * Strength of the push given to the loosened pieces (default 1). Parts that
+   * stand on the ground under a floor need more to break free.
+   */
+  power?: number;
 }
 
 export interface HousePlan {
@@ -43,7 +48,7 @@ export interface HousePlan {
 
 const WALL = [0xff6f9c, 0xff8db1];
 const END_WALL = [0xff7fa6, 0xff9bbb];
-const SLAB = 0xfff1c9;
+const SLAB = [0xfff1c9, 0xffe2a1];
 const ROOF = [0x2f73e0, 0x4189f5];
 const RIDGE = 0x1d4fb0;
 const CHIMNEY = 0xd9472f;
@@ -76,7 +81,7 @@ export function twoStoryHouse(): HousePlan {
           size: { x: 0.9, y: storey, z: wall },
           color: WALL[(i + floor) % 2],
           decor: { kind: 'window', face: side > 0 ? '+z' : '-z' },
-          delay: front ? 0 : floor === 1 ? 0.05 * i : 0.4 + 0.08 * i,
+          delay: front ? 0 : floor === 1 ? 0.04 * i : 0.12 + 0.05 * i,
         });
       }
     }
@@ -103,26 +108,31 @@ export function twoStoryHouse(): HousePlan {
                   face: front ? '-x' : '+x',
                 }
               : undefined,
-          delay: front ? 0 : 0.5 + 0.06 * j,
+          delay: front ? 0 : floor === 1 ? 0.15 + 0.06 * j : 0.16 + 0.05 * j,
         });
       }
     }
   });
 
-  // Floor of the upper storey, split front/back.
+  // Floor of the upper storey, split front/back and left/right. One large
+  // slab is heavy and falls flat, absorbing the hit; quarters break apart
+  // along the seam under the bucket.
   for (const front of [true, false]) {
-    pieces.push({
-      kind: 'slab',
-      zone: front ? 1 : 3,
-      center: {
-        x: front ? (x0 + mid) / 2 : (mid + x1) / 2,
-        y: storey + slab / 2,
-        z: 0,
-      },
-      size: { x: mid - x0, y: slab, z: halfWidth * 2 },
-      color: SLAB,
-      delay: front ? 0 : 0.3,
-    });
+    for (const side of [1, -1]) {
+      pieces.push({
+        kind: 'slab',
+        zone: front ? 1 : 3,
+        center: {
+          x: front ? (x0 + mid) / 2 : (mid + x1) / 2,
+          y: storey + slab / 2,
+          z: (side * halfWidth) / 2,
+        },
+        size: { x: mid - x0, y: slab, z: halfWidth },
+        color: SLAB[(side > 0 ? 0 : 1) ^ (front ? 0 : 1)],
+        // After the walls below, so they escape before the floor lands on them.
+        delay: front ? 0.1 : 0.34,
+      });
+    }
   }
 
   // Gable roof with the ridge along Z, so the front slope faces the excavator.
@@ -211,12 +221,13 @@ export function twoStoryHouse(): HousePlan {
     core: { x: mid, z: 0 },
     attacks: [
       { rootX: -1.4, target: { x: 3.1, y: roofTop(3.1), z: 0 } },
-      { rootX: -1.4, target: { x: 3, y: storey + slab, z: 0 } },
+      { rootX: -1.4, target: { x: 3, y: storey + slab, z: 0 }, power: 1.7 },
       { rootX: 0.4, target: { x: 4.75, y: roofTop(4.75), z: 0 } },
       {
         rootX: 0.4,
         target: { x: 4.65, y: gableBase, z: halfWidth - wall / 2 },
         final: true,
+        power: 1.4,
       },
     ],
   };

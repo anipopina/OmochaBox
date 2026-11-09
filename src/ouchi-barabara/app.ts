@@ -17,6 +17,9 @@ const MAX_QUEUE = 2;
 const STEP = 1 / 60;
 const MAX_SPEED = 13;
 const BUCKET_PUSH = 6;
+const KNOCK_RADIUS = 2.4;
+const SHOVE_TIME = 0.3;
+const DEBRIS_MASK = GROUP.piece | GROUP.roof | GROUP.chimney;
 /** A loose piece that never settles is put to sleep after this long. */
 const SETTLE_LIMIT = 9;
 
@@ -125,15 +128,18 @@ world.allowSleep = true;
 (world.solver as CANNON.GSSolver).iterations = 8;
 const kit = new HouseKit();
 const groundMaterial = new CANNON.Material('ground');
+// cannon-es brakes every contact point with a fixed mu·g·m regardless of load,
+// and a box resting on a face has four points. Coefficients are therefore
+// about a quarter of real-world values, or loosened walls stop dead.
 world.addContactMaterial(
   new CANNON.ContactMaterial(groundMaterial, kit.material, {
-    friction: 0.6,
+    friction: 0.2,
     restitution: 0.18,
   }),
 );
 world.addContactMaterial(
   new CANNON.ContactMaterial(kit.material, kit.material, {
-    friction: 0.5,
+    friction: 0.15,
     restitution: 0.08,
   }),
 );
@@ -154,7 +160,7 @@ function kinematic(halfExtents: CANNON.Vec3) {
     material: kit.material,
     allowSleep: false,
     collisionFilterGroup: GROUP.machine,
-    collisionFilterMask: GROUP.piece | GROUP.roof | GROUP.chimney,
+    collisionFilterMask: DEBRIS_MASK,
   });
   world.addBody(body);
   return body;
@@ -189,6 +195,18 @@ let pending: {
   power: number;
   final: boolean;
 }[] = [];
+/**
+ * Walls keep an outward push for a moment after breaking loose. This is a
+ * deliberate cheat, not physics: floors resting on them and cannon-es contact
+ * friction otherwise stop ground-floor walls before they topple.
+ */
+let shoves: {
+  piece: Piece;
+  x: number;
+  z: number;
+  speed: number;
+  until: number;
+}[] = [];
 let simTime = 0;
 let shake = 0;
 let collapsed = false;
@@ -210,6 +228,7 @@ function resetScene(rebuild: boolean) {
   queued = 0;
   phases = [];
   pending = [];
+  shoves = [];
   collapsed = false;
   shake = 0;
   excavator.root.position.x = house.plan.attacks[0].rootX;
@@ -268,6 +287,10 @@ function syncKinematics(dt: number) {
   machineBody.position.set(x, 0.8, 0);
   machineBody.velocity.set(dt > 0 ? (x - previousRoot) / dt : 0, 0, 0);
   previousRoot = x;
+  // The bucket only touches debris while slamming down. Colliding during the
+  // wind-up and return would scoop pieces up and carry them onto the machine.
+  bucketBody.collisionFilterMask =
+    phases[0]?.kind === 'strike' ? DEBRIS_MASK : 0;
   excavator.bucketCore.getWorldPosition(bucketWorld);
   excavator.bucketCore.getWorldQuaternion(bucketQuaternion);
   bucketBody.position.set(bucketWorld.x, bucketWorld.y, bucketWorld.z);
@@ -364,7 +387,7 @@ function impact(attack: AttackSpec) {
   );
   const zone = attackIndex - 1;
   const reduced = motion.matches;
-  const power = (attack.final ? 1.35 : 1) * (reduced ? 0.5 : 1);
+  const power = (attack.power ?? 1) * (reduced ? 0.5 : 1);
   const colors = new Set<number>();
   for (const piece of house.pieces) {
     if (piece.spec.zone !== zone) continue;
@@ -376,6 +399,22 @@ function impact(attack: AttackSpec) {
       power,
       final: attack.final === true,
     });
+  }
+  // Debris from earlier hits often rests on the part being hit and would pin
+  // it in place by friction; the slam knocks that debris loose as well.
+  for (const piece of house.pieces) {
+    if (piece.loosened === null) continue;
+    const body = piece.body;
+    const dx = body.position.x - target.x;
+    const dz = body.position.z - target.z;
+    const reach = Math.hypot(dx, body.position.y - target.y, dz);
+    if (reach > KNOCK_RADIUS) continue;
+    const flat = Math.hypot(dx, dz) || 1;
+    const strength = (1 - reach / KNOCK_RADIUS) * 3 * power;
+    body.wakeUp();
+    body.velocity.x += Math.max(dx / flat, 0.25) * strength;
+    body.velocity.y += strength * 0.6;
+    body.velocity.z += (dz / flat) * strength;
   }
   const palette = [...colors];
   effects.burst(
@@ -416,12 +455,38 @@ function loosen(entry: (typeof pending)[number]) {
   dx = Math.max(dx, roof ? 0.9 : 0.25);
   const near = 1 / (1 + distance * 0.6);
   const push = (final ? 2.7 : 1.6 + 3.2 * near) * power;
+  // Walls hop slightly so ground friction does not hold their base.
   const lift = final
     ? 1.5 + Math.random() * 2
-    : (roof ? -2.5 : -1) + Math.random() * 1.5;
+    : roof
+      ? -2.5 + Math.random() * 1.5
+      : piece.spec.kind === 'wall'
+        ? 0.8 + Math.random()
+        : -1 + Math.random() * 1.5;
+  if (piece.spec.kind === 'slab') {
+    // Floor quarters drop and fold into a V along the centre seam (inner
+    // edge first), so the floor visibly breaks instead of landing flat.
+    const side = Math.sign(c.z - house.plan.core.z) || 1;
+    velocity.set(dx * push * 0.5, -2.5 * power, dz * push * 0.5);
+    spin.set(
+      -side * 3.4 * power,
+      (Math.random() - 0.5) * 1.5 * power,
+      (Math.random() - 0.5) * 2.5 * power,
+    );
+    house.loosen(piece, velocity, spin, simTime);
+    return;
+  }
   velocity.set(dx * push, lift * power, dz * push);
+  if (piece.spec.kind === 'wall')
+    shoves.push({
+      piece,
+      x: dx / Math.hypot(dx, dz),
+      z: dz / Math.hypot(dx, dz),
+      speed: push * 0.8,
+      until: simTime + SHOVE_TIME,
+    });
   // Tip the top of each piece outward so walls topple instead of sliding.
-  const topple = (piece.spec.kind === 'wall' ? 2.6 : 1.2) * power;
+  const topple = (piece.spec.kind === 'wall' ? 3.4 : 1.2) * power;
   spin.set(
     dz * topple + (Math.random() - 0.5) * 3 * power,
     (Math.random() - 0.5) * 2 * power,
@@ -467,10 +532,32 @@ function updatePhases(dt: number) {
 }
 
 function stepPhysics(dt: number) {
+  let loosened = false;
   for (let i = pending.length - 1; i >= 0; i--) {
     if (pending[i].at <= simTime) {
       loosen(pending[i]);
       pending.splice(i, 1);
+      loosened = true;
+    }
+  }
+  // cannon-es solves sleeping bodies as immovable, so debris asleep beside
+  // the house would stop newly loosened pieces dead. Wake all debris first;
+  // whatever stays still falls asleep again shortly.
+  if (loosened)
+    for (const piece of house.pieces)
+      if (piece.loosened !== null) piece.body.wakeUp();
+  for (let i = shoves.length - 1; i >= 0; i--) {
+    const shove = shoves[i];
+    if (simTime > shove.until) {
+      shoves.splice(i, 1);
+      continue;
+    }
+    const v = shove.piece.body.velocity;
+    const along = v.x * shove.x + v.z * shove.z;
+    if (along < shove.speed) {
+      v.x += (shove.speed - along) * shove.x;
+      v.z += (shove.speed - along) * shove.z;
+      shove.piece.body.wakeUp();
     }
   }
   world.step(STEP, dt, 3);
@@ -513,6 +600,9 @@ function report() {
   canvas.dataset.attack = String(attackIndex);
   canvas.dataset.queued = String(queued);
   canvas.dataset.running = String(running);
+  canvas.dataset.standing = String(
+    house.pieces.filter((piece) => piece.loosened === null).length,
+  );
 }
 
 function render() {
@@ -542,6 +632,7 @@ function frame(now: number) {
     !phases.length &&
     !queued &&
     !pending.length &&
+    !shoves.length &&
     !awake &&
     effects.idle &&
     shake <= 0

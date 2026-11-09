@@ -77,9 +77,13 @@ function polar(rootX: number, target: Point3) {
 
 /** Folded carry pose: bucket held high enough to clear rubble while driving. */
 export function readyPose(): Pose {
-  const angle = (-70 * Math.PI) / 180;
-  return { swing: 0, ...solveWrist(2.5, 1.95, angle) };
+  const { boom, arm } = solveWrist(2.5, 1.95, 0);
+  // Bucket curled toward the machine while carrying; angle set by eye in the
+  // Blender layout of this rig (relative to the arm).
+  return { swing: 0, boom, arm, bucket: READY_BUCKET };
 }
+
+const READY_BUCKET = (-53.4 * Math.PI) / 180;
 
 export interface StrikePlan {
   windup: Pose;

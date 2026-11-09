@@ -15,6 +15,7 @@ export const GROUP = {
 } as const;
 
 const DENSITY = 6;
+const SIDE_GAP = 0.015;
 
 export interface Piece {
   spec: PieceSpec;
@@ -191,7 +192,15 @@ export class House {
         );
       } else {
         geometry = kit.box(x, y, z);
-        body.addShape(new CANNON.Box(new CANNON.Vec3(x / 2, y / 2, z / 2)));
+        // Narrower than the mesh horizontally: cannon-es applies a fixed
+        // friction (mu·g·m) at every touching contact regardless of load, so
+        // flush side-by-side blocks would brake each other to a halt. Stacked
+        // pieces keep their full height and still rest on each other.
+        body.addShape(
+          new CANNON.Box(
+            new CANNON.Vec3(x / 2 - SIDE_GAP, y / 2, z / 2 - SIDE_GAP),
+          ),
+        );
       }
       body.position.set(spec.center.x, spec.center.y, spec.center.z);
       if (spec.tilt) body.quaternion.setFromEuler(0, 0, spec.tilt);
@@ -221,7 +230,9 @@ export class House {
         spec,
         mesh,
         body,
-        mass: x * y * z * DENSITY,
+        // Floors are kept light so they drop between the walls instead of
+        // pinning them upright with friction.
+        mass: x * y * z * DENSITY * (spec.kind === 'slab' ? 0.45 : 1),
         loosened: null,
       });
     }

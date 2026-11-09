@@ -187,6 +187,7 @@ try {
     await shot(`ouchi-${width}x${height}-collapse`);
     await idle();
     assert.equal(await field('hits'), '4', 'House collapses in four hits');
+    assert.equal(await field('standing'), '0', 'No piece is left standing');
     await delay(300);
     await shot(`ouchi-${width}x${height}-rubble`);
     await tap(width * 0.6, height * 0.5);
