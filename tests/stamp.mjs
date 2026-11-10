@@ -7,6 +7,9 @@ import { tmpdir } from 'node:os';
 import { createStaticServer } from './static-server.mjs';
 
 const root = resolve(import.meta.dirname, '..');
+const catalogue = JSON.parse(
+  await readFile(join(root, 'src/games.json'), 'utf8'),
+);
 const profile = await mkdtemp(join(tmpdir(), 'stamp-browser-'));
 const output =
   process.env.STAMP_RESULTS_DIRECTORY || join(root, 'test-results');
@@ -176,7 +179,7 @@ try {
       const groups = await evaluate('window.__stampFixtureGroups');
       assert.deepEqual(
         groups.map((group) => group.length),
-        [2, 5, 7],
+        [2, 5, 9],
       );
       assert.deepEqual(
         await evaluate(
@@ -236,7 +239,7 @@ try {
     await shot(`stamp-art-${width}`);
     for (const [pageNumber, length] of [
       [2, 6],
-      [3, 2],
+      [3, 4],
     ]) {
       await tap(await point('#next-page'));
       assert.equal(
@@ -247,6 +250,15 @@ try {
         await evaluate(`document.querySelectorAll('.choice').length`),
         length,
       );
+      if (pageNumber === 2) {
+        assert.deepEqual(
+          await evaluate(
+            `[...document.querySelectorAll('.choice')].slice(0,3).map(button=>button.dataset.item)`,
+          ),
+          ['aquarium/penguin-a', 'aquarium/penguin', 'aquarium/penguin-e'],
+          'Penguins stay together in A/B/E order',
+        );
+      }
       if (process.env.STAMP_EXPECT_BOUNDARIES) {
         const groups = await evaluate('window.__stampFixtureGroups');
         assert.deepEqual(
@@ -287,12 +299,12 @@ try {
       await delay(800);
       await shot(`stamp-page-${pageNumber}-${width}`);
     }
-    assert.equal(await count(), 14, 'All 14 originals mix across pages');
+    assert.equal(await count(), 16, 'All 16 originals mix across pages');
     assert.equal(
       await evaluate(
         `new Set([...document.querySelectorAll('.stamp')].map(i=>i.dataset.item)).size`,
       ),
-      14,
+      16,
     );
     await click('#next-page');
     assert.equal(
@@ -316,7 +328,7 @@ try {
       await evaluate(
         `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
       ),
-      'aquarium/dolphin',
+      'aquarium/octopus',
       'Visible first item selected on page change',
     );
     await click('#previous-page');
@@ -325,7 +337,7 @@ try {
       '2',
     );
     for (let i = 0; i < 20; i++) await click('#next-page');
-    assert.equal(await count(), 14, 'Rapid paging retains art');
+    assert.equal(await count(), 16, 'Rapid paging retains art');
     assert.equal(
       await evaluate(
         `document.querySelectorAll('.choice[aria-pressed="true"]').length`,
@@ -591,14 +603,14 @@ try {
     await evaluate(
       `document.querySelector('.choice[aria-pressed="true"]').dataset.item`,
     ),
-    'aquarium/sea-star',
+    'aquarium/crab',
     'New paper retains chosen item',
   );
   await call('Page.removeScriptToEvaluateOnNewDocument', {
     identifier: gate.identifier,
   });
   report(
-    'Stamp paging: 14 originals, all 8 aquarium selections, mixed art, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS',
+    'Stamp paging: 16 originals, all 10 aquarium selections, mixed art, visible selection, bidirectional looping, rapid paging, loading input and new paper PASS',
   );
   await call('Emulation.setDeviceMetricsOverride', {
     width: 400,
@@ -892,10 +904,12 @@ try {
     '3',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${catalogue.length}`,
+  );
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    20,
+    catalogue.length,
   );
   assert.ok(
     await evaluate(
@@ -1027,7 +1041,9 @@ try {
     'Feedback: native AudioContext starts only after user input, <=3 sine voices / 0.075 gain, legacy OFF preferences ignored, background suspend/resume; <=72 particles and expiry, reduced <=4; Vibration API spy 12ms / >=160ms and unsupported fallback PASS (no physical audio/haptic verification)',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${catalogue.length}`,
+  );
   assert.equal(
     await evaluate(
       `document.querySelector('.play-settings,#sound-setting,#vibration-setting')`,
@@ -1055,7 +1071,9 @@ try {
     'Drawing ignores saved OFF preferences',
   );
   await click('#back');
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${catalogue.length}`,
+  );
   await call('Page.removeScriptToEvaluateOnNewDocument', {
     identifier: drawingProbe.identifier,
   });
@@ -1063,7 +1081,9 @@ try {
     source: `Storage.prototype.getItem=Storage.prototype.setItem=()=>{throw new DOMException('blocked','SecurityError')}`,
   });
   await call('Page.reload');
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${catalogue.length}`,
+  );
   await click('a[href="ponpon-stamp/"]');
   await waitFor(`document.querySelectorAll('.choice').length===6`);
   await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
@@ -1077,7 +1097,7 @@ try {
   );
   if (process.env.STAMP_EXPECT_BOUNDARIES)
     report(
-      'General catalogue PASS: 2/5/7-item sets become 6/6/2-item pages; first and second pages cross set boundaries; all six viewports and full stamp regressions pass',
+      'General catalogue PASS: 2/5/9-item sets become 6/6/4-item pages; first and second pages cross set boundaries; all six viewports and full stamp regressions pass',
     );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

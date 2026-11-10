@@ -8,7 +8,7 @@ const hashes = JSON.parse(
 );
 for (const [series, count] of [
   ['shapes', 6],
-  ['aquarium', 8],
+  ['aquarium', 10],
 ]) {
   const directory = new URL(`src/assets/characters/${series}/`, root);
   const names = (await readdir(directory)).sort();
@@ -34,5 +34,5 @@ assert.equal(
   0,
 );
 console.log(
-  'Characters PASS: 6 shapes + 8 manually revised aquarium SVGs, exact SHA-256, series directories',
+  'Characters PASS: 6 shapes + 10 user-provided aquarium SVGs, exact SHA-256, series directories',
 );

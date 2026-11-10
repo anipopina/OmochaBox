@@ -1,7 +1,7 @@
 import stampSquare from '../assets/characters/shapes/01-coral-square.svg';
 import stampCyan from '../assets/characters/shapes/02-cyan-circle.svg';
 import stampStar from '../assets/characters/shapes/05-coral-star.svg';
-import stampPenguin from '../assets/characters/aquarium/01-penguin.svg';
+import stampPenguin from '../assets/characters/aquarium/01-penguin-b.svg';
 import stampFish from '../assets/characters/aquarium/02-clownfish.svg';
 import stampOctopus from '../assets/characters/aquarium/05-octopus.svg';
 
