@@ -26,7 +26,9 @@ body {
 #patch {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse, #815438, #67432d);
+  --soil-tile-size: 640px;
+  background: #67432d url('./assets/soil-depth.webp') repeat 0 0 /
+    var(--soil-tile-size) var(--soil-tile-size);
   cursor: grab;
   outline-offset: -5px;
 }
@@ -104,14 +106,12 @@ body {
   width: clamp(104px, min(28vw, 27dvh), 190px);
   aspect-ratio: 1;
   z-index: 4;
-  border: 10px ridge #e8b862;
+  /* Keep the content box used to position harvested potatoes. */
+  border: 10px solid transparent;
   border-radius: 50%;
-  background:
-    repeating-linear-gradient(90deg, #d6a25a66 0 5px, #8b542b55 5px 10px),
-    repeating-linear-gradient(0deg, #c68d47 0 6px, #a56936 6px 12px);
-  box-shadow:
-    inset 0 0 14px 5px #70421f,
-    0 7px 7px #4d301c66;
+  background: url('./assets/basket.webp') center / contain no-repeat;
+  background-origin: border-box;
+  filter: drop-shadow(0 7px 5px #4d301c66);
   cursor: pointer;
 }
 #basket .potato {
@@ -128,10 +128,10 @@ body {
 }
 .clod {
   position: absolute;
-  width: 14px;
-  height: 10px;
-  border-radius: 40% 65% 45% 55%;
-  background: #704025;
+  aspect-ratio: 1;
+  background: url('./assets/soil-clods.webp') 0 0 / 400% 100%;
+  filter: drop-shadow(1px 3px 2px #3d251755);
+  transform: translate(-50%, -50%) rotate(var(--angle));
   pointer-events: none;
   z-index: 5;
   animation: scatter 500ms ease-out forwards;
@@ -144,7 +144,13 @@ body {
 }
 @keyframes scatter {
   to {
-    transform: translate(var(--dx), var(--dy)) rotate(150deg);
+    transform: translate(calc(var(--dx) - 50%), calc(var(--dy) - 50%))
+      rotate(calc(var(--angle) + 150deg));
+    opacity: 0;
+  }
+}
+@keyframes soil-settle {
+  to {
     opacity: 0;
   }
 }
@@ -153,6 +159,6 @@ body {
     animation: none;
   }
   .clod {
-    animation-duration: 100ms;
+    animation: soil-settle 120ms ease-out forwards;
   }
 }

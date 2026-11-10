@@ -249,6 +249,7 @@ a:focus-visible {
   outline-offset: 6px;
 }
 .garden-preview,
+.oimo-preview,
 .window-preview,
 .balloon-preview,
 .barabara-preview {
@@ -283,7 +284,8 @@ a:focus-visible {
 .garden-preview {
   background: #101a30;
 }
-.garden-preview img {
+.garden-preview img,
+.oimo-preview img {
   display: block;
   width: 100%;
   height: 100%;
@@ -466,6 +468,7 @@ footer p {
     gap: 28px;
   }
   .garden-preview,
+  .oimo-preview,
   .window-preview,
   .balloon-preview,
   .barabara-preview {

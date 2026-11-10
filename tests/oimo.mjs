@@ -180,6 +180,24 @@ try {
       await evaluate("document.querySelector('#patch').clientWidth"),
       width,
     );
+    const texture = await evaluate(`(()=>{
+      const c=document.querySelector('#soil'),ctx=c.getContext('2d');
+      const colors=new Set();
+      for(let y=10;y<c.height;y+=23) for(let x=10;x<c.width;x+=23){
+        const p=ctx.getImageData(x,y,1,1).data;
+        colors.add([p[0],p[1],p[2]].join(','));
+      }
+      return {colors:colors.size,depth:getComputedStyle(document.querySelector('#patch')).backgroundImage};
+    })()`);
+    assert.ok(
+      texture.colors > 100,
+      'surface contains photographic soil detail',
+    );
+    assert.match(
+      texture.depth,
+      /soil-depth.*\.webp/,
+      'textured excavation floor',
+    );
     await shot('oimo-covered-' + width);
     await tap(0.5, 0.5);
     const n = await evaluate(
@@ -192,6 +210,12 @@ try {
       'same location no longer expands',
     );
     assert.equal(await state(), 'digging');
+    assert.ok(
+      await evaluate(
+        `(()=>{const c=document.querySelector('#soil');const p=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let partial=0;for(let i=3;i<p.length;i+=4)if(p[i]>8&&p[i]<247)partial++;return partial>30})()`,
+      ),
+      'brush leaves a translucent soil edge',
+    );
     await shot('oimo-partial-' + width);
     await dig();
     assert.equal(await state(), 'ready');
@@ -207,11 +231,11 @@ try {
       'ready reveal never erases cell rectangles',
     );
     const rasterDifference = await evaluate(
-      `(()=>{const canvas=document.querySelector('#soil'),ctx=canvas.getContext('2d'),data=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparent=0;for(let y=0;y<160;y++)for(let x=0;x<160;x++){const px=Math.floor((x+.5)*canvas.width/160),py=Math.floor((y+.5)*canvas.height/160);if(data[(py*canvas.width+px)*4+3]<128)transparent++;}return Math.abs(transparent-Number(document.querySelector('#patch').dataset.cleared))/(160*160)})()`,
+      `(()=>{const canvas=document.querySelector('#soil'),ctx=canvas.getContext('2d'),data=ctx.getImageData(0,0,canvas.width,canvas.height).data;let transparent=0;for(let y=0;y<160;y++)for(let x=0;x<160;x++){const px=Math.floor((x+.5)*canvas.width/160),py=Math.floor((y+.5)*canvas.height/160);if(data[(py*canvas.width+px)*4+3]<3)transparent++;}return Math.abs(transparent-Number(document.querySelector('#patch').dataset.cleared))/(160*160)})()`,
     );
     assert.ok(
       rasterDifference < 0.02,
-      'rendered mask and cell coverage agree within raster sampling tolerance',
+      'nearly transparent mask and cleared cells agree within raster sampling tolerance',
     );
     await shot('oimo-ready-' + width);
     await harvestTap();
@@ -353,6 +377,54 @@ try {
   assert.equal(
     await evaluate("document.querySelector('#basket').children.length"),
     0,
+  );
+  await call('Emulation.setEmulatedMedia', {
+    features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+  });
+  await visit();
+  await evaluate(
+    `(()=>{const style=document.createElement('style');style.id='pause-clods';style.textContent='.clod{animation-play-state:paused!important}';document.head.append(style)})()`,
+  );
+  await tap(0.5, 0.5);
+  const clods =
+    await evaluate(`([...document.querySelectorAll('.clod')].map(el=>{
+    const s=getComputedStyle(el);return {animation:s.animationName,image:s.backgroundImage};
+  }))`);
+  assert.equal(clods.length, 2, 'reduced motion uses fewer clods');
+  assert.ok(
+    clods.every(
+      (c) =>
+        c.animation === 'soil-settle' &&
+        /url\(/.test(c.image) &&
+        /soil-clods|data:image\/webp/.test(c.image),
+    ),
+    'reduced motion uses textured clods without flight',
+  );
+  await shot('oimo-reduced-motion-partial');
+  await evaluate("document.querySelector('#pause-clods').remove()");
+  await delay(180);
+  assert.equal(
+    await evaluate("document.querySelectorAll('.clod').length"),
+    0,
+    'reduced motion particles are released',
+  );
+  await tap(0.3, 0.4);
+  await evaluate(
+    "Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden",
+  );
+  assert.equal(
+    await evaluate("document.querySelectorAll('.clod').length"),
+    0,
+    'hidden page removes soil particles',
+  );
+  await delay(180);
+  assert.equal(
+    await evaluate("document.querySelectorAll('.clod').length"),
+    0,
+    'particles do not restart on return',
+  );
+  report(
+    'Oimo photographic surface/floor, reduced motion clods, particle release and hidden cleanup PASS',
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

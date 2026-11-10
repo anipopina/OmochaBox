@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-11",
+  "generator": "OpenAI built-in image generation",
+  "purpose": "Home card image: discovery composition with flat soil, sweet potato and leaves; no basket",
+  "prompt": "card-prompt.txt",
+  "references": [
+    {
+      "role": "Gameplay screenshot for lighting and textures"
+    },
+    {
+      "role": "Generated discovery composition reference",
+      "sha256": "83bee3b7706107e8188f7206094d2437afbe5a9d18bf742a2040cedb3eff23f7"
+    },
+    {
+      "role": "Actual game soil surface",
+      "file": "src/oimo-horihori/assets/soil-surface.webp"
+    }
+  ],
+  "rights": "Generated from project references. Soil derives from Poly Haven Farm Soil (Amal Kumar, CC0-1.0); see README.md. No exclusive rights are presumed.",
+  "conversion": {
+    "max_size": [
+      1200,
+      800
+    ],
+    "resampling": "Lanczos",
+    "format": "WebP",
+    "quality": 85,
+    "method": 6,
+    "crop": false
+  },
+  "files": [
+    {
+      "file": "source-assets/oimo-horihori/card-original.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "bytes": 2509420,
+      "sha256": "bb71408ba0ae5126f08f3a107e66d3fa8746e9861ddb05c881495ed9feaebb21"
+    },
+    {
+      "file": "src/assets/previews/oimo-horihori.webp",
+      "size": [
+        1200,
+        800
+      ],
+      "bytes": 124376,
+      "sha256": "c1708fbaf66547e9270abd13e7d684d63bcabd6ba327e49956ab92264e8e0e3e"
+    }
+  ]
+}

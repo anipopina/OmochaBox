@@ -1,0 +1,37 @@
+{
+  "source": "https://polyhaven.com/a/farm_soil",
+  "author": "Amal Kumar",
+  "license": "CC0-1.0",
+  "license_url": "https://polyhaven.com/license",
+  "original": "User-adjusted diffuse image; upstream unmodified image is not included.",
+  "files": [
+    {
+      "file": "source-assets/oimo-horihori/soil-original.jpg",
+      "width": 2048,
+      "height": 2048,
+      "bytes": 651696,
+      "sha256": "bf26c55547aaa0082e63ebdf39c20e7467e405b16bddb7c87096103b61a8d6b2"
+    },
+    {
+      "file": "src/oimo-horihori/assets/soil-surface.webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 149906,
+      "sha256": "334af9be6d4932c6ddfe099f5b526e2f26a15fde780c75e7564b7dcb48306728"
+    },
+    {
+      "file": "src/oimo-horihori/assets/soil-depth.webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 29886,
+      "sha256": "333ed3330808cdc7f2cc69a37ddab8e5262705bb2fbeabbf53d73696395b4ea5"
+    },
+    {
+      "file": "src/oimo-horihori/assets/soil-clods.webp",
+      "width": 384,
+      "height": 96,
+      "bytes": 3640,
+      "sha256": "55ee40585f886acd1f6ac05c19d8d936353efd48e35a29d1009c9578c64851d2"
+    }
+  ]
+}

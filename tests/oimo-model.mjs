@@ -5,7 +5,7 @@ import {
   rows,
   potatoLayout,
   brush,
-  oldField,
+  brushExposure,
   basketPotato,
   basketSize,
 } from '../src/oimo-horihori/model.ts';
@@ -13,30 +13,49 @@ const g = new Digging();
 assert.equal(g.harvest(), false);
 g.dig(0.5, 0.5);
 const count = g.cleared.size;
-for (let i = 0; i < 30; i++) g.dig(0.5, 0.5);
+const exposure = Array.from(g.exposure);
+for (let i = 0; i < 30; i++) assert.equal(g.dig(0.5, 0.5), false);
 assert.equal(g.cleared.size, count, 'repeated stamp never expands');
-assert.equal(g.phase, 'digging');
-const circles = brush(0.5, 0.5, 740, 439);
-for (let y = 0; y < rows; y++)
-  for (let x = 0; x < columns; x++)
-    assert.equal(
-      g.cleared.has(y * columns + x),
-      circles.some(
-        (c) =>
-          (((x + 0.5) / columns - c.x) / c.rx) ** 2 +
-            (((y + 0.5) / rows - c.y) / c.ry) ** 2 <=
-          1,
-      ),
-      'same geometry for visual and hit',
-    );
-const old = oldField(740, 439),
-  oldArea = Math.PI * 0.23 * 0.2875 * old.width * old.height;
-assert.ok(((count / (columns * rows)) * 740 * 439) / oldArea > 0.4);
-assert.ok(
-  ((count / (columns * rows)) * 740 * 439) / oldArea < 0.65,
-  'roughly half prior stamp area',
+assert.deepEqual(
+  Array.from(g.exposure),
+  exposure,
+  'repetition preserves partial opacity',
 );
-for (let y = 0; y <= 1; y += 0.1) for (let x = 0; x <= 1; x += 0.1) g.dig(x, y);
+assert.equal(g.phase, 'digging');
+assert.equal(g.holes.length, 1, 'one smooth shape per stamp');
+const circle = brush(0.5, 0.5, 740, 439);
+assert.equal(circle.x, 0.5);
+assert.equal(circle.y, 0.5);
+assert.ok(
+  Math.abs(circle.rx * 740 - circle.ry * 439) < 1e-9,
+  'circular in CSS pixels',
+);
+assert.equal(brushExposure(0), 1);
+assert.equal(brushExposure(0.6), 1);
+assert.ok(Math.abs(brushExposure(0.8) - 0.5) < 1e-9);
+assert.equal(brushExposure(1), 0);
+assert.equal(brushExposure(1.1), 0);
+assert.ok(
+  g.exposure.some((value) => value > 0 && value < 1),
+  'soft edge contains partial exposure',
+);
+for (let y = 0; y < rows; y++)
+  for (let x = 0; x < columns; x++) {
+    const index = y * columns + x;
+    const expected = brushExposure(
+      Math.hypot(
+        ((x + 0.5) / columns - circle.x) / circle.rx,
+        ((y + 0.5) / rows - circle.y) / circle.ry,
+      ),
+    );
+    assert.ok(
+      Math.abs(g.exposure[index] - expected) < 1e-7,
+      'mask follows smooth brush profile',
+    );
+    assert.equal(g.cleared.has(index), g.exposure[index] >= 0.99);
+  }
+for (let y = 0; y <= 1; y += 0.05)
+  for (let x = 0; x <= 1; x += 0.05) g.dig(x, y);
 assert.equal(g.phase, 'ready');
 assert.equal(g.round, 0);
 assert.equal(g.harvest(), true);
@@ -44,6 +63,10 @@ assert.equal(g.harvest(), false);
 g.next();
 assert.equal(g.phase, 'digging');
 assert.equal(g.holes.length, 0);
+assert.ok(
+  g.exposure.every((value) => value === 0),
+  'new round restores opaque soil',
+);
 for (const [w, h] of [
   [320, 568],
   [390, 844],
@@ -103,17 +126,37 @@ assert.ok(target.cleared.size < columns * rows * 0.5);
 target.setTargets([new Map([[500, 100]])]);
 assert.ok(target.cleared.has(500));
 console.log(
-  'Oimo model PASS: half-area irregular stamp, exact shared geometry, no tap assistance, explicit harvest, single potato, 1080 safe layouts, basket variety, target exposure and resize',
+  'Oimo model PASS: single smooth brush, partial opacity, shared exposure field, no tap assistance, explicit harvest, single potato, 1080 safe layouts, basket variety, target exposure and resize',
+);
+
+const partial = new Digging();
+partial.exposure[12880] = 0.5;
+partial.setTargets([new Map([[12880, 100]])]);
+assert.equal(
+  partial.phase,
+  'digging',
+  'half-visible potato cannot be harvested',
+);
+partial.exposure[12880] = 0.94;
+partial.setTargets([new Map([[12880, 100]])]);
+assert.equal(
+  partial.phase,
+  'ready',
+  'opacity-weighted exposure allows harvest',
 );
 
 const rim = new Digging();
 const diagonal = new Map(
   Array.from({ length: 100 }, (_, i) => [(i + 25) * columns + i + 25, 100]),
 );
-for (const index of [...diagonal.keys()].slice(0, 92)) rim.cleared.add(index);
+for (const index of [...diagonal.keys()].slice(0, 92)) {
+  rim.cleared.add(index);
+  rim.exposure[index] = 1;
+}
 rim.setTargets([diagonal], 1180, 757);
 assert.equal(rim.phase, 'digging', '92% remains covered');
 rim.cleared.add([...diagonal.keys()][92]);
+rim.exposure[[...diagonal.keys()][92]] = 1;
 const beforeRim = new Set(rim.cleared);
 rim.setTargets([diagonal], 1180, 757);
 assert.equal(rim.phase, 'ready');

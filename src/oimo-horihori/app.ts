@@ -1,6 +1,9 @@
 import '../shared/home-button';
 import potatoUrl from './assets/sweet-potato.webp';
 import leavesUrl from './assets/leaves.webp';
+import soilUrl from './assets/soil-surface.webp';
+import depthUrl from './assets/soil-depth.webp';
+import clodsUrl from './assets/soil-clods.webp';
 import { Digging, columns, rows, potatoLayout, basketPotato } from './model';
 import { requireElement } from '../shared/dom';
 
@@ -12,6 +15,21 @@ const basket = requireElement('#basket', HTMLDivElement);
 const cheer = requireElement('#cheer', HTMLDivElement);
 const ctx = canvas.getContext('2d')!;
 const game = new Digging();
+const soilArtwork = new Image();
+soilArtwork.src = soilUrl;
+const soilDetails = [depthUrl, clodsUrl].map((url) => {
+  const image = new Image();
+  image.src = url;
+  return image;
+});
+const surface = document.createElement('canvas');
+const surfaceCtx = surface.getContext('2d')!;
+const mask = document.createElement('canvas');
+mask.width = columns;
+mask.height = rows;
+const maskCtx = mask.getContext('2d')!;
+const maskPixels = maskCtx.createImageData(columns, rows);
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let pointer: number | null = null;
 let previous = { x: 0, y: 0 };
 let timer = 0;
@@ -27,31 +45,39 @@ for (let i = 0; i < 5; i++) {
   document.querySelector('.leaves')!.append(leaf);
 }
 
+// Cache the intact surface separately from the changing exposure mask.
+function cacheSurface() {
+  surface.width = canvas.width;
+  surface.height = canvas.height;
+  surfaceCtx.fillStyle = '#b77a43';
+  surfaceCtx.fillRect(0, 0, surface.width, surface.height);
+  if (!artworkReady) return;
+  const tileSize = parseFloat(
+    getComputedStyle(patch).getPropertyValue('--soil-tile-size'),
+  );
+  const scale =
+    (tileSize * (canvas.width / patch.clientWidth)) / soilArtwork.naturalWidth;
+  const pattern = surfaceCtx.createPattern(soilArtwork, 'repeat')!;
+  pattern.setTransform(new DOMMatrix().scale(scale));
+  surfaceCtx.fillStyle = pattern;
+  surfaceCtx.fillRect(0, 0, surface.width, surface.height);
+}
 function paint() {
   const w = canvas.width,
     h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#b77a43';
-  ctx.fillRect(0, 0, w, h);
-  // Stable irregular grains, so rotating the screen does not shuffle the soil.
-  for (let i = 0; i < 220; i++) {
-    const x = (((Math.sin(i * 127.1 + 3) * 43758.5453) % 1) + 1) % 1;
-    const y = (((Math.sin(i * 311.7 + 9) * 19234.345) % 1) + 1) % 1;
-    ctx.fillStyle = ['#cf955b', '#9c6235', '#d5a46a'][i % 3]!;
-    ctx.beginPath();
-    ctx.ellipse(
-      x * w,
-      y * h,
-      ((2 + (i % 4)) * w) / 360,
-      ((1 + (i % 3)) * h) / 360,
-      i,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-  }
+  ctx.drawImage(surface, 0, 0);
+  // Interpolate the shared exposure field rather than layering translucent stamps.
+  // Layering would make a repeated stamp erase more soil than the model allows.
+  for (let i = 0; i < game.exposure.length; i++)
+    maskPixels.data[i * 4 + 3] = Math.round(game.exposure[i]! * 255);
+  maskCtx.putImageData(maskPixels, 0, 0);
   ctx.globalCompositeOperation = 'destination-out';
-  for (const hole of [...game.holes, ...game.readyRim]) {
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(mask, 0, 0, w, h);
+  ctx.fillStyle = '#000';
+  for (const hole of game.readyRim) {
     ctx.beginPath();
     ctx.ellipse(
       hole.x * w,
@@ -92,15 +118,21 @@ function plant() {
   update();
 }
 function scatter(x: number, y: number) {
-  if (scene.querySelectorAll('.clod').length > 40) return;
-  for (let i = 0; i < 6; i++) {
+  const count = reducedMotion.matches ? 2 : 6;
+  if (scene.querySelectorAll('.clod').length + count > 42) return;
+  for (let i = 0; i < count; i++) {
     const clod = document.createElement('i');
     clod.className = 'clod';
+    clod.setAttribute('aria-hidden', 'true');
+    clod.style.width = `${28 + Math.random() * 18}px`;
+    clod.style.backgroundPosition = `${(Math.floor(Math.random() * 4) * 100) / 3}% 0`;
+    clod.style.setProperty('--angle', `${Math.random() * 180 - 90}deg`);
     clod.style.left = `${x}px`;
     clod.style.top = `${y}px`;
     clod.style.setProperty('--dx', `${(Math.random() - 0.5) * 180}px`);
     clod.style.setProperty('--dy', `${-30 + Math.random() * 110}px`);
-    clod.addEventListener('animationend', () => clod.remove(), { once: true });
+    for (const event of ['animationend', 'animationcancel'])
+      clod.addEventListener(event, () => clod.remove(), { once: true });
     scene.append(clod);
   }
 }
@@ -285,6 +317,7 @@ function resize() {
     dpr = Math.min(devicePixelRatio || 1, 2);
   canvas.width = Math.round(r.width * dpr);
   canvas.height = Math.round(r.height * dpr);
+  cacheSurface();
   paint();
 }
 basket.addEventListener('click', () =>
@@ -299,14 +332,17 @@ basket.addEventListener('keydown', (e) => {
     basket.click();
   }
 });
+cacheSurface();
 plant();
 resize();
 
-void artwork
-  .decode()
+void Promise.all(
+  [artwork, soilArtwork, ...soilDetails].map((image) => image.decode()),
+)
   .then(() => {
     artworkReady = true;
     patch.dataset.artworkReady = 'true';
+    cacheSurface();
     layout();
   })
   .catch(() => {

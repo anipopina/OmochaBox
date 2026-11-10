@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-11",
+  "generator": "OpenAI built-in image generation",
+  "purpose": "Empty realistic overhead wicker basket for harvested sweet potatoes",
+  "prompt": "basket-prompt.txt",
+  "rights": "Generated for this project. No third-party stock assets were supplied. No exclusive rights or third-party license are presumed.",
+  "conversion": {
+    "alpha_crop": [
+      0,
+      0,
+      1253,
+      1254
+    ],
+    "max_edge": 512,
+    "resampling": "Lanczos",
+    "format": "WebP",
+    "quality": 85,
+    "method": 6,
+    "alpha_preserved": true
+  },
+  "files": [
+    {
+      "file": "source-assets/oimo-horihori/basket-original.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 2687029,
+      "sha256": "ec6b7666db74c6cd334788d24c407c66417b640428277d33cd89cafe9708ad23"
+    },
+    {
+      "file": "src/oimo-horihori/assets/basket.webp",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bytes": 76178,
+      "sha256": "178d6d9cbbe5f565435dcc2254b89309bd8c4b07a93f7fb4cdee96a3812a0df8"
+    }
+  ]
+}

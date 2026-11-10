@@ -3,6 +3,7 @@ export const rows = 160;
 export type Phase = 'digging' | 'ready' | 'harvesting';
 export class Digging {
   cleared = new Set<number>();
+  readonly exposure = new Float32Array(columns * rows);
   readyRim: Circle[] = [];
   private width = 740;
   private height = 439;
@@ -26,7 +27,7 @@ export class Digging {
           visible = 0;
         for (const [index, weight] of target) {
           total += weight;
-          if (this.cleared.has(index)) visible += weight;
+          visible += weight * this.exposure[index]!;
         }
         return total > 0 && visible / total >= 0.93;
       });
@@ -34,13 +35,15 @@ export class Digging {
     this.phase = 'ready';
     // Rebuild after rotation so the cells describe the current curved mask.
     this.cleared.clear();
-    this.clearCircles(this.holes);
+    this.exposure.fill(0);
+    this.clearCircles(this.holes, true);
     // Dilate the potato silhouette with overlapping, gently varying round cuts.
     // Drawing and cell clearing use these same curves, never cell rectangles.
     this.readyRim = rimCircles(this.targets, this.width, this.height);
     this.clearCircles(this.readyRim);
   }
-  private clearCircles(circles: Circle[]) {
+  private clearCircles(circles: Circle[], soft = false) {
+    let changed = false;
     for (const c of circles) {
       const left = Math.max(0, Math.floor((c.x - c.rx) * columns));
       const right = Math.min(columns - 1, Math.ceil((c.x + c.rx) * columns));
@@ -48,25 +51,32 @@ export class Digging {
       const bottom = Math.min(rows - 1, Math.ceil((c.y + c.ry) * rows));
       for (let row = top; row <= bottom; row++)
         for (let col = left; col <= right; col++) {
-          if (
-            (((col + 0.5) / columns - c.x) / c.rx) ** 2 +
-              (((row + 0.5) / rows - c.y) / c.ry) ** 2 <=
-            1
-          )
-            this.cleared.add(row * columns + col);
+          const distance = Math.hypot(
+            ((col + 0.5) / columns - c.x) / c.rx,
+            ((row + 0.5) / rows - c.y) / c.ry,
+          );
+          const strength = soft
+            ? brushExposure(distance)
+            : Number(distance <= 1);
+          const index = row * columns + col;
+          // Maximum exposure keeps repeated input from thinning the same stamp.
+          const next = Math.fround(Math.max(this.exposure[index]!, strength));
+          if (next === this.exposure[index]) continue;
+          this.exposure[index] = next;
+          if (next >= 0.99) this.cleared.add(index);
+          changed = true;
         }
     }
+    return changed;
   }
   holes: Circle[] = [];
   dig(x: number, y: number, width = 740, height = 439) {
     if (this.phase !== 'digging') return false;
-    const circles = brush(x, y, width, height);
-    const before = this.cleared.size;
+    const circle = brush(x, y, width, height);
     this.width = width;
     this.height = height;
-    this.clearCircles(circles);
-    if (this.cleared.size === before) return false;
-    this.holes.push(...circles);
+    if (!this.clearCircles([circle], true)) return false;
+    this.holes.push(circle);
     this.checkExposure();
     return true;
   }
@@ -79,6 +89,7 @@ export class Digging {
     if (this.phase !== 'harvesting') return;
     this.round++;
     this.cleared.clear();
+    this.exposure.fill(0);
     this.readyRim = [];
     this.holes = [];
     this.phase = 'digging';
@@ -104,25 +115,16 @@ export function brush(
   y: number,
   width: number,
   height: number,
-): Circle[] {
+): Circle {
   const old = oldField(width, height);
   const radius = Math.sqrt(old.width * old.height * 0.0275);
-  // A fixed, asymmetric stamp: repeating a tap cannot grow the hole.
-  const lobes = [
-    [0, 0, 1],
-    [0.82, 0.32, 0.43],
-    [-0.74, 0.58, 0.48],
-    [0.31, -0.83, 0.38],
-    [-0.7, -0.65, 0.33],
-    [0.15, 0.87, 0.29],
-  ];
-  return lobes.map(([dx, dy, r]) => ({
-    x: x + (dx! * radius) / width,
-    y: y + (dy! * radius) / height,
-    rx: (r! * radius) / width,
-    ry: (r! * radius) / height,
-  }));
+  return { x, y, rx: radius / width, ry: radius / height };
 }
+export function brushExposure(distance: number) {
+  const edge = Math.max(0, Math.min(1, (distance - 0.6) / 0.4));
+  return 1 - edge * edge * (3 - 2 * edge);
+}
+
 function random(seed: number) {
   return () => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
