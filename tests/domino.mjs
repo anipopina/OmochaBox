@@ -220,6 +220,13 @@ try {
   report(
     'Reduced motion, keyboard, pagehide/pageshow, entrance round trip: PASS',
   );
+  await evaluate("document.querySelector('#domino').click()");
+  assert.equal(
+    (await status()).state,
+    'falling',
+    'Assistive activation starts the chain',
+  );
+  await evaluate("document.querySelector('#reset').click()");
   await tap(120, 250);
   await delay(150);
   await evaluate(

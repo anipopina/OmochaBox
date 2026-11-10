@@ -120,11 +120,9 @@ function draw() {
         ],
         '#ffd987',
       );
-      // An affine wooden face remains visible even when the block lies along the horizontal route.
-      const faceHeight =
-        Math.abs(dy) < size * 0.16 ? (dy < 0 ? -1 : 1) * size * 0.16 : dy;
+      // Let the face pass continuously through edge-on; the solid sides remain visible.
       ctx.save();
-      ctx.transform(1, 0, -dx / size, -faceHeight / size, -w / 2, 0);
+      ctx.transform(1, 0, -dx / size, -dy / size, -w / 2, 0);
       ctx.beginPath();
       ctx.roundRect(0, -size, w, size, 6);
       ctx.clip();
@@ -268,6 +266,9 @@ canvas.addEventListener('pointerdown', (event) => {
       event.clientY - box.top + size * 0.4,
     ),
   );
+});
+canvas.addEventListener('click', (event) => {
+  if (event.detail === 0) begin(selected);
 });
 canvas.addEventListener('keydown', (event) => {
   if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.key)) {
