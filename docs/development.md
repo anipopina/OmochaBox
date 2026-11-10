@@ -37,7 +37,34 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 CHROME_PATH=/path/to/chromium npm test
 ```
 
-`npm test` はビルド、公開範囲・インフラ・素材の検査、共通および各遊びのブラウザーテストを実行します。実行対象は [package.json](../package.json)、テストの実装は [tests/](../tests/) を参照してください。結果とスクリーンショットは `test-results/` に保存します。
+### 検証範囲の選び方
+
+| 変更・目的 | 実施する検証 |
+| --- | --- |
+| 毎日の遊び追加・個別修正 | `npm run check` と `npm run test:toy -- <slug>`。対象の独立した実画面レビューも行う |
+| テスト運用スクリプトだけの変更 | `npm run check`、`npm run test:runner` と変更に対応する代表テスト。全体回帰の反復は不要 |
+| 入口の一覧・遷移 | `npm run check` と `npm run test:smoke` |
+| 共通の戻るボタン | `npm run check`、`npm run build`、`npm run test:home-button`（全作品・3画面サイズ） |
+| その他の共通処理 | 依存する遊びを `test:toy -- <slug1> <slug2>` で指定し、変更内容に応じた確認を追加 |
+| 広範囲の依存・Vite・共通基盤、影響不明、横断的な問題、AWS本番へのまとめ反映前 | `npm run check` と `npm run test:full` |
+
+`npm test` は `test:smoke` の別名です。日常の追加に無関係な作品の詳細回帰・AWS用ビルドは必須にしません。Sitesは全作品を公開する検証環境です。無関係な既知の失敗は新作の公開ゲートにせず、対象・理由・未確認事項を報告します。対象の失敗や真の共通回帰は解消または明示し、未確認を成功扱いにしません。定期実行は設定していません。
+
+### 実行コマンドと対象対応表
+
+```sh
+npm run test:list
+npm run test:toy -- pitatto-magnet
+npm run test:smoke -- pitatto-magnet
+npm run test:full
+npm run test:runner
+```
+
+`test:toy` は通常ビルド・出力素材検査、対象の入口から開く・戻る・再入場・初期素材読み込み、対象のモデル／ブラウザー詳細検査を実行します。`test:smoke` は通常ビルド・出力素材検査と軽い往復確認だけで、省略時は全作品、slug指定時は対象作品を確認します。共通確認は1画面サイズで実行し、各作品の詳細操作や音の聴感を保証するものではありません。変更した操作で後から読む素材は詳細検査と実画面レビューで確認します。
+
+対応表の正本は [tests/test-plan.mjs](../tests/test-plan.mjs) で、`test:list` から表示できます。新作は [src/games.json](../src/games.json) と対応表の両方に登録します。未登録・誤記・不要な引数はエラーになります。既存の `browser.mjs` はおえかきと窓、`toy-interactions.mjs` はいろガラスとみずたまりを含むため、これらの組合せは一緒に検証します。`stamp.mjs` に残るおえかきの設定非依存確認も維持しています。おえかき・窓の詳細検査にはテスト用ビルドも作ります。各単体スクリプトは従来どおり直接実行できますが、必要なビルドを先に用意してください。
+
+`test:full` は通常・AWS・テスト用ビルド、公開範囲・インフラ・素材、全作品の詳細検査を実行します。各検査の失敗後も独立した検査を続け、結果と秒数を一覧表示します。前提ビルドが失敗した検査は古い出力で実行せず `SKIP` にします。`FAIL` または `SKIP` があれば終了コードは非ゼロです。集約結果は `test-results/<toy|smoke|full>-summary.json`、既存の結果・スクリーンショットも `test-results/` に保存します。同じ作業場所で複数の実行を重ねないでください。運用スクリプト自体は `test:runner` の小さな検査で、選択範囲・引数検証・失敗継続・依存スキップを確認できます。
 
 専用一時プロファイルと自動選択ポートを使い、終了時にブラウザーとHTTPサーバーを停止します。ヘッドレス検証では `--no-sandbox` を指定するため、対象はこのローカルコードだけにしてください。エミュレーションとは別に、実機iPhone/iPadのSafari、OSジェスチャー、音の聴感も確認します。
 

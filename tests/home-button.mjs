@@ -1,3 +1,4 @@
+import { games, catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -5,6 +6,14 @@ import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createStaticServer } from './static-server.mjs';
 
+const args = process.argv.slice(2);
+const smoke = args[0] === '--smoke';
+const targets = smoke ? args.slice(1) : args;
+for (const slug of targets)
+  assert.ok(
+    games.some((game) => game.id === slug),
+    `Unknown toy: ${slug}`,
+  );
 const root = resolve(import.meta.dirname, '..');
 const profile = await mkdtemp(join(tmpdir(), 'home-button-browser-'));
 const output = join(root, 'test-results');
@@ -97,14 +106,48 @@ try {
     }
     assert.fail(`Timed out: ${expression}`);
   };
-  const pages = JSON.parse(
-    await readFile(join(root, 'src/games.json'), 'utf8'),
-  ).map((game) => game.id);
-  for (const [width, height] of [
-    [320, 568],
-    [844, 390],
-    [1280, 800],
-  ]) {
+  const pages = games
+    .filter((game) => !targets.length || targets.includes(game.id))
+    .map((game) => game.id);
+  const viewports = smoke
+    ? [[390, 844]]
+    : [
+        [320, 568],
+        [844, 390],
+        [1280, 800],
+      ];
+  await call('Network.enable');
+  const requests = new Map();
+  let activeLoader;
+  ws.addEventListener('message', (event) => {
+    const { method, params } = JSON.parse(event.data);
+    if (method === 'Page.frameNavigated' && !params.frame.parentId)
+      activeLoader = params.frame.loaderId;
+    if (method === 'Network.requestWillBeSent')
+      requests.set(params.requestId, {
+        loader: params.loaderId,
+        url: params.request.url,
+      });
+    if (
+      method === 'Network.loadingFinished' ||
+      method === 'Network.loadingFailed'
+    )
+      requests.delete(params.requestId);
+    if (method === 'Network.responseReceived' && params.response.status >= 400)
+      errors.push(params.response.url + ': ' + params.response.status);
+    if (method === 'Network.loadingFailed' && !params.canceled)
+      errors.push(params.errorText);
+  });
+  const activeRequests = () =>
+    [...requests.values()].filter((request) => request.loader === activeLoader);
+  const assetsReady = async () => {
+    await waitFor(
+      "document.readyState === 'complete' && [...document.images].filter(i => (i.getAttribute('src') || i.getAttribute('srcset')) && i.loading !== 'lazy').every(i => i.complete && i.naturalWidth > 0)",
+    );
+    for (let i = 0; i < 100 && activeRequests().length; i++) await delay(50);
+    assert.deepEqual(activeRequests(), [], 'Initial asset requests completed');
+  };
+  for (const [width, height] of viewports) {
     await call('Emulation.setDeviceMetricsOverride', {
       width,
       height,
@@ -112,11 +155,13 @@ try {
       mobile: true,
     });
     for (const page of pages) {
-      await call('Page.navigate', { url: `${origin}/${page}/` });
+      await call('Page.navigate', { url: origin + '/' });
+      await waitFor(`location.pathname==='/' && (${catalogueReady})`);
+      await evaluate(`document.querySelector('a[href="${page}/"]').click()`);
       await waitFor(
         `location.pathname==='/${page}/' && document.querySelector('#back.home-button svg')`,
       );
-      await delay(100);
+      await assetsReady();
       const result = await evaluate(`(() => {
         const a=document.querySelector('#back'), svg=a.querySelector('svg');
         const r=a.getBoundingClientRect(), s=getComputedStyle(a);
@@ -169,9 +214,13 @@ try {
         code: 'Enter',
         windowsVirtualKeyCode: 13,
       });
+      await waitFor(`location.pathname==='/' && (${catalogueReady})`);
+      await evaluate(`document.querySelector('a[href="${page}/"]').click()`);
       await waitFor(
-        `location.pathname==='/' && document.querySelector('.game-card')`,
+        `location.pathname==='/${page}/' && document.querySelector('#back.home-button svg')`,
       );
+      await assetsReady();
+      console.log(`Smoke ${page}: open, return, re-enter, initial assets PASS`);
     }
   }
   assert.equal(errors.length, 0, JSON.stringify(errors));
@@ -179,7 +228,7 @@ try {
   assert.equal(license.status, 200);
   assert.match(await license.text(), /Apache License/);
   console.log(
-    `Home button PASS: ${pages.length} games / 3 viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS errors`,
+    `Home button PASS: ${pages.length} games / ${viewports.length} viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS/network errors`,
   );
 } finally {
   ws?.close();

@@ -1,4 +1,4 @@
-import { gameCount } from './catalogue.mjs';
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { positionAt } from '../src/korokoro-suberidai/model.ts';
 for (let ms = 1; ms <= 8500; ms++) {
@@ -128,7 +128,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? `document.querySelectorAll('.game-card').length===${gameCount}`
+        ? catalogueReady
         : "document.querySelectorAll('.supply').length===3",
     );
   };
@@ -294,9 +294,7 @@ try {
   await shot('slide-reduced');
   await waitFor("document.querySelectorAll('.ball').length===0");
   await evaluate("document.querySelector('#back').click()");
-  await waitFor(
-    `document.querySelectorAll('.game-card').length===${gameCount}`,
-  );
+  await waitFor(catalogueReady);
   await evaluate(
     'document.querySelector(\'a[href="korokoro-suberidai/"]\').click()',
   );

@@ -1,4 +1,4 @@
-import { gameCount } from './catalogue.mjs';
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { Peekaboo } from '../src/dare-no-ouchi/model.ts';
 const model = new Peekaboo();
@@ -130,7 +130,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? `document.querySelectorAll('.game-card').length===${gameCount}`
+        ? catalogueReady
         : "document.querySelector('#house')?.dataset.ready === 'true'",
     );
   };

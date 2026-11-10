@@ -1,4 +1,4 @@
-import { gameCount } from './catalogue.mjs';
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -347,9 +347,7 @@ try {
   );
   assert.equal(await state(), 'digging');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor(
-    `document.querySelectorAll('.game-card').length===${gameCount}`,
-  );
+  await waitFor(catalogueReady);
   await evaluate(`document.querySelector('a[href="oimo-horihori/"]').click()`);
   await waitFor("document.querySelector('#patch')?.dataset.round==='0'");
   assert.equal(

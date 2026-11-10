@@ -1,4 +1,4 @@
-import { gameCount } from './catalogue.mjs';
+import { catalogueReady, gameCount } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -186,9 +186,7 @@ try {
       `performance.timeOrigin !== ${previousDocument} && document.readyState === 'complete'`,
     );
     await waitFor(
-      path === '/'
-        ? `document.querySelectorAll('.game-card').length===${gameCount}`
-        : "!!document.querySelector('#pump')",
+      path === '/' ? catalogueReady : "!!document.querySelector('#pump')",
     );
     // Offscreen lazy hub images may never start loading until scrolled into view.
     // Force their request in this test, retaining full decode validation.
@@ -600,9 +598,7 @@ try {
   await evaluate(
     `document.querySelector('#pump').click();document.querySelector('#back').click()`,
   );
-  await waitFor(
-    `document.querySelectorAll('.game-card').length===${gameCount}`,
-  );
+  await waitFor(catalogueReady);
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
     gameCount,

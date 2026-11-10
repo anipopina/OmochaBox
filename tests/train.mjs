@@ -1,4 +1,4 @@
-import { gameCount } from './catalogue.mjs';
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { Journey } from '../src/kotokoto-kisha/model.ts';
 const model = new Journey();
@@ -131,7 +131,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? `document.querySelectorAll('.game-card').length===${gameCount}`
+        ? catalogueReady
         : "document.querySelector('#scene')?.dataset.ready === 'true'",
     );
   };
@@ -314,9 +314,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
   await delay(250);
   assert.equal(await evaluate('document.getAnimations().length'), 0);
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(
-    `document.querySelectorAll('.game-card').length===${gameCount}`,
-  );
+  await waitFor(catalogueReady);
   await evaluate(`document.querySelector('a[href="kotokoto-kisha/"]').click()`);
   await waitFor(`document.querySelector('#scene')?.dataset.ready==='true'`);
   assert.equal(await evaluate('window.contexts.length'), 0);
