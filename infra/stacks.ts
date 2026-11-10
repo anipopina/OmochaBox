@@ -101,7 +101,7 @@ export function createInfrastructure(
       }),
     ],
     destinationBucket: bucket,
-    // Prune and invalidate together remove games withdrawn from the allowlist.
+    // Prune and invalidate together remove stale files from previous builds.
     prune: true,
     retainOnDelete: true,
     distribution,

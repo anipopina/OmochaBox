@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { selectGames } from '../build/publication.ts';
 
@@ -12,7 +12,7 @@ const selected = selectGames(catalogue, flags);
 assert.deepEqual(
   selectGames(catalogue, {}),
   [],
-  'Unapproved games default to excluded',
+  'Unapproved games are hidden by default',
 );
 assert.throws(() => selectGames(catalogue, { typo: true }), /Unknown/);
 assert.throws(
@@ -23,7 +23,7 @@ for (const bad of [null, [], true])
   assert.throws(() => selectGames(catalogue, bad));
 for (const [directory, games, origin] of [
   ['dist', catalogue, 'https://omochabox.ryonchibi.chatgpt.site'],
-  ['dist-production', selected, 'https://omochabox.anipopina.com'],
+  ['dist-production', catalogue, 'https://omochabox.anipopina.com'],
 ]) {
   const manifest = await json(`${directory}/.vite/manifest.json`);
   const entries = Object.keys(manifest)
@@ -49,39 +49,16 @@ for (const [directory, games, origin] of [
   const hub = await readFile(join(root, directory, 'index.html'), 'utf8');
   assert.ok(hub.includes('https://anipopina.com/'));
   if (directory === 'dist-production') {
-    const scripts = (await readdir(join(root, directory, 'assets'))).filter(
-      (file) => file.endsWith('.js'),
-    );
-    const code = (
-      await Promise.all(
-        scripts.map((file) =>
-          readFile(join(root, directory, 'assets', file), 'utf8'),
-        ),
-      )
-    ).join('\n');
-    for (const game of catalogue.filter(
-      (g) => !games.some((p) => p.id === g.id),
-    )) {
-      assert.ok(
-        !code.includes(game.id),
-        `${game.id}: excluded from bundled code`,
-      );
-      assert.ok(!hub.includes(game.href), `${game.id}: no fallback link`);
-      assert.ok(
-        !Object.keys(manifest).some(
-          (key) =>
-            key === game.id + '/app.ts' ||
-            key.includes('/previews/' + game.id + '.'),
-        ),
-        `${game.id}: no game runtime or dedicated preview`,
-      );
-    }
     assert.deepEqual(
       (await json(`${directory}/publication.json`)).games,
       games.map((g) => g.id),
     );
+    assert.deepEqual(
+      (await json(`${directory}/publication.json`)).defaultGames,
+      selected.map((g) => g.id),
+    );
   }
 }
 console.log(
-  'Publication PASS: Sites includes all games; production includes only allowlisted pages, code, previews and correct sharing URLs',
+  'Publication PASS: Sites includes all games; production includes all games with allowlisted defaults and correct sharing URLs',
 );

@@ -47,13 +47,6 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
   const production = mode === 'aws';
   const release = await publication(projectRoot, production);
   const entries = await htmlEntries(sourceRoot);
-  const published = new Set(
-    [
-      'index.html',
-      '404.html',
-      ...release.games.map((game) => game.href + 'index.html'),
-    ].map((path) => join(sourceRoot, path)),
-  );
   return {
     root: sourceRoot,
     appType: 'mpa',
@@ -72,9 +65,7 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
       // Existing games use modern Canvas/Web Audio; preserve ES2022 syntax support.
       target: 'es2022',
       rolldownOptions: {
-        input: production
-          ? entries.filter((path) => published.has(path))
-          : entries,
+        input: entries,
       },
     },
   };

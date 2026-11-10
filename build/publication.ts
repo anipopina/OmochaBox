@@ -32,14 +32,13 @@ export async function publication(root: string, production: boolean) {
   const config = JSON.parse(
     await readFile(join(root, 'infra/config.json'), 'utf8'),
   );
-  const games = production
-    ? selectGames(
-        catalogue,
-        JSON.parse(
-          await readFile(join(root, 'config/production-games.json'), 'utf8'),
-        ),
-      )
-    : catalogue;
+  const defaultGames = selectGames(
+    catalogue,
+    JSON.parse(
+      await readFile(join(root, 'config/production-games.json'), 'utf8'),
+    ),
+  );
+  const games = catalogue;
   const origin = production ? `https://${config.domainName}` : sitesOrigin;
   const plugin: Plugin = {
     name: 'published-games',
@@ -56,10 +55,13 @@ export async function publication(root: string, production: boolean) {
     },
     enforce: 'pre',
     resolveId(id) {
-      if (id === 'virtual:game-previews') return '\0' + id;
+      if (id === 'virtual:game-previews' || id === 'virtual:game-visibility')
+        return '\0' + id;
     },
     load(id) {
-      if (id === join(source, 'games.json')) return JSON.stringify(games);
+      if (id === '\0virtual:game-visibility')
+        return `export const defaultGameIds = ${JSON.stringify(defaultGames.map((game) => game.id))};
+export const showPrototypesByDefault = ${!production};`;
       if (id === '\0virtual:game-previews') {
         return (
           games
@@ -74,7 +76,7 @@ export async function publication(root: string, production: boolean) {
     },
     transformIndexHtml(html) {
       html = html.replaceAll(sitesOrigin, origin);
-      // The fallback must never link to an unpublished game.
+      // Keep the production fallback independent of the selected default games.
       if (production)
         html = html.replace(
           /<noscript\b[^>]*>[\s\S]*?<\/noscript\s*>/,
@@ -88,7 +90,11 @@ export async function publication(root: string, production: boolean) {
           type: 'asset',
           fileName: 'publication.json',
           source: JSON.stringify(
-            { origin, games: games.map((game) => game.id) },
+            {
+              origin,
+              games: games.map((game) => game.id),
+              defaultGames: defaultGames.map((game) => game.id),
+            },
             null,
             2,
           ),

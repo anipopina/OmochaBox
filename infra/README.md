@@ -1,13 +1,13 @@
 # AWS本番公開
 
-公開する遊びは [`config/production-games.json`](../config/production-games.json) の値を `true` にします。未記載・`false` の遊びは対象外です。誤ったIDやboolean以外の値はビルドを失敗させます。初期対象は「ふきふき、まど」「ぽんぽんスタンプ」です。承認・選択はユーザーが行います。
+通常表示する遊びは [`config/production-games.json`](../config/production-games.json) の値を `true` にします。未記載・`false` の遊びは試作品として扱い、トップページの「しさくひんも みる」をオンにすると表示します。設定はブラウザーに保存し、保存できない場合もそのページ内で切り替えられます。誤ったIDやboolean以外の値はビルドを失敗させます。通常表示の承認・選択はユーザーが行います。
 
 ```sh
 npm run build:production
 npm run preview:production
 ```
 
-本番ビルドは `dist-production/`。対象外のゲームページ・実行コード・専用プレビューを含めません。共通の装飾素材は共有します。通常の `npm run build` はSites向けの全遊びを `dist/` に出力し、本番リストの影響を受けません。
+本番ビルドは `dist-production/`。試作品も含む全遊びのページ・実行コード・プレビューを出力するため、試作品のURLにも直接アクセスできます。公開範囲を制限するアクセス制御ではありません。新しい遊びは通常表示には自動追加しません。通常の `npm run build` はSites向けに全遊びを `dist/` に出力し、初回から全遊びを表示します。
 
 ## AWSの構成
 
