@@ -154,6 +154,11 @@ try {
       mobile: true,
     });
     await visit();
+    // Count how often the next-house button (and its entrance animation)
+    // appears.
+    await evaluate(`window.nextShows = 0; new MutationObserver(() => {
+      if (!document.querySelector('#next').hidden) window.nextShows++;
+    }).observe(document.querySelector('#next'), { attributes: true })`);
     assert.ok(await evaluate("document.querySelector('#fallback').hidden"));
     assert.equal(await field('state'), 'ready');
     // The back button stays reachable above the full-screen field.
@@ -190,11 +195,96 @@ try {
     assert.equal(await field('standing'), '0', 'No piece is left standing');
     await delay(300);
     await shot(`ouchi-${width}x${height}-rubble`);
+    assert.equal(
+      await evaluate("document.querySelector('#next').hidden"),
+      false,
+      'Next-house button appears once the house is rubble',
+    );
+    assert.ok(
+      await evaluate(`(()=>{const r=document.querySelector('#next').getBoundingClientRect();
+        return r.width>=56&&r.right<=innerWidth&&r.bottom<=innerHeight})()`),
+    );
+    // Rubble play: a tap knocks debris instead of doing nothing.
     await tap(width * 0.6, height * 0.5);
-    await delay(300);
-    assert.equal(await field('hits'), '4', 'Rubble taps do nothing yet');
+    await waitFor("document.querySelector('#field').dataset.pokes==='1'");
+    await idle();
+    assert.equal(
+      await field('hits'),
+      '4',
+      'Rubble play is not a demolition hit',
+    );
+    assert.equal(
+      await evaluate('window.nextShows'),
+      1,
+      'Next-house button enters once, and stays during rubble play',
+    );
+    if (width === 1280) {
+      // Rubble play follows the rough direction of the tap: the lower part
+      // of the screen is the near (+Z) side, the upper part the far side.
+      const aimAt = async (y) => {
+        let sum = 0;
+        for (let i = 0; i < 3; i++) {
+          await tap(width * 0.6, y);
+          await delay(100);
+          sum += Number(await field('pokeZ'));
+          await idle();
+        }
+        return sum / 3;
+      };
+      const near = await aimAt(height * 0.85);
+      const far = await aimAt(height * 0.25);
+      assert.ok(
+        near > far,
+        `Tap direction steers rubble play (${near} vs ${far})`,
+      );
+      // Long press keeps swinging one at a time until the finger lifts.
+      await call('Input.dispatchTouchEvent', {
+        type: 'touchStart',
+        touchPoints: [{ x: width * 0.6, y: height * 0.5, id: 1 }],
+      });
+      await delay(2600);
+      assert.equal(await field('holding'), 'true');
+      await call('Input.dispatchTouchEvent', {
+        type: 'touchEnd',
+        touchPoints: [],
+      });
+      await idle();
+      const pokes = Number(await field('pokes'));
+      assert.ok(pokes >= 3, `Held press repeats rubble swings (${pokes})`);
+      // Drive on to the next house and demolish it too.
+      await evaluate("document.querySelector('#next').click()");
+      assert.equal(await field('state'), 'transition');
+      assert.equal(
+        await evaluate("document.querySelector('#next').hidden"),
+        true,
+      );
+      await tap(width * 0.6, height * 0.5);
+      await delay(1600);
+      await shot(`ouchi-${width}x${height}-travel`);
+      await idle();
+      assert.equal(await field('houses'), '1', 'Arrived at the next house');
+      assert.equal(
+        await field('camera'),
+        '0.00',
+        'Scene recentred after arrival',
+      );
+      assert.equal(
+        await field('hits'),
+        '0',
+        'Taps during the drive are ignored',
+      );
+      assert.equal(await field('standing'), '42', 'New house stands whole');
+      await shot(`ouchi-${width}x${height}-next-house`);
+      await tap(width * 0.6, height * 0.5);
+      await waitFor("document.querySelector('#field').dataset.hits==='1'");
+      assert.ok(
+        Number(await field('impactError')) < 0.02,
+        'Aim holds after recentring',
+      );
+      await idle();
+    }
     report(
-      `${width}x${height}: tap, queue cap, 4-hit collapse, idle loop stop PASS`,
+      `${width}x${height}: tap, queue cap, 4-hit collapse, rubble play, idle loop stop PASS`,
     );
   }
 
@@ -248,7 +338,14 @@ try {
   await delay(400);
   await shot('ouchi-reduced-hit');
   await idle();
-  report('Reduced motion attack PASS');
+  for (let i = 0; i < 6 && (await field('state')) !== 'rubble'; i++) {
+    await tap(400, 400);
+    await idle();
+  }
+  await evaluate("document.querySelector('#next').click()");
+  await idle();
+  assert.equal(await field('houses'), '1', 'Reduced motion still drives on');
+  report('Reduced motion attack and drive to the next house PASS');
 
   assert.equal(errors.length, 0, JSON.stringify(errors));
   await writeFile(join(output, 'ouchi-results.txt'), reports.join('\n'));

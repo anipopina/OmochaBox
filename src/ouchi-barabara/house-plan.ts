@@ -46,14 +46,63 @@ export interface HousePlan {
   core: { x: number; z: number };
 }
 
-const WALL = [0xff6f9c, 0xff8db1];
-const END_WALL = [0xff7fa6, 0xff9bbb];
-const SLAB = [0xfff1c9, 0xffe2a1];
-const ROOF = [0x2f73e0, 0x4189f5];
-const RIDGE = 0x1d4fb0;
-const CHIMNEY = 0xd9472f;
+export interface HousePalette {
+  wall: [number, number];
+  endWall: [number, number];
+  slab: [number, number];
+  roof: [number, number];
+  ridge: number;
+  chimney: number;
+}
 
-export function twoStoryHouse(): HousePlan {
+/**
+ * Vivid wall/roof pairs. Successive houses use different palettes so the next
+ * house reads as a new one even before Phase 3 adds other building shapes.
+ */
+export const PALETTES: HousePalette[] = [
+  {
+    wall: [0xff6f9c, 0xff8db1],
+    endWall: [0xff7fa6, 0xff9bbb],
+    slab: [0xfff1c9, 0xffe2a1],
+    roof: [0x2f73e0, 0x4189f5],
+    ridge: 0x1d4fb0,
+    chimney: 0xd9472f,
+  },
+  {
+    wall: [0x5ed49a, 0x7fe0b0],
+    endWall: [0x6fdaa5, 0x8fe6bb],
+    slab: [0xfff1c9, 0xffe2a1],
+    roof: [0xe8443a, 0xf4614f],
+    ridge: 0xb52a22,
+    chimney: 0x8a5a3c,
+  },
+  {
+    wall: [0x5cc8ff, 0x80d6ff],
+    endWall: [0x6dceff, 0x92dcff],
+    slab: [0xfff1c9, 0xffe2a1],
+    roof: [0xff8a1f, 0xffa042],
+    ridge: 0xd96a00,
+    chimney: 0xd9472f,
+  },
+  {
+    wall: [0xffd23f, 0xffde6b],
+    endWall: [0xffd64f, 0xffe27a],
+    slab: [0xfff1c9, 0xffe2a1],
+    roof: [0x8b5cf6, 0xa07bf8],
+    ridge: 0x6a3fd4,
+    chimney: 0xd9472f,
+  },
+];
+
+export function twoStoryHouse(palette: HousePalette = PALETTES[0]): HousePlan {
+  const {
+    wall: WALL,
+    endWall: END_WALL,
+    slab: SLAB,
+    roof: ROOF,
+    ridge: RIDGE,
+    chimney: CHIMNEY,
+  } = palette;
   const x0 = 2.4;
   const x1 = 6;
   const mid = (x0 + x1) / 2;

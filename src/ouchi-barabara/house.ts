@@ -161,11 +161,17 @@ export class House {
   readonly group = new THREE.Group();
   readonly pieces: Piece[] = [];
   private readonly ownGeometries: THREE.BufferGeometry[] = [];
+  private hasBodies = true;
 
+  /**
+   * @param originX World X of the plan's origin. Houses further down the road
+   * are built ahead of the excavator and shifted back when the scene recentres.
+   */
   constructor(
     readonly plan: HousePlan,
     kit: HouseKit,
     private readonly world: CANNON.World,
+    public originX = 0,
   ) {
     for (const spec of plan.pieces) {
       const { x, y, z } = spec.size;
@@ -202,7 +208,7 @@ export class House {
           ),
         );
       }
-      body.position.set(spec.center.x, spec.center.y, spec.center.z);
+      body.position.set(spec.center.x + originX, spec.center.y, spec.center.z);
       if (spec.tilt) body.quaternion.setFromEuler(0, 0, spec.tilt);
       const group =
         spec.kind === 'roof'
@@ -223,7 +229,7 @@ export class House {
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       decorate(kit, mesh, spec);
-      mesh.position.set(spec.center.x, spec.center.y, spec.center.z);
+      mesh.position.set(spec.center.x + originX, spec.center.y, spec.center.z);
       if (spec.tilt) mesh.rotation.z = spec.tilt;
       this.group.add(mesh);
       this.pieces.push({
@@ -266,8 +272,30 @@ export class House {
     }
   }
 
-  dispose() {
+  /** Move the whole house along X (meshes and bodies), keeping its state. */
+  shift(dx: number) {
+    this.originX += dx;
+    for (const piece of this.pieces) {
+      piece.body.position.x += dx;
+      piece.body.aabbNeedsUpdate = true;
+      piece.mesh.position.x += dx;
+    }
+  }
+
+  /** Take every piece out of the physics world; meshes stay for a fade-out. */
+  removeBodies() {
+    if (!this.hasBodies) return;
     for (const piece of this.pieces) this.world.removeBody(piece.body);
+    this.hasBodies = false;
+  }
+
+  /** Shrink every piece in place (1 = full size, 0 = gone). */
+  scaleAll(scale: number) {
+    for (const piece of this.pieces) piece.mesh.scale.setScalar(scale);
+  }
+
+  dispose() {
+    this.removeBodies();
     this.group.removeFromParent();
     for (const geometry of this.ownGeometries) geometry.dispose();
   }

@@ -85,6 +85,14 @@ export function readyPose(): Pose {
 
 const READY_BUCKET = (-53.4 * Math.PI) / 180;
 
+/**
+ * Bucket lowered like a blade for plowing through rubble: teeth down, its
+ * rounded back facing forward, held just above the ground.
+ */
+export function pushPose(): Pose {
+  return { swing: 0, ...solveWrist(3.05, 1.18, -Math.PI / 2) };
+}
+
 export interface StrikePlan {
   windup: Pose;
   strike: Pose;
