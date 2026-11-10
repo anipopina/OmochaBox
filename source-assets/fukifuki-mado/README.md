@@ -4,14 +4,20 @@
 
 | ID | 内容 | 原本 |
 | --- | --- | --- |
-| garden | 庭のどうぶつ | garden-original.png |
 | animal-train | どうぶつ列車 | animal-train-original.jpg |
 | frog-pond | 池のカエル | frog-pond-original.jpg |
 | shapes-picnic | 図形のピクニック | shapes-picnic-original.png |
 | underwater | 海のなかまたち | underwater-original.jpg |
 | shapes-hello | 窓からこんにちは | shapes-hello-original.png |
+| dinosaur-splash | 恐竜の水あそび | dinosaur-splash-original.png |
+| paper-space | ロケットと宇宙 | paper-space-original.png |
+| animal-bakery | どうぶつのパン屋さん | animal-bakery-original.png |
 
-`garden` は2026-10-20にこのプロジェクト向けにOpenAI image generationで制作した画像です。明るい庭、ねこ・うさぎ・いぬ・小鳥、鮮やかな絵本調、文字・ロゴなしという指示から生成しました。外部ストック画像やGoogleアイコンは使用していません。追加5枚は2026-10-21にユーザーから提供された素材です。生成ツールや第三者ライセンスの詳細は未提供のため、推定して記載しません。生成画像について排他的著作権を主張しません。
+`animal-train`、`frog-pond`、`shapes-picnic`、`underwater`、`shapes-hello` は2026-10-21にユーザーから提供された素材です。生成ツールや第三者ライセンスの詳細は未提供のため、推定して記載しません。生成画像について排他的著作権を主張しません。
+
+`dinosaur-splash` は2026-11-10にOpenAI image generationで新規生成した画像です。緑とオレンジの恐竜、赤いボール、水たまりを鮮やかなガッシュの絵本調で描き、外部画像・既存キャラクター・第三者素材は入力していません。生成指示と利用条件の確認先は `provenance.json` の `generated_sources` に保存しています。[OpenAI利用規約](https://openai.com/policies/row-terms-of-use/) の出力の権利に関する条項と[公開ポリシー](https://openai.com/policies/sharing-publication-policy/)を2026-11-10に確認し、本プロジェクトでの変換・公開リポジトリへの同梱・Web配信に使用します。第三者素材のLICENSE・NOTICEや帰属表示義務はなく、生成元はこの記録で明示します。生成物の独自性や排他的著作権を保証するものではありません。
+
+`paper-space` と `animal-bakery` も2026-11-10にOpenAI image generationで制作した画像です。それぞれ同日に新規生成した海の切り絵風画像を画風参照、パン屋さんの画像を画風変更の入力に使用しました。外部ストック画像や第三者素材は使用せず、上記と同じ利用条件で採用しています。入力画像の生成指示とハッシュも `generated_sources` に記録し、配信用のパン屋さんには修正版を使用しています。
 
 ## 追加・差し替え手順
 
@@ -44,7 +50,7 @@ EXIFの向きを補正し、背景全体を覆う不透明RGB画像としてWebP
 - GaussianBlur半径は680px基準で34px。小さい画像では比例して調整します。
 - 乳白色の膜はRGB (248, 252, 252)、中央で約57%、周辺で約69%を基本に、なめらかなむらを加えます。水滴は控えめなハイライトと影を重ねます。
 - テクスチャの乱数シードは `20261021` に固定し、再変換時に同じ画像になるようにします。
-- WebP quality=82 / method=6。現在は1枚約4〜6KB、全6枚で約30KBです。容量・SHA-256・変換条件を `provenance.json` の `images[].fog` に保存します。
+- WebP quality=82 / method=6。容量・SHA-256・変換条件を `provenance.json` の `images[].fog` に保存します。
 - 曇り画像にアルファ透過は不要です。Canvasで拭いた場所を透明にし、その下の鮮明な画像を見せます。両方の切り抜き位置は中央揃えで一致させます。
 
 変換後は拭く前にも色とシルエットが見えること、拭くと表情や細部が鮮明になることを目視確認してください。画像を削除するときは `assets/fog/` の対応画像も整理します。
