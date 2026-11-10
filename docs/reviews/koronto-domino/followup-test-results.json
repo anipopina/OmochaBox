@@ -1,0 +1,115 @@
+{
+  "check": "pass",
+  "npmTestAttempts": 2,
+  "npmTestFailure": "tests/browser.mjs:695 Release tail <=1.21 seconds; actual 1, expected 0",
+  "remainingCommands": [
+    {
+      "command": "node tests/balloon.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/balloon-timing.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/stamp.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/slide.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/pinwheel.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/glass.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/pond.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/mogumogu.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/bubbles.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/toy-interactions.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/guitar.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/train.mjs",
+      "exit": 1
+    },
+    {
+      "command": "node tests/house.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/popcorn.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/ice.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/jelly.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node --import tsx tests/magnet-model.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/magnet.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/ehon.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node --import tsx tests/oimo-model.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/oimo.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node --import tsx tests/clay-model.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/clay.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node --import tsx tests/ouchi-model.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/ouchi.mjs",
+      "exit": 1
+    },
+    {
+      "command": "node --import tsx tests/domino-model.mjs",
+      "exit": 0
+    },
+    {
+      "command": "node tests/domino.mjs",
+      "exit": 0
+    }
+  ]
+}

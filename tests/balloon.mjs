@@ -159,7 +159,10 @@ try {
   await call('Runtime.enable');
   await call('Page.enable');
   await call('Page.addScriptToEvaluateOnNewDocument', {
-    source: `window.rafCalls=0;const raf=requestAnimationFrame;window.requestAnimationFrame=(f)=>raf(t=>{window.rafCalls++;f(t)});`,
+    source: await readFile(
+      join(root, 'tests/fixtures/balloon-observer.js'),
+      'utf8',
+    ),
   });
   const waitFor = async (expression) => {
     for (let i = 0; i < 100; i++) {
@@ -383,7 +386,7 @@ try {
     });
     await delay(1500);
     const before = await evaluate(
-      `(()=>{const e=document.querySelector('.balloon'),r=e.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(e).transform);return {x:r.x+r.width*${fx},y:r.y+r.height*${fy},tx:m.m41,ty:m.m42}})()`,
+      `(()=>{const r=document.querySelector('.balloon').getBoundingClientRect();return {x:r.x+r.width*${fx},y:r.y+r.height*${fy}}})()`,
     );
     await call('Input.dispatchTouchEvent', {
       type: 'touchStart',
@@ -393,17 +396,36 @@ try {
       type: 'touchEnd',
       touchPoints: [],
     });
-    await delay(100);
-    const after = await evaluate(
-      `(()=>{const e=document.querySelector('.balloon'),m=new DOMMatrix(getComputedStyle(e).transform);return {tx:m.m41,ty:m.m42,tapped:e.dataset.tapped}})()`,
+    await waitFor('window.balloonTouch?.frames.length === 2');
+    const observed = await evaluate(
+      `(()=>{const {trusted,directionX,directionY,frames}=window.balloonTouch;return {trusted,directionX,directionY,frames}})()`,
     );
-    assert.equal(after.tapped, 'true');
+    assert.equal(
+      observed.trusted,
+      true,
+      'Trusted pointer input reached the balloon',
+    );
+    assert.equal(
+      observed.directionX,
+      dx,
+      'Requested horizontal quadrant reached',
+    );
+    assert.equal(
+      observed.directionY,
+      dy,
+      'Requested vertical quadrant reached',
+    );
+    const [first, second] = observed.frames;
     assert.ok(
-      (after.tx - before.tx) * dx > 0,
+      second.time > first.time,
+      'Two successive rendered frames observed',
+    );
+    assert.ok(
+      (second.x - first.x) * dx > 0,
       'Trusted quadrant touch horizontal direction',
     );
     assert.ok(
-      (after.ty - before.ty) * dy > 0,
+      (second.y - first.y) * dy > 0,
       'Trusted quadrant touch vertical direction',
     );
   }
@@ -484,17 +506,42 @@ try {
   // Chromium delivered a frame, especially while capturing other pages.
   await evaluate('new Promise(resolve => requestAnimationFrame(resolve))');
   assert.equal(await count(), 0, 'Expired balloons removed on the next frame');
+  await waitFor('window.pendingRafs.size === 0');
   const frames = await evaluate('window.rafCalls');
   await delay(250);
   assert.equal(await evaluate('window.rafCalls'), frames, 'Idle loop stops');
+  await evaluate('window.balloonFullFrame = null');
   await mouse('mousePressed', await point());
-  await delay(2700);
+  await waitFor('window.balloonFullFrame !== null');
+  const firstFullFrame = await evaluate('window.balloonFullFrame');
+  assert.equal(
+    firstFullFrame.pending,
+    0,
+    'The first full-size frame queues no successor',
+  );
+  assert.equal(
+    await evaluate('window.rafCalls'),
+    firstFullFrame.calls,
+    'No extra frame after becoming full',
+  );
+  assert.equal(
+    await evaluate(
+      "document.querySelector('#pump').getAttribute('aria-pressed')",
+    ),
+    'true',
+    'Still held when the loop stops',
+  );
   const heldFrames = await evaluate('window.rafCalls');
   await delay(200);
   assert.equal(
     await evaluate('window.rafCalls'),
     heldFrames,
     'Maximum held loop stops',
+  );
+  assert.equal(
+    await evaluate('window.pendingRafs.size'),
+    0,
+    'No pending frame after maximum growth',
   );
   await mouse('mouseReleased', await point());
   await evaluate(

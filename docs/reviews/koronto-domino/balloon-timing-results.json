@@ -1,0 +1,82 @@
+{
+  "baselineMain": "dd079475f8233b5691cdc4ae06b21be38d7cf19f",
+  "runtimeChangesToBalloon": false,
+  "originalDirectionAndHeldStopRerun": {
+    "main": "pass",
+    "candidate": "pass"
+  },
+  "originalMainLaterFailure": "hardcoded 20 cards; actual 21",
+  "controlledDelayResults": {
+    "main": [
+      {
+        "case": "direction",
+        "frames": [
+          {
+            "time": 1709.2,
+            "x": 96.5246,
+            "y": 416.57
+          },
+          {
+            "time": 1725.8,
+            "x": 98.738,
+            "y": 418.621
+          }
+        ],
+        "lateDeltaY": -39.923,
+        "lateTapped": "false",
+        "oldAssertionWouldPass": false,
+        "newAssertionPasses": true
+      },
+      {
+        "case": "held",
+        "oldSnapshot": {
+          "frames": 1,
+          "full": "false",
+          "pending": 1
+        },
+        "stopped": 2,
+        "final": 2,
+        "oldAssertionWouldPass": false,
+        "newAssertionPasses": true
+      }
+    ],
+    "branch": [
+      {
+        "case": "direction",
+        "frames": [
+          {
+            "time": 1725.5,
+            "x": 97.179,
+            "y": 417.522
+          },
+          {
+            "time": 1742.2,
+            "x": 99.2982,
+            "y": 419.415
+          }
+        ],
+        "lateDeltaY": -42.60999999999996,
+        "lateTapped": "false",
+        "oldAssertionWouldPass": false,
+        "newAssertionPasses": true
+      },
+      {
+        "case": "held",
+        "oldSnapshot": {
+          "frames": 1,
+          "full": "false",
+          "pending": 1
+        },
+        "stopped": 2,
+        "final": 2,
+        "oldAssertionWouldPass": false,
+        "newAssertionPasses": true
+      }
+    ]
+  },
+  "fixedBalloonSuite": {
+    "main": "pass",
+    "candidate": "pass"
+  },
+  "caveat": "Controlled delays demonstrate the measurement race; no frame record exists for the original intermittent failures."
+}
