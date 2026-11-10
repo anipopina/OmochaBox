@@ -19,7 +19,12 @@ const SIDE_GAP = 0.015;
 
 export interface Piece {
   spec: PieceSpec;
-  mesh: THREE.Mesh;
+  /**
+   * Transform of the piece. Box pieces are drawn through the house's shared
+   * instanced mesh, so for them this is an invisible holder; gables are
+   * ordinary meshes.
+   */
+  mesh: THREE.Object3D;
   body: CANNON.Body;
   mass: number;
   /** Simulation time when it broke loose, or null while standing. */
@@ -42,7 +47,10 @@ function canvasTexture(
 
 /** Geometry, materials and decal textures shared by every house. */
 export class HouseKit {
-  private readonly boxes = new Map<string, THREE.BufferGeometry>();
+  /** Unit cube scaled per instance for every box-shaped piece. */
+  readonly unitBox = new THREE.BoxGeometry(1, 1, 1);
+  /** White base colour; each instance carries its piece's colour. */
+  readonly instanced = new THREE.MeshLambertMaterial();
   private readonly colors = new Map<number, THREE.MeshLambertMaterial>();
   readonly window: THREE.MeshLambertMaterial;
   readonly door: THREE.MeshLambertMaterial;
@@ -80,16 +88,6 @@ export class HouseKit {
     });
   }
 
-  box(x: number, y: number, z: number) {
-    const key = `${x.toFixed(3)}:${y.toFixed(3)}:${z.toFixed(3)}`;
-    let geometry = this.boxes.get(key);
-    if (!geometry) {
-      geometry = new THREE.BoxGeometry(x, y, z);
-      this.boxes.set(key, geometry);
-    }
-    return geometry;
-  }
-
   color(color: number) {
     let material = this.colors.get(color);
     if (!material) {
@@ -100,7 +98,8 @@ export class HouseKit {
   }
 
   dispose() {
-    for (const geometry of this.boxes.values()) geometry.dispose();
+    this.unitBox.dispose();
+    this.instanced.dispose();
     for (const material of this.colors.values()) material.dispose();
     this.window.map?.dispose();
     this.door.map?.dispose();
@@ -127,16 +126,13 @@ function gableGeometry(spec: PieceSpec) {
   return geometry;
 }
 
-function decorate(kit: HouseKit, mesh: THREE.Mesh, spec: PieceSpec) {
-  const decor = spec.decor;
-  if (!decor) return;
+/** Window or door placement relative to its piece. */
+function decalMatrix(spec: PieceSpec) {
+  const decor = spec.decor!;
   const door = decor.kind === 'door';
-  const plane = new THREE.Mesh(
-    door ? kit.doorGeometry : kit.windowGeometry,
-    door ? kit.door : kit.window,
-  );
   const lift = door ? -spec.size.y / 2 + 0.45 : 0.06;
   const out = 0.006;
+  const plane = new THREE.Object3D();
   switch (decor.face) {
     case '+z':
       plane.position.set(0, lift, spec.size.z / 2 + out);
@@ -154,7 +150,15 @@ function decorate(kit: HouseKit, mesh: THREE.Mesh, spec: PieceSpec) {
       plane.rotation.y = -Math.PI / 2;
       break;
   }
-  mesh.add(plane);
+  plane.updateMatrix();
+  return plane.matrix.clone();
+}
+
+interface Decal {
+  piece: Piece;
+  local: THREE.Matrix4;
+  mesh: THREE.InstancedMesh;
+  index: number;
 }
 
 export class House {
@@ -162,6 +166,17 @@ export class House {
   readonly pieces: Piece[] = [];
   private readonly ownGeometries: THREE.BufferGeometry[] = [];
   private hasBodies = true;
+  /**
+   * Windows and doors are drawn as two instanced meshes per house (instead of
+   * one mesh per decal) to keep draw calls down; each instance follows its
+   * piece.
+   */
+  private readonly decals: Decal[] = [];
+  private readonly decalMeshes: THREE.InstancedMesh[] = [];
+  private readonly scratch = new THREE.Matrix4();
+  /** All box-shaped pieces, drawn as one instanced unit cube. */
+  private readonly boxes: { piece: Piece; size: THREE.Matrix4 }[] = [];
+  private boxMesh: THREE.InstancedMesh | null = null;
 
   /**
    * @param originX World X of the plan's origin. Houses further down the road
@@ -175,7 +190,7 @@ export class House {
   ) {
     for (const spec of plan.pieces) {
       const { x, y, z } = spec.size;
-      let geometry: THREE.BufferGeometry;
+      let geometry: THREE.BufferGeometry | null = null;
       const body = new CANNON.Body({
         mass: 0,
         type: CANNON.Body.STATIC,
@@ -197,7 +212,6 @@ export class House {
           new CANNON.Vec3((s * x) / 4, -y / 4, 0),
         );
       } else {
-        geometry = kit.box(x, y, z);
         // Narrower than the mesh horizontally: cannon-es applies a fixed
         // friction (mu·g·m) at every touching contact regardless of load, so
         // flush side-by-side blocks would brake each other to a halt. Stacked
@@ -225,14 +239,17 @@ export class House {
             : -1;
       world.addBody(body);
 
-      const mesh = new THREE.Mesh(geometry, kit.color(spec.color));
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      decorate(kit, mesh, spec);
+      let mesh: THREE.Object3D;
+      if (geometry) {
+        const solid = new THREE.Mesh(geometry, kit.color(spec.color));
+        solid.castShadow = true;
+        solid.receiveShadow = true;
+        this.group.add(solid);
+        mesh = solid;
+      } else mesh = new THREE.Object3D();
       mesh.position.set(spec.center.x + originX, spec.center.y, spec.center.z);
       if (spec.tilt) mesh.rotation.z = spec.tilt;
-      this.group.add(mesh);
-      this.pieces.push({
+      const piece: Piece = {
         spec,
         mesh,
         body,
@@ -240,8 +257,96 @@ export class House {
         // pinning them upright with friction.
         mass: x * y * z * DENSITY * (spec.kind === 'slab' ? 0.45 : 1),
         loosened: null,
-      });
+      };
+      this.pieces.push(piece);
+      if (!geometry)
+        this.boxes.push({
+          piece,
+          size: new THREE.Matrix4().makeScale(x, y, z),
+        });
     }
+    this.buildBoxes(kit);
+    this.buildDecals(kit);
+  }
+
+  private buildBoxes(kit: HouseKit) {
+    const mesh = new THREE.InstancedMesh(
+      kit.unitBox,
+      kit.instanced,
+      this.boxes.length,
+    );
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.frustumCulled = false;
+    const color = new THREE.Color();
+    this.boxes.forEach(({ piece }, index) =>
+      mesh.setColorAt(index, color.set(piece.spec.color)),
+    );
+    this.boxMesh = mesh;
+    this.group.add(mesh);
+    this.updateBoxes(true);
+  }
+
+  /** Move box instances with their pieces (only loose ones unless `all`). */
+  private updateBoxes(all: boolean) {
+    const mesh = this.boxMesh;
+    if (!mesh) return;
+    this.boxes.forEach(({ piece, size }, index) => {
+      if (!all && piece.loosened === null) return;
+      piece.mesh.updateMatrix();
+      mesh.setMatrixAt(
+        index,
+        this.scratch.multiplyMatrices(piece.mesh.matrix, size),
+      );
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+  }
+
+  private buildDecals(kit: HouseKit) {
+    const kinds = [
+      { door: false, geometry: kit.windowGeometry, material: kit.window },
+      { door: true, geometry: kit.doorGeometry, material: kit.door },
+    ];
+    for (const kind of kinds) {
+      const owners = this.pieces.filter(
+        (piece) =>
+          piece.spec.decor && (piece.spec.decor.kind === 'door') === kind.door,
+      );
+      if (!owners.length) continue;
+      const mesh = new THREE.InstancedMesh(
+        kind.geometry,
+        kind.material,
+        owners.length,
+      );
+      mesh.frustumCulled = false;
+      owners.forEach((piece, index) =>
+        this.decals.push({
+          piece,
+          local: decalMatrix(piece.spec),
+          mesh,
+          index,
+        }),
+      );
+      this.decalMeshes.push(mesh);
+      this.group.add(mesh);
+    }
+    this.updateDecals(true);
+  }
+
+  /** Move decals with their pieces (only loose ones unless `all`). */
+  private updateDecals(all: boolean) {
+    const touched = new Set<THREE.InstancedMesh>();
+    for (const decal of this.decals) {
+      if (!all && decal.piece.loosened === null) continue;
+      const mesh = decal.piece.mesh;
+      mesh.updateMatrix();
+      decal.mesh.setMatrixAt(
+        decal.index,
+        this.scratch.multiplyMatrices(mesh.matrix, decal.local),
+      );
+      touched.add(decal.mesh);
+    }
+    for (const mesh of touched) mesh.instanceMatrix.needsUpdate = true;
   }
 
   /** Break a piece loose with an initial velocity and spin. */
@@ -270,6 +375,8 @@ export class House {
         quaternion.w,
       );
     }
+    this.updateDecals(false);
+    this.updateBoxes(false);
   }
 
   /** Move the whole house along X (meshes and bodies), keeping its state. */
@@ -280,6 +387,8 @@ export class House {
       piece.body.aabbNeedsUpdate = true;
       piece.mesh.position.x += dx;
     }
+    this.updateDecals(true);
+    this.updateBoxes(true);
   }
 
   /** Take every piece out of the physics world; meshes stay for a fade-out. */
@@ -292,10 +401,14 @@ export class House {
   /** Shrink every piece in place (1 = full size, 0 = gone). */
   scaleAll(scale: number) {
     for (const piece of this.pieces) piece.mesh.scale.setScalar(scale);
+    this.updateDecals(true);
+    this.updateBoxes(true);
   }
 
   dispose() {
     this.removeBodies();
+    for (const mesh of this.decalMeshes) mesh.dispose();
+    this.boxMesh?.dispose();
     this.group.removeFromParent();
     for (const geometry of this.ownGeometries) geometry.dispose();
   }

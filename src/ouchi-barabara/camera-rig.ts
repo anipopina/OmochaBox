@@ -6,14 +6,34 @@ import * as THREE from 'three';
 // starts after the machine does, eases in and settles after it stops, so the
 // excavator visibly moves across the frame instead of being pinned in place.
 
-/** Corners of the work site (site-local) that must stay in view. */
-const FIT_CORNERS = (() => {
-  const corners: THREE.Vector3[] = [];
-  for (const x of [-3.4, 7])
-    for (const y of [0, 5.4])
-      for (const z of [-2.2, 2.4]) corners.push(new THREE.Vector3(x, y, z));
-  return corners;
-})();
+/**
+ * カメラの調整値。縦長用（portrait）と横長用（landscape）の値を、画面の縦横比が
+ * `aspect.portrait` から `aspect.landscape` の間にあるとき、なめらかに混ぜます。
+ * カメラは `site` の範囲全体が画面に収まるまで自動で引くため、`direction` で
+ * 見る角度を決めると、距離はそこから決まります。
+ */
+export const CAMERA = {
+  /** 縦方向の画角（度）。 */
+  fov: 38,
+  /** 縦横比（幅÷高さ）の切り替え範囲。この値以下は縦長用、以上は横長用の値を
+   *  そのまま使います。 */
+  aspect: { portrait: 0.6, landscape: 1.4 },
+  /** 注視点からカメラへ向かう方向（長さは任意）。 */
+  direction: {
+    portrait: [-1, 0.9, 0.32],
+    landscape: [-0.3, 0.6, 1],
+  },
+  /** カメラが見る点（X は道に沿った方向、Y は上、Z は手前）。 */
+  look: { portrait: [2.0, 1.9, 0], landscape: [1.9, 1.9, 0] },
+  /** 画面に必ず収める、ショベルカーと家の周りの箱。X と Z の範囲と、
+   *  最も高い点（いちばん高い屋根と振り上げたバケット）。 */
+  site: { x: [-3.4, 7], z: [-1.6, 2.4], top: 5.4 },
+  /** 箱を画面の端にどこまで近づけてよいか（1 = 端ぴったり）。 */
+  margin: { x: 1.1, y: 0.9 },
+  /** 次の家へ移動するときの追従。遅れの時間（秒、大きいほど遅れる）、
+   *  動きを減らす設定のときの遅れの時間、走る速さあたりの先を映す量。 */
+  follow: { smooth: 0.5, smoothReduced: 0.12, lookAhead: 0.25 },
+} as const;
 
 export class CameraRig {
   /** Current horizontal offset of the framing along X. */
@@ -21,47 +41,74 @@ export class CameraRig {
   /** Where the framing is heading along X. */
   target = 0;
   private velocity = 0;
-  private readonly base = new THREE.Vector3();
+  private distance = 0;
+  private readonly direction = new THREE.Vector3();
+  private readonly look = new THREE.Vector3();
 
   constructor(private readonly camera: THREE.PerspectiveCamera) {}
 
   /**
    * Choose the view for the current aspect ratio and pull back until the
-   * whole site fits. Portrait looks more along the approach so the long
-   * excavator-to-house line is foreshortened.
+   * whole site fits. Every building shares this framing. Portrait looks more
+   * along the approach so the long excavator-to-house line is foreshortened.
    */
   fit() {
-    const camera = this.camera;
-    const blend = THREE.MathUtils.clamp((camera.aspect - 0.6) / 0.8, 0, 1);
-    const direction = new THREE.Vector3(
-      THREE.MathUtils.lerp(-1, -0.3, blend),
-      THREE.MathUtils.lerp(0.9, 0.6, blend),
-      THREE.MathUtils.lerp(0.32, 1, blend),
-    ).normalize();
-    const look = new THREE.Vector3(
-      THREE.MathUtils.lerp(2.6, 1.9, blend),
-      1.9,
+    const { aspect, direction, look } = CAMERA;
+    const blend = THREE.MathUtils.clamp(
+      (this.camera.aspect - aspect.portrait) /
+        (aspect.landscape - aspect.portrait),
       0,
+      1,
     );
+    const mix = (a: readonly number[], b: readonly number[], i: number) =>
+      THREE.MathUtils.lerp(a[i], b[i], blend);
+    this.direction
+      .set(
+        mix(direction.portrait, direction.landscape, 0),
+        mix(direction.portrait, direction.landscape, 1),
+        mix(direction.portrait, direction.landscape, 2),
+      )
+      .normalize();
+    this.look.set(
+      mix(look.portrait, look.landscape, 0),
+      mix(look.portrait, look.landscape, 1),
+      mix(look.portrait, look.landscape, 2),
+    );
+    this.distance = this.fitDistance(CAMERA.site.top);
+    this.place(this.distance);
+  }
+
+  private place(distance: number) {
+    const camera = this.camera;
+    camera.position.copy(this.look).addScaledVector(this.direction, distance);
+    camera.lookAt(this.look);
+    camera.updateMatrixWorld();
+  }
+
+  private fitDistance(top: number) {
+    const corners: THREE.Vector3[] = [];
+    for (const x of CAMERA.site.x)
+      for (const y of [0, top])
+        for (const z of CAMERA.site.z) corners.push(new THREE.Vector3(x, y, z));
     const projected = new THREE.Vector3();
     const fits = (distance: number) => {
-      camera.position.copy(look).addScaledVector(direction, distance);
-      camera.lookAt(look);
-      camera.updateMatrixWorld();
-      return FIT_CORNERS.every((corner) => {
-        projected.copy(corner).project(camera);
-        return Math.abs(projected.x) <= 0.94 && Math.abs(projected.y) <= 0.9;
+      this.place(distance);
+      return corners.every((corner) => {
+        projected.copy(corner).project(this.camera);
+        return (
+          Math.abs(projected.x) <= CAMERA.margin.x &&
+          Math.abs(projected.y) <= CAMERA.margin.y
+        );
       });
     };
     let near = 4;
-    let far = 60;
+    let far = 80;
     for (let i = 0; i < 24; i++) {
       const middle = (near + far) / 2;
       if (fits(middle)) far = middle;
       else near = middle;
     }
-    fits(far);
-    this.base.copy(camera.position);
+    return far;
   }
 
   /** Advance the follow toward `target`; smaller smoothTime follows tighter. */
@@ -99,7 +146,7 @@ export class CameraRig {
   /** Place the camera; `jitter` is a small random offset for impact shake. */
   apply(jitter: number) {
     const position = this.camera.position;
-    position.copy(this.base);
+    position.copy(this.look).addScaledVector(this.direction, this.distance);
     position.x += this.shift;
     if (jitter > 0) {
       position.x += (Math.random() - 0.5) * jitter;

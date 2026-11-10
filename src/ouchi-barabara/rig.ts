@@ -90,8 +90,14 @@ const READY_BUCKET = (-53.4 * Math.PI) / 180;
  * rounded back facing forward, held just above the ground.
  */
 export function pushPose(): Pose {
-  return { swing: 0, ...solveWrist(3.05, 1.18, -Math.PI / 2) };
+  const pose = solveWrist(3.05, 1.18, -Math.PI / 2);
+  // Turned a little toward the carry pose's bucket angle, so the bucket's
+  // overlap with the rubble changes less when switching between the two.
+  const toward = Math.sign(READY_BUCKET - pose.bucket);
+  return { swing: 0, ...pose, bucket: pose.bucket + toward * PUSH_TURN };
 }
+
+const PUSH_TURN = (10 * Math.PI) / 180;
 
 export interface StrikePlan {
   windup: Pose;
@@ -101,17 +107,38 @@ export interface StrikePlan {
   clamped: boolean;
 }
 
+/**
+ * How the bucket meets the target. A slam comes down from above, teeth
+ * first; a side hit swings in level from the front, for wall faces high up
+ * where slamming would cut through the roof first.
+ */
+export type StrikeStyle = 'slam' | 'side';
+
 /** Poses that make the bucket teeth land exactly on `target`. */
-export function strikePlan(rootX: number, target: Point3): StrikePlan {
+export function strikePlan(
+  rootX: number,
+  target: Point3,
+  style: StrikeStyle = 'slam',
+): StrikePlan {
   const { swing, h } = polar(rootX, target);
+  const deg = Math.PI / 180;
+  if (style === 'side') {
+    const wrist = wristForTip(h, target.y, 0);
+    const strike = solveWrist(wrist.h, wrist.y, 0);
+    // Pull back level with the target, bucket curled up, then sweep in.
+    const windup = solveWrist(wrist.h - 1.2, wrist.y + 0.35, 70 * deg);
+    const recoil = solveWrist(wrist.h - 0.35, wrist.y + 0.1, 20 * deg);
+    return {
+      windup: { swing, ...windup },
+      strike: { swing, ...strike },
+      recoil: { swing, ...recoil },
+      clamped: strike.clamped,
+    };
+  }
   const wrist = wristForTip(h, target.y, RIG.strikeAngle);
   const strike = solveWrist(wrist.h, wrist.y, RIG.strikeAngle);
   // Raise and pull back before the hit so the slam reads as a big swing.
-  const windup = solveWrist(
-    wrist.h - 0.9,
-    wrist.y + 1.15,
-    (15 * Math.PI) / 180,
-  );
+  const windup = solveWrist(wrist.h - 0.9, wrist.y + 1.15, 15 * deg);
   const recoil = solveWrist(
     wrist.h - 0.15,
     wrist.y + 0.45,
@@ -153,5 +180,35 @@ export function mixPose(a: Pose, b: Pose, t: number): Pose {
     boom: a.boom + (b.boom - a.boom) * t,
     arm: a.arm + (b.arm - a.arm) * t,
     bucket: a.bucket + (b.bucket - a.bucket) * t,
+  };
+}
+
+/** Boom lift over the higher end of a big move, and its near-vertical cap. */
+const LIFT = (40 * Math.PI) / 180;
+const LIFT_CAP = (95 * Math.PI) / 180;
+/** Share of the arm's fold kept at the lifted pose (1 = stays as it was). */
+const ARM_KEEP = 0.9;
+
+/**
+ * Joint-space path for the big moves (wind-up and return). Moving all joints
+ * together opens the folded arm while the boom is still low, which sweeps the
+ * wrist forward through the building. Instead the path bends through a
+ * lifted pose: boom raised well above both ends (capped near vertical), arm
+ * still mostly folded. A quadratic blend through it keeps the motion smooth.
+ */
+export function liftPose(from: Pose, to: Pose, t: number): Pose {
+  const via = {
+    boom: Math.min(LIFT_CAP, Math.max(from.boom, to.boom) + LIFT),
+    arm: from.arm + (to.arm - from.arm) * (1 - ARM_KEEP),
+    bucket: (from.bucket + to.bucket) / 2,
+  };
+  const u = 1 - t;
+  const curve = (a: number, v: number, b: number) =>
+    u * u * a + 2 * u * t * v + t * t * b;
+  return {
+    swing: from.swing + (to.swing - from.swing) * t,
+    boom: curve(from.boom, via.boom, to.boom),
+    arm: curve(from.arm, via.arm, to.arm),
+    bucket: curve(from.bucket, via.bucket, to.bucket),
   };
 }

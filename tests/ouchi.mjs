@@ -273,7 +273,11 @@ try {
         '0',
         'Taps during the drive are ignored',
       );
-      assert.equal(await field('standing'), '42', 'New house stands whole');
+      assert.equal(
+        await field('standing'),
+        await field('pieces'),
+        'New building stands whole',
+      );
       await shot(`ouchi-${width}x${height}-next-house`);
       await tap(width * 0.6, height * 0.5);
       await waitFor("document.querySelector('#field').dataset.hits==='1'");
@@ -286,6 +290,21 @@ try {
     report(
       `${width}x${height}: tap, queue cap, 4-hit collapse, rubble play, idle loop stop PASS`,
     );
+  }
+
+  // Developer frame-rate readout appears only with ?fps.
+  assert.equal(await evaluate("document.querySelector('#fps')"), null);
+  {
+    const previous = await evaluate('performance.timeOrigin');
+    await call('Page.navigate', { url: origin + '/ouchi-barabara/?fps' });
+    await waitFor(
+      `performance.timeOrigin !== ${previous} && document.querySelector('#field')?.dataset.ready==='true'`,
+    );
+    await tap(400, 400);
+    await waitFor(
+      "/fps/.test(document.querySelector('#fps')?.textContent ?? '')",
+    );
+    await idle();
   }
 
   // Keyboard: Enter attacks, held repeat does not.

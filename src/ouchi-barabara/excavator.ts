@@ -172,6 +172,47 @@ function bucketShapes() {
   };
 }
 
+/**
+ * Cylinder fixed along a direction in its parent part, only extending or
+ * retracting toward a moving end. Used where a cylinder free to swing would
+ * sink into the part by varying amounts as the joint turns.
+ */
+class SlidePiston {
+  private readonly end = new THREE.Vector3();
+  private readonly barrel: THREE.Mesh;
+  private readonly rod: THREE.Mesh;
+  constructor(
+    private readonly frame: THREE.Object3D,
+    private readonly start: THREE.Vector3,
+    private readonly direction: THREE.Vector3,
+    private readonly to: THREE.Object3D,
+    barrelGeometry: THREE.BufferGeometry,
+    rodGeometry: THREE.BufferGeometry,
+    barrelMaterial: THREE.Material,
+    rodMaterial: THREE.Material,
+  ) {
+    this.barrel = new THREE.Mesh(barrelGeometry, barrelMaterial);
+    this.rod = new THREE.Mesh(rodGeometry, rodMaterial);
+    this.barrel.castShadow = this.rod.castShadow = true;
+    const turn = new THREE.Quaternion().setFromUnitVectors(
+      THREE.Object3D.DEFAULT_UP,
+      direction,
+    );
+    this.barrel.quaternion.copy(turn);
+    this.rod.quaternion.copy(turn);
+    this.barrel.position.copy(start);
+    frame.add(this.barrel, this.rod);
+  }
+  update() {
+    this.frame.worldToLocal(this.to.getWorldPosition(this.end));
+    // Length to where the moving end projects onto the cylinder's line.
+    const length = Math.max(0.3, this.end.sub(this.start).dot(this.direction));
+    this.rod.position.copy(this.start).addScaledVector(this.direction, length);
+    this.barrel.scale.set(1, length * 0.58, 1);
+    this.rod.scale.set(1, length * 0.58, 1);
+  }
+}
+
 class Piston {
   private readonly a = new THREE.Vector3();
   private readonly b = new THREE.Vector3();
@@ -222,7 +263,7 @@ export class Excavator {
   /** Bucket collision box size (local axes). */
   readonly bucketSize = new THREE.Vector3(0.9, 0.55, 0.84);
   pose: Pose = readyPose();
-  private readonly pistons: Piston[] = [];
+  private readonly pistons: (Piston | SlidePiston)[] = [];
   /** Arm-side end of the arm cylinder; slides with the arm angle. */
   private readonly armCylinderEnd = new THREE.Object3D();
   private readonly tread: THREE.CanvasTexture;
@@ -284,22 +325,30 @@ export class Excavator {
       return point;
     };
     this.arm.add(this.armCylinderEnd);
-    const pairs: [THREE.Object3D, THREE.Object3D][] = [
-      [anchor(this.boom, 1.3, 0.9), this.armCylinderEnd],
-      [anchor(this.arm, 0.3, 0.3), anchor(this.bucket, -0.1, 0.18)],
-    ];
-    for (const [from, to] of pairs)
-      this.pistons.push(
-        new Piston(
-          this.upper,
-          from,
-          to,
-          barrelGeometry,
-          rodGeometry,
-          steel,
-          chrome,
-        ),
-      );
+    this.pistons.push(
+      new Piston(
+        this.upper,
+        anchor(this.boom, 1.3, 0.9),
+        this.armCylinderEnd,
+        barrelGeometry,
+        rodGeometry,
+        steel,
+        chrome,
+      ),
+      // The bucket cylinder keeps its angle along the top of the arm and
+      // only extends with the bucket, so its overlap with the arm stays the
+      // same however far the bucket turns.
+      new SlidePiston(
+        this.arm,
+        new THREE.Vector3(0.3, 0.3, 0),
+        new THREE.Vector3(1.7, -0.08, 0).normalize(),
+        anchor(this.bucket, -0.1, 0.18),
+        barrelGeometry,
+        rodGeometry,
+        steel,
+        chrome,
+      ),
+    );
     this.applyPose(this.pose);
   }
 

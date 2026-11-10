@@ -74,18 +74,32 @@ export class Scenery {
     );
     const disc = this.geometry(new THREE.CircleGeometry(1, 40));
     const hill = this.geometry(new THREE.SphereGeometry(1, 20, 12));
+    const hillShapes: [x: number, z: number, r: number][] = [
+      [-6, -34, 10],
+      [3, -40, 13],
+    ];
+    const blocks = BLOCKS.to - BLOCKS.from + 1;
+    const hills = new THREE.InstancedMesh(
+      hill,
+      this.material(0xffffff),
+      blocks * hillShapes.length,
+    );
+    hills.frustumCulled = false;
+    this.group.add(hills);
+    const dummy = new THREE.Object3D();
+    const color = new THREE.Color();
+    let h = 0;
     for (let k = BLOCKS.from; k <= BLOCKS.to; k++) {
       const base = k * BLOCK;
       if (base % SITE_SPACING === 0)
         flat(disc, SITE, base + 1.8, 0.01, 7.5, 4.2);
-      [
-        [-6, -34, 10],
-        [3, -40, 13],
-      ].forEach(([x, z, r], i) => {
-        const mesh = new THREE.Mesh(hill, this.material(HILLS[i]));
-        mesh.scale.setScalar(r);
-        mesh.position.set(base + x, -r * 0.55, z);
-        this.group.add(mesh);
+      hillShapes.forEach(([x, z, r], i) => {
+        dummy.position.set(base + x, -r * 0.55, z);
+        dummy.scale.setScalar(r);
+        dummy.updateMatrix();
+        hills.setMatrixAt(h, dummy.matrix);
+        hills.setColorAt(h, color.set(HILLS[i]));
+        h++;
       });
     }
     this.plant();

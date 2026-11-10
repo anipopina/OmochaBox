@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { requireElement } from '../shared/dom';
 import {
+  CAMERA,
   CameraRig,
   fitShadowCamera,
   SUN_AIM_X,
@@ -11,8 +12,9 @@ import {
 import { Excavator } from './excavator';
 import { Effects } from './effects';
 import { GROUP, House, HouseKit, type Piece } from './house';
-import { PALETTES, twoStoryHouse, type AttackSpec } from './house-plan';
+import { BUILDINGS, PALETTES, type AttackSpec } from './house-plan';
 import {
+  liftPose,
   mixPose,
   pushPose,
   readyPose,
@@ -20,13 +22,28 @@ import {
   RIG,
   type Point3,
   type Pose,
+  type StrikeStyle,
 } from './rig';
+import { Quality } from './quality';
 import { Scenery, SITE_SPACING } from './scenery';
 
 const canvas = requireElement('#field', HTMLCanvasElement);
 const fallback = requireElement('#fallback', HTMLElement);
 const nextButton = requireElement('#next', HTMLButtonElement);
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+// Developer switches: `?fps` shows frame rate and quality level; `?quality=max`
+// pins full quality (checks and screenshots).
+const params = new URLSearchParams(location.search);
+const quality = new Quality(params.get('quality') === 'max', () => resize());
+const fpsMeter = params.has('fps') ? createFpsMeter() : null;
+
+function createFpsMeter() {
+  const meter = document.createElement('div');
+  meter.id = 'fps';
+  meter.setAttribute('aria-hidden', 'true');
+  document.body.append(meter);
+  return { element: meter, since: 0 };
+}
 
 /** Taps accepted while an attack plays; more are dropped, not stored. */
 const MAX_QUEUE = 2;
@@ -43,24 +60,19 @@ const SETTLE_LIMIT = 9;
 /** Seconds for the drive to the next house (reduced motion: shorter). */
 const TRAVEL_TIME = 6;
 const TRAVEL_TIME_REDUCED = 4;
-/** Camera follow smoothing (seconds) and look-ahead per unit of speed. */
-const FOLLOW_SMOOTH = 0.5;
-const FOLLOW_SMOOTH_REDUCED = 0.12;
-const LOOK_AHEAD = 0.25;
 /** Seconds for leftover rubble of the previous house to shrink away. */
 const RETIRE_TIME = 0.6;
+/**
+ * Share of the road (by distance) driven with the bucket down, plowing, and
+ * where the lift into the carry pose (and the dust) has fully faded.
+ */
+const PLOW_UNTIL = 0.22;
+const PLOW_END = 0.4;
 /** Bearing windows (radians) tried in turn when aiming rubble play. */
 const AIM_SPREADS = [0.45, 0.9];
 
 type PhaseKind =
-  | 'drive'
-  | 'windup'
-  | 'strike'
-  | 'recoil'
-  | 'return'
-  | 'lower'
-  | 'travel'
-  | 'raise';
+  'drive' | 'windup' | 'strike' | 'recoil' | 'return' | 'lower' | 'travel';
 
 /** One bucket swing in world coordinates. */
 interface Swing {
@@ -70,6 +82,7 @@ interface Swing {
   zone?: number;
   final?: boolean;
   power?: number;
+  style?: StrikeStyle;
   /** Rubble play: the loose piece being knocked, or null for bare ground. */
   poke?: Piece | null;
 }
@@ -81,6 +94,10 @@ interface Phase {
   ease: (t: number) => number;
   toX?: number;
   swing?: Swing;
+  /** Path through a lifted pose instead of a straight joint blend. */
+  lift?: boolean;
+  /** Pose along the phase's eased progress, instead of from→to. */
+  poseAt?: (t: number) => Pose;
   /** Captured when the phase starts, so chained moves blend smoothly. */
   from?: Pose;
   fromX?: number;
@@ -113,12 +130,11 @@ try {
   fallback.hidden = false;
   throw new Error('WebGL is unavailable');
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(38, 1, 0.5, 140);
+const camera = new THREE.PerspectiveCamera(CAMERA.fov, 1, 0.5, 140);
 const view = new CameraRig(camera);
 
 // Sky: a vertical gradient drawn as a flat screen-filling background.
@@ -212,8 +228,15 @@ excavator.bucket.add(tip);
 const effects = new Effects();
 scene.add(effects.group);
 
+/** The first house is always the two-storey one; later ones vary. */
+const FIRST_BUILDING = 1;
+let buildingIndex = FIRST_BUILDING;
 let paletteIndex = 0;
-let house = new House(twoStoryHouse(PALETTES[paletteIndex]), kit, world);
+let house = new House(
+  BUILDINGS[buildingIndex](PALETTES[paletteIndex]),
+  kit,
+  world,
+);
 scene.add(house.group);
 /** Rubble of the house being left behind while driving to the next one. */
 let previous: House | null = null;
@@ -269,12 +292,22 @@ function demolished() {
   return attackIndex >= house.plan.attacks.length;
 }
 
+/** How much the bucket is still down plowing (1 → 0 while lifting). */
+function plowAmount() {
+  const phase = phases[0];
+  if (phase?.kind !== 'travel') return 0;
+  const t = phase.ease(phase.elapsed / phase.duration);
+  return 1 - THREE.MathUtils.smoothstep(t, PLOW_UNTIL, PLOW_END);
+}
+
+/** Driving with the bucket (mostly) still down in the rubble. */
+function plowing() {
+  return plowAmount() > 0.5;
+}
+
 function transitioning() {
   return phases.some(
-    (phase) =>
-      phase.kind === 'lower' ||
-      phase.kind === 'travel' ||
-      phase.kind === 'raise',
+    (phase) => phase.kind === 'lower' || phase.kind === 'travel',
   );
 }
 
@@ -292,8 +325,13 @@ function resetScene(rebuild: boolean) {
     previous?.dispose();
     retiring?.house.dispose();
     house.dispose();
+    buildingIndex = FIRST_BUILDING;
     paletteIndex = 0;
-    house = new House(twoStoryHouse(PALETTES[paletteIndex]), kit, world);
+    house = new House(
+      BUILDINGS[buildingIndex](PALETTES[paletteIndex]),
+      kit,
+      world,
+    );
     scene.add(house.group);
   }
   previous = null;
@@ -311,6 +349,7 @@ function resetScene(rebuild: boolean) {
   press = null;
   holding = false;
   view.reset();
+  view.fit();
   excavator.root.position.x = house.plan.attacks[0].rootX;
   excavator.applyPose(readyPose());
   syncKinematics(0);
@@ -341,7 +380,7 @@ function syncKinematics(dt: number) {
     kind === 'travel' && previous !== null && x > previous.originX + 7;
   machineBody.collisionFilterMask = pastSite ? 0 : DEBRIS_MASK;
   bucketBody.collisionFilterMask =
-    !pastSite && (kind === 'strike' || kind === 'travel') ? DEBRIS_MASK : 0;
+    !pastSite && (kind === 'strike' || plowing()) ? DEBRIS_MASK : 0;
   excavator.bucketCore.getWorldPosition(bucketWorld);
   excavator.bucketCore.getWorldQuaternion(bucketQuaternion);
   bucketBody.position.set(bucketWorld.x, bucketWorld.y, bucketWorld.z);
@@ -367,7 +406,7 @@ function syncKinematics(dt: number) {
 }
 
 function planSwing(swing: Swing) {
-  const plan = strikePlan(swing.rootX, swing.target);
+  const plan = strikePlan(swing.rootX, swing.target, swing.style);
   const next: Phase[] = [];
   if (Math.abs(swing.rootX - excavator.root.position.x) > 1e-6)
     next.push({
@@ -378,17 +417,19 @@ function planSwing(swing: Swing) {
       ease: easeInOut,
       elapsed: 0,
     });
+  // Unhurried wind-up and return around a quick slam.
   next.push(
     {
       kind: 'windup',
-      duration: 0.36,
+      duration: 0.6,
       to: plan.windup,
       ease: easeInOut,
+      lift: true,
       elapsed: 0,
     },
     {
       kind: 'strike',
-      duration: 0.17,
+      duration: 0.2,
       to: plan.strike,
       ease: easeIn,
       swing,
@@ -396,16 +437,17 @@ function planSwing(swing: Swing) {
     },
     {
       kind: 'recoil',
-      duration: 0.13,
+      duration: 0.15,
       to: plan.recoil,
       ease: easeOut,
       elapsed: 0,
     },
     {
       kind: 'return',
-      duration: 0.42,
+      duration: 0.6,
       to: readyPose(),
       ease: easeInOut,
+      lift: true,
       elapsed: 0,
     },
   );
@@ -421,6 +463,7 @@ function startAttack() {
     zone: attackIndex,
     final: spec.final,
     power: spec.power,
+    style: spec.style,
   });
   attackIndex++;
 }
@@ -669,6 +712,12 @@ function loosen(entry: (typeof pending)[number]) {
   house.loosen(piece, velocity, spin, simTime);
 }
 
+/** A random index in [0, count) other than `current`. */
+function pickOther(current: number, count: number) {
+  const index = Math.floor(Math.random() * (count - 1));
+  return index >= current ? index + 1 : index;
+}
+
 /**
  * Drive on to the next house: lower the bucket like a blade, plow through the
  * rubble (pushing it aside), and stop in front of a new house built one site
@@ -677,13 +726,11 @@ function loosen(entry: (typeof pending)[number]) {
 function beginTransition() {
   nextRequested = false;
   queued = 0;
-  let index = paletteIndex;
-  while (index === paletteIndex)
-    index = Math.floor(Math.random() * PALETTES.length);
-  paletteIndex = index;
+  buildingIndex = pickOther(buildingIndex, BUILDINGS.length);
+  paletteIndex = pickOther(paletteIndex, PALETTES.length);
   previous = house;
   house = new House(
-    twoStoryHouse(PALETTES[paletteIndex]),
+    BUILDINGS[buildingIndex](PALETTES[paletteIndex]),
     kit,
     world,
     previous.originX + SITE_SPACING,
@@ -707,16 +754,17 @@ function beginTransition() {
     {
       kind: 'travel',
       duration: travel,
-      to: pushPose(),
+      to: readyPose(),
       toX: house.originX + house.plan.attacks[0].rootX,
       ease: cruise,
-      elapsed: 0,
-    },
-    {
-      kind: 'raise',
-      duration: 0.5,
-      to: readyPose(),
-      ease: easeInOut,
+      // Plow through the old site, then lift into the carry pose for the
+      // rest of the road so the bucket arrives clear of the next building.
+      poseAt: (t) =>
+        mixPose(
+          pushPose(),
+          readyPose(),
+          THREE.MathUtils.smoothstep(t, PLOW_UNTIL, PLOW_END),
+        ),
       elapsed: 0,
     },
   ];
@@ -781,7 +829,13 @@ function updatePhases(dt: number) {
       excavator.root.position.x = x;
       excavator.roll(x - before);
     }
-    excavator.applyPose(mixPose(phase.from, phase.to, t));
+    excavator.applyPose(
+      phase.poseAt
+        ? phase.poseAt(t)
+        : phase.lift
+          ? liftPose(phase.from, phase.to, t)
+          : mixPose(phase.from, phase.to, t),
+    );
     if (phase.elapsed >= phase.duration) {
       phases.shift();
       if (phase.swing) impact(phase.swing);
@@ -799,7 +853,7 @@ function updatePhases(dt: number) {
 
 /** While plowing, nudge rubble ahead of the bucket off to the sides. */
 function plowAside() {
-  if (!previous || phases[0]?.kind !== 'travel') return;
+  if (!previous || !plowing()) return;
   const rootX = excavator.root.position.x;
   for (const piece of previous.pieces) {
     if (piece.loosened === null) continue;
@@ -873,7 +927,9 @@ function updateCamera(dt: number) {
       0,
       1,
     );
-    const ahead = reduced ? 0 : Math.max(0, machineSpeed) * LOOK_AHEAD;
+    const ahead = reduced
+      ? 0
+      : Math.max(0, machineSpeed) * CAMERA.follow.lookAhead;
     view.target = Math.min(
       house.originX,
       previous.originX + (house.originX - previous.originX) * progress + ahead,
@@ -882,7 +938,7 @@ function updateCamera(dt: number) {
     // Before the drive starts the old site stays framed.
     view.target = previous ? previous.originX : house.originX;
   }
-  view.follow(dt, reduced ? FOLLOW_SMOOTH_REDUCED : FOLLOW_SMOOTH);
+  view.follow(dt, reduced ? CAMERA.follow.smoothReduced : CAMERA.follow.smooth);
   placeSun();
 }
 
@@ -900,6 +956,7 @@ function placeSun() {
  */
 function fitShadow() {
   view.apply(0);
+  camera.updateMatrixWorld();
   placeSun();
   const size = fitShadowCamera(
     camera,
@@ -907,12 +964,13 @@ function fitShadow() {
     sun.target.position,
     sun.shadow.camera,
   );
-  const map = size > 26 ? 2048 : 1024;
+  const map = Math.min(size > 26 ? 2048 : 1024, quality.current.shadowMap);
   if (sun.shadow.mapSize.x !== map) {
     sun.shadow.mapSize.set(map, map);
     sun.shadow.map?.dispose();
     sun.shadow.map = null;
   }
+  view.apply(0);
 }
 
 function updateRetiring(dt: number) {
@@ -926,16 +984,17 @@ function updateRetiring(dt: number) {
   }
 }
 
-/** Puffs of dust at the bucket while plowing. */
+/** Puffs of dust at the bucket while plowing, fading as it lifts. */
 function plowDust(dt: number) {
-  if (phases[0]?.kind !== 'travel' || motion.matches) return;
+  const amount = plowAmount();
+  if (amount < 0.05 || motion.matches) return;
   dustTimer -= dt;
   if (dustTimer > 0) return;
   dustTimer = 0.2;
   excavator.bucketCore.getWorldPosition(bucketWorld);
   effects.puff(
     new THREE.Vector3(bucketWorld.x + 0.3, 0.3, (Math.random() - 0.5) * 1.2),
-    1.4,
+    1.4 * amount,
   );
 }
 
@@ -986,6 +1045,8 @@ function report() {
   canvas.dataset.running = String(running);
   canvas.dataset.holding = String(holding);
   canvas.dataset.camera = view.shift.toFixed(2);
+  canvas.dataset.building = house.plan.id;
+  canvas.dataset.pieces = String(house.pieces.length);
   canvas.dataset.standing = String(
     house.pieces.filter((piece) => piece.loosened === null).length,
   );
@@ -997,9 +1058,15 @@ function render() {
 }
 
 function frame(now: number) {
+  if (lastFrame !== null) quality.sample((now - lastFrame) / 1000);
   const dt =
     lastFrame === null ? STEP : Math.min(0.05, (now - lastFrame) / 1000);
   lastFrame = now;
+  if (fpsMeter && now - fpsMeter.since > 500) {
+    fpsMeter.since = now;
+    const info = renderer.info.render;
+    fpsMeter.element.textContent = `${Math.round(1 / quality.average)} fps · Q${quality.level} · ${info.calls} draws · ${info.triangles} tris`;
+  }
   simTime += dt;
   if (press && !holding && now - press.since >= HOLD_DELAY * 1000)
     holding = true;
@@ -1035,6 +1102,7 @@ function wake() {
   if (running || !active || document.hidden) return;
   running = true;
   lastFrame = null;
+  quality.resume();
   renderer.setAnimationLoop(frame);
 }
 
@@ -1062,6 +1130,9 @@ function suspend() {
 function resize() {
   const width = Math.max(1, canvas.clientWidth);
   const height = Math.max(1, canvas.clientHeight);
+  renderer.setPixelRatio(
+    Math.min(devicePixelRatio, quality.current.pixelRatio),
+  );
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
