@@ -1,0 +1,67 @@
+{
+  "created": "2026-11-10",
+  "generator": "OpenAI image_gen",
+  "source": "Project game Canvas capture -> reference-generated.png -> card-original.png",
+  "reference_provenance": "../library-provenance.json records existing user-provided leaf images visible in the references. All leaf motifs were removed from the final card image.",
+  "generation": [
+    {
+      "input": "reference-game.png",
+      "output": "reference-generated.png",
+      "prompt": "Use case: precise-object-edit. Asset type: 2:1 landscape game card thumbnail. The supplied image is the EDIT TARGET: an actual screenshot of the current children's light-drawing game. This must look like a screenshot of THAT SAME GAME, NOT a polished new illustration. Preserve the entire original image's composition, exact flower positions, relative sizes, colors, rotations, and overall shapes. Preserve the six SHORT, BROAD, ROUNDED, overlapping oval petals of every flower exactly; do not turn them into long tapered petals. Preserve the round golden flower centers and their existing simple subtle gradient/one broad highlight. Preserve the original realistic illustrated teal corner leaf assets, their texture and placement. Preserve the muted navy background, faint sparse large star silhouettes, blurry spots, and dark negative space. Keep existing glow very restrained at its original strength. Only clean up the tiny transient colored dots/sparkle flecks overlaid on the flower centers or petals: remove these flecks, leaving clean petals and plain round centers. Do not add ANY decorative elements, light streaks, stars, text, UI, borders, highlights, realistic flower details, outlines, beams, bright effects, extra petals, or extra flowers. Do not beautify or increase saturation/brightness. Maintain the humble soft Canvas-rendered appearance of the real game. Output one full-bleed 2:1 landscape image."
+    },
+    {
+      "input": "reference-generated.webp",
+      "output": "card-original.png",
+      "prompt": "Use case: precise-object-edit. Asset type: landscape 2:1 card thumbnail for a toddler's light-drawing game. The supplied image is the edit target. Make ONLY these requested changes:\n1. Remove ALL corner foliage, grass, leaves, branches and plant motifs completely. Replace these areas seamlessly with the SAME muted deep navy background gradient and very faint sparse background stars. No border or corner ornament.\n2. Add simple hand-drawn light strokes that accurately resemble the actual Canvas toy. A stroke is a solid pastel-colored line of UNIFORM thickness with fully round ends and rounded turns, approximately 20–25 pixels wide on a 1200x600 canvas, with only a subtle low-opacity halo roughly 33–40 pixels wide. It looks like a child's finger drew a curved line of colored light. Cyan #76ddff, soft gold #ffe276, pink #ffb7d6, lavender #b4aaff. NO white-hot cores, NO pointed/tapered ends, NO neon beam/ribbon/comet/laser, NO elaborate trails, NO fireworks or extra sparkle decorations. One or two legible strokes, gently imperfect curves; restrained glow only. The lines are independent drawing marks, NOT stems or connectors between flowers. Draw lines behind flowers if they overlap.\nInvariants: Preserve existing flower count, colors, the original short broad rounded overlapping SIX petals, golden round centers, original shading and restrained outer glow. Preserve the original modest screenshot-like rendering; do NOT upgrade to fancy illustration, increase glow/saturation, elongate petals, add tiny dots or white highlights on petals. Keep the same muted background stars with a few soft blurry shapes. No text, UI, icons, frame or watermark. Keep flowers and recognizable portions of strokes inside the central 80% of width and 80% of height so moderate thumbnail cropping remains safe. Wide full-bleed image, 2:1.\nKeep the yellow flower on the left and pink/lavender flowers on the right. Add a cyan drawn stroke curving gently through the open central negative space without obscuring the flowers; optionally one short pink curved mark in the open upper-left. Maintain ample navy space so the image stays readable."
+    }
+  ],
+  "delivery": {
+    "path": "src/assets/previews/hikari-no-oekaki.webp",
+    "dimensions": [
+      1200,
+      600
+    ],
+    "format": "WebP",
+    "mode": "RGB",
+    "processing": "Pillow resize LANCZOS; quality=90; method=6"
+  },
+  "usage_review": {
+    "reviewed": "2026-11-10",
+    "terms": "https://openai.com/policies/terms-of-use/",
+    "terms_effective": "2026-01-01",
+    "basis": "The Content section assigns Output rights to the user as between OpenAI and the user, subject to applicable law and third-party rights. No separate stock-asset license was introduced.",
+    "permitted_use": "Modification, inclusion of the original in the public source repository, and Web delivery of the optimized image.",
+    "attribution": "No output-specific attribution requirement identified in the reviewed terms. Retain this generation provenance and do not represent the output as human-generated."
+  },
+  "files": {
+    "reference-game.png": {
+      "bytes": 800423,
+      "sha256": "2bdd3d5c05cbacc28e1e92a6b14c2b743f2edb2234179519048bf2d63d74ec07"
+    },
+    "reference-generated.png": {
+      "bytes": 1607190,
+      "sha256": "c44a590e3a978114cae397dac90cced73f76a40e46d74d7277dd2f64e6ce6c6f"
+    },
+    "card-original.png": {
+      "bytes": 1507829,
+      "sha256": "20feb2ce54d5b14583c29954632ac5fcf61dc8e098650ddaad17406ca6844cf0"
+    },
+    "src/assets/previews/hikari-no-oekaki.webp": {
+      "bytes": 23720,
+      "sha256": "0367f887d369276fe51e2429e232303e6625570523f2808e96a7bfc784138ef9"
+    },
+    "reference-generated.webp": {
+      "bytes": 44124,
+      "sha256": "025a3d4505c3bddf7c8284edabeb407330b9b996c6f424e9aecf486696c541b3"
+    }
+  },
+  "reference_processing": {
+    "input": "reference-generated.png",
+    "output": "reference-generated.webp",
+    "dimensions": [
+      1200,
+      600
+    ],
+    "processing": "RGB; resize LANCZOS; WebP quality=90; method=6"
+  }
+}

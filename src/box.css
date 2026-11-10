@@ -281,78 +281,14 @@ a:focus-visible {
   transform: rotate(12deg);
 }
 .garden-preview {
-  background:
-    url('hikari-no-oekaki/assets/leaves-top-left.webp') top left/180px no-repeat,
-    url('hikari-no-oekaki/assets/leaves-bottom-right.webp') bottom right/180px
-      no-repeat,
-    radial-gradient(circle, #20364a, #101a30);
+  background: #101a30;
 }
-.flower {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  width: 1px;
-  height: 1px;
-}
-.flower i {
-  position: absolute;
-  left: -25px;
-  top: -68px;
-  width: 50px;
-  height: 70px;
-  border-radius: 50%;
-  background: #ffe276;
-  transform-origin: 25px 68px;
-}
-.flower i:nth-child(2) {
-  transform: rotate(60deg);
-}
-.flower i:nth-child(3) {
-  transform: rotate(120deg);
-}
-.flower i:nth-child(4) {
-  transform: rotate(180deg);
-}
-.flower i:nth-child(5) {
-  transform: rotate(240deg);
-}
-.flower i:nth-child(6) {
-  transform: rotate(300deg);
-}
-.flower b {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  left: -16px;
-  top: -16px;
-  border-radius: 50%;
-  background: #fff7d7;
-}
-.spark {
-  position: absolute;
-  color: #b4aaff;
-  font-size: 35px;
-}
-.one {
-  left: 24%;
-  top: 25%;
-}
-.two {
-  right: 18%;
-  bottom: 21%;
-  color: #76ddff;
-}
-.trail {
-  position: absolute;
-  width: 80px;
-  height: 60px;
-  border: 10px solid #76ddff;
-  border-top: 0;
-  border-right: 0;
-  border-radius: 0 0 0 65%;
-  left: 17%;
-  bottom: 23%;
-  transform: rotate(-25deg);
+.garden-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 .window-preview {
   background: #64c5dd;
@@ -371,18 +307,6 @@ a:focus-visible {
   height: 100%;
   object-fit: cover;
   object-position: 50% 60%;
-}
-.window-preview span {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  padding: 8px 16px;
-  border: 2px solid #10194c;
-  border-radius: 99px;
-  background: #fff333;
-  color: #10194c;
-  font-size: 15px;
-  font-weight: 900;
 }
 .card-copy {
   display: flex;

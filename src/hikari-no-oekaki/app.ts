@@ -21,6 +21,7 @@ interface Stroke extends TimedPoint {
 }
 interface Flower extends TimedPoint {
   radius: number;
+  rotation: number;
   released: number;
 }
 type ParticleKind = 'drag' | 'charge' | 'burst' | 'dissolve';
@@ -72,6 +73,24 @@ type Voice = FlowerVoice | SampleVoice;
     voices = new Set<Voice>();
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const garden = document.createElement('canvas');
+  // Reproducible random positions keep the backdrop still across redraws and resize.
+  // Chosen to avoid strong overlaps in both portrait and landscape layouts.
+  let backgroundSeed = 0x782bb076;
+  const backgroundRandom = () => {
+    backgroundSeed ^= backgroundSeed << 13;
+    backgroundSeed ^= backgroundSeed >>> 17;
+    backgroundSeed ^= backgroundSeed << 5;
+    return (backgroundSeed >>> 0) / 0x100000000;
+  };
+  const backgroundMarks = Array.from({ length: 24 }, (_, index) => ({
+    x: backgroundRandom(),
+    y: backgroundRandom(),
+    kind: Math.floor(backgroundRandom() * 3),
+    radius: 12 + backgroundRandom() * 20,
+    alpha: 0.06 + backgroundRandom() * 0.08,
+    rotation: backgroundRandom() * Math.PI * 2,
+    soft: index % 3 === 0,
+  }));
   // Independent approved corner images. They never create an input-hit layer.
   const leaves = [topLeftUrl, topRightUrl, bottomLeftUrl, bottomRightUrl].map(
     (url) => {
@@ -173,22 +192,28 @@ type Voice = FlowerVoice | SampleVoice;
           size,
         );
     });
-    g.globalAlpha = 1;
     // A stationary mix of points and stars: no flicker, no extra animation loop.
-    for (let i = 0; i < 24; i++) {
-      const x = (i * 137 + 31) % Math.max(1, width);
-      const y = height * (0.18 + ((i * 7) % 17) / 25);
-      if (i % 3 === 0) circle(g, x, y, 1.15, '#8ba5b2');
+    for (const mark of backgroundMarks) {
+      const radius = mark.radius * sceneScale();
+      g.save();
+      g.translate(mark.x * width, mark.y * height);
+      g.rotate(mark.rotation);
+      g.globalAlpha = mark.alpha * (mark.soft ? 0.8 : 1);
+      // Blur only the static distant marks, leaving leaves and drawing crisp.
+      if (mark.soft) g.filter = `blur(${radius * 0.12}px)`;
+      if (mark.kind === 0) circle(g, 0, 0, radius * 0.35, '#8ba5b2');
       else
         star(
           g,
-          x,
-          y,
-          i % 2 ? 3.2 : 2.6,
-          i % 2 ? '#91adb9' : '#b7b699',
-          i % 3 === 1 ? 5 : 4,
+          0,
+          0,
+          radius,
+          mark.kind === 1 ? '#91adb9' : '#b7b699',
+          mark.kind === 1 ? 5 : 4,
         );
+      g.restore();
     }
+    g.globalAlpha = 1;
   }
   function background() {
     ctx.globalAlpha = 1;
@@ -290,7 +315,7 @@ type Voice = FlowerVoice | SampleVoice;
       const radius = f.radius * grow;
       for (let k = 0; k < 6; k++) {
         const dissolve = clamp((age - 3650 - k * 135) / 430, 0, 1),
-          a = (k * Math.PI) / 3 - Math.PI / 2;
+          a = f.rotation + (k * Math.PI) / 3 - Math.PI / 2;
         if (dissolve > 0 && !(f.released & (1 << k))) {
           f.released |= 1 << k;
           emit(
@@ -310,7 +335,7 @@ type Voice = FlowerVoice | SampleVoice;
         const px = radius * 0.57 * (1 - dissolve * 0.45);
         const rx = radius * 0.42 * (1 - dissolve);
         const ry = radius * 0.36 * (1 - dissolve * 0.65);
-        const sheen = ctx.createRadialGradient(
+        const petalFill = ctx.createRadialGradient(
           px + rx * 0.2,
           -ry * 0.28,
           0,
@@ -318,31 +343,15 @@ type Voice = FlowerVoice | SampleVoice;
           0,
           Math.max(rx, ry),
         );
-        sheen.addColorStop(0, '#fff8ef');
-        sheen.addColorStop(0.26, palette[f.color]);
-        sheen.addColorStop(0.76, palette[f.color]);
-        sheen.addColorStop(1, petalShades[f.color]);
-        ctx.fillStyle = sheen;
+        petalFill.addColorStop(0, palette[f.color]);
+        petalFill.addColorStop(0.76, palette[f.color]);
+        petalFill.addColorStop(1, petalShades[f.color]);
+        ctx.fillStyle = petalFill;
         ctx.shadowColor = palette[f.color] + '65';
         ctx.shadowBlur = 10 * sceneScale();
         ctx.beginPath();
         ctx.ellipse(px, 0, rx, ry, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.clip();
-        ctx.strokeStyle = '#fff8ef55';
-        ctx.lineWidth = 1.1 * sceneScale();
-        ctx.beginPath();
-        ctx.ellipse(
-          px,
-          0,
-          rx * 0.91,
-          ry * 0.9,
-          0,
-          Math.PI * 1.05,
-          Math.PI * 1.8,
-        );
-        ctx.stroke();
         ctx.restore();
       }
       const center = age > 4750 ? 1 - clamp((age - 4750) / 350, 0, 1) : 1;
@@ -359,16 +368,6 @@ type Voice = FlowerVoice | SampleVoice;
       core.addColorStop(0.5, '#ffe471');
       core.addColorStop(1, f.color === 1 ? '#dd9425' : '#f2b83c');
       circle(ctx, f.x, f.y, coreRadius, core);
-      for (let seed = 0; seed < 7; seed++) {
-        const angle = (seed * Math.PI * 2) / 7;
-        circle(
-          ctx,
-          f.x + Math.cos(angle) * coreRadius * 0.65,
-          f.y + Math.sin(angle) * coreRadius * 0.65,
-          coreRadius * 0.055,
-          '#fff6bd',
-        );
-      }
       circle(
         ctx,
         f.x - radius * 0.055 * center,
@@ -729,6 +728,7 @@ type Voice = FlowerVoice | SampleVoice;
       color: p.color,
       time: now,
       radius: flowerRadius(chargeAt(p, now)),
+      rotation: Math.random() * Math.PI * 2,
       released: 0,
     });
     const version = generation,
