@@ -17,7 +17,7 @@ npm run preview:production
 - 東京の非公開S3からCloudFront OACで配信し、HTTPはHTTPSへ転送。S3・CloudFrontのアクセスログは作成しません。
 - CloudFront用のACM証明書は米国東部（us-east-1）でDNS検証。既存の `anipopina.com` 公開ゾーンを検索し、証明書検証レコードと本番ホストのA／AAAAレコードを作ります。
 - `/遊び/` を `/遊び/index.html` に解決し、非公開・存在しないパスは404にします。
-- 再公開ではS3の不要ファイルを削除し、CloudFrontの全パスを無効化します。`false` に変えた遊びも次回デプロイで配信対象から外れます。
+- 再公開ではS3の不要ファイルを削除し、CloudFrontの全パスを無効化します。
 - スタック削除保護を有効にし、S3はスタック削除時も保持します。
 
 ## 初回準備とデプロイ
