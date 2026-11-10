@@ -1,3 +1,4 @@
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -286,7 +287,7 @@ try {
   await settled();
   assert.equal(await page(), 0);
   await click('#back');
-  await waitFor("document.querySelectorAll('.game-card').length===20");
+  await waitFor(catalogueReady);
   assert.ok(
     await evaluate(
       '!!document.querySelector(\'a[href="https://anipopina.com/"]\')',

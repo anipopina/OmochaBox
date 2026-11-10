@@ -1,3 +1,4 @@
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -114,7 +115,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? catalogueReady
         : "document.querySelector('#glass')?.dataset.ready === 'true'",
     );
   };
@@ -341,7 +342,7 @@ try {
   await delay(500);
   assert.equal(await evaluate('window.rafCalls'), frames);
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===20");
+  await waitFor(catalogueReady);
   assert.ok(
     await evaluate(
       '!!document.querySelector(\'a[href="https://anipopina.com/"]\')',

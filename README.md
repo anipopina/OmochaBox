@@ -41,14 +41,17 @@ npm run dev
 
 `src/` を編集するとブラウザーへ反映されます。
 
-| コマンド          | 用途                                |
-| ----------------- | ----------------------------------- |
-| `npm run dev`     | 開発サーバー                        |
-| `npm run check`   | 型・ESLint・整形の検査              |
-| `npm run format`  | Prettierで整形                      |
-| `npm run build`   | 型チェックと公開用ビルド（`dist/`） |
-| `npm run preview` | ビルド結果のローカル確認            |
-| `npm test`        | ビルド出力・素材・ブラウザーの検証  |
+| コマンド                          | 用途                                         |
+| --------------------------------- | -------------------------------------------- |
+| `npm run dev`                     | 開発サーバー                                 |
+| `npm run check`                   | 型・ESLint・整形の検査                       |
+| `npm run format`                  | Prettierで整形                               |
+| `npm run build`                   | 型チェックと公開用ビルド（`dist/`）          |
+| `npm run preview`                 | ビルド結果のローカル確認                     |
+| `npm test` / `npm run test:smoke` | 通常ビルドと軽い全作品の入口・往復・素材確認 |
+| `npm run test:toy -- <slug>`      | 通常ビルド・対象の詳細検査と往復確認         |
+| `npm run test:full`               | AWS向けを含む全体回帰（節目のみ）            |
+| `npm run test:list`               | 対象slugと詳細検査の対応表                   |
 
 ブラウザーテストにはChromiumが必要です。実行ファイルの指定方法や個別の検査コマンドは [開発ガイド](docs/development.md) を参照してください。
 
@@ -71,7 +74,9 @@ docs/                         開発資料・過去の検証記録
 
 1. `src/<slug>/` に `index.html`・`app.ts`・`style.css`・`README.md` と必要な素材を追加します。
 2. `src/games.json` に遊びを登録し、`src/previews/<slug>.ts` にカードの図案を追加します。
-3. 遊び固有の検証と入口からの往復を確認し、`npm run check` と `npm test` を実行します。
+3. 詳細検査を `tests/test-plan.mjs` に登録し、`npm run check` と `npm run test:toy -- <slug>` を実行します。独立した実画面レビューも行います。毎日の追加では全体回帰・AWS用ビルドは不要です。
+
+共通部分の変更や本番反映前の検証範囲は [開発ガイド](docs/development.md#検証範囲の選び方) に従います。
 
 HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材の参照方法やページの共通要件は [開発ガイド](docs/development.md) を参照してください。
 

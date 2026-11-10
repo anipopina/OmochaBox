@@ -1,3 +1,4 @@
+import { catalogueReady } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import {
   MAX_SPEED,
@@ -133,7 +134,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? catalogueReady
         : "document.querySelector('#wheel')?.dataset.active !== undefined",
     );
   };
@@ -394,7 +395,7 @@ try {
   );
   await shot('pinwheel-reduced');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===20");
+  await waitFor(catalogueReady);
   await evaluate(
     'document.querySelector(\'a[href="kurukuru-kazaguruma/"]\').scrollIntoView()',
   );

@@ -1,3 +1,4 @@
+import { catalogueReady } from './catalogue.mjs';
 import { createStaticServer } from './static-server.mjs';
 import { readFile, mkdir, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
@@ -152,16 +153,11 @@ try {
   await mkdir(join(root, 'test-results'), { recursive: true });
   const productionOrigin = `http://127.0.0.1:${productionServer.address().port}`;
   await call('Page.navigate', { url: productionOrigin + '/' });
-  for (
-    let i = 0;
-    i < 100 &&
-    !(await evaluate('document.querySelectorAll(".game-card").length === 21'));
-    i++
-  )
+  for (let i = 0; i < 100 && !(await evaluate(catalogueReady)); i++)
     await delay(50);
   assert.equal(
-    await evaluate('document.querySelectorAll(".game-card").length'),
-    21,
+    await evaluate(catalogueReady),
+    true,
     'Production hub loads bundled modules',
   );
   assert.equal(await evaluate('typeof window.__test'), 'undefined');
@@ -862,10 +858,7 @@ try {
       });
       await call('Page.navigate', { url: origin + '/' });
       await delay(300);
-      assert.equal(
-        await evaluate('document.querySelectorAll(".game-card").length'),
-        21,
-      );
+      assert.equal(await evaluate(catalogueReady), true);
       assert.equal(
         await evaluate('document.querySelector("h1").textContent'),
         'すきなあそびを えらんでね！',
