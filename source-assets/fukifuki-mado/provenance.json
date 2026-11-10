@@ -1,48 +1,5 @@
 {
-  "source": "OpenAI image generation, created for OmochaBox on 2026-10-20",
-  "original": "exec-8a72166d-1120-4d04-8f63-4d9a1205450d.png",
-  "sha256": "74253443a866cafa060b69b55212232bdec6ab1f0e5216199d85fae1eb6d00ab",
-  "original_bytes": 2945907,
-  "output_bytes": 361864,
-  "output_size": [
-    1254,
-    1254
-  ],
-  "webp_quality": 86,
-  "third_party_assets": "None. Original generated artwork; no third-party stock or icon assets.",
   "images": [
-    {
-      "id": "garden",
-      "original": "garden-original.png",
-      "sha256": "74253443a866cafa060b69b55212232bdec6ab1f0e5216199d85fae1eb6d00ab",
-      "original_bytes": 2945907,
-      "output": "garden.webp",
-      "output_bytes": 361864,
-      "output_size": [
-        1254,
-        1254
-      ],
-      "webp_quality": 86,
-      "fog": {
-        "output": "fog/garden.webp",
-        "output_bytes": 5726,
-        "sha256": "aa1e64470b51a37141774391b4cd798de44523dd6c58e49fba8a9d5b69a58a56",
-        "output_size": [
-          680,
-          680
-        ],
-        "blur_radius": 34.0,
-        "webp_quality": 82,
-        "texture_seed": 20261021,
-        "veil_rgb": [
-          248,
-          252,
-          252
-        ],
-        "veil_center_alpha": 105,
-        "veil_edge_alpha": 135
-      }
-    },
     {
       "id": "animal-train",
       "original": "animal-train-original.jpg",
@@ -202,6 +159,102 @@
         "veil_center_alpha": 105,
         "veil_edge_alpha": 135
       }
+    },
+    {
+      "id": "dinosaur-splash",
+      "original": "dinosaur-splash-original.png",
+      "sha256": "b2046a753da138bf0a4fda3684b494c9daa6ab7cc5ea29e4a1f9bec36778c225",
+      "original_bytes": 2938983,
+      "output": "dinosaur-splash.webp",
+      "output_bytes": 349242,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/dinosaur-splash.webp",
+        "output_bytes": 6002,
+        "sha256": "7014b8641eab083f67a5c3c2b5505332a06229793c5113f8d6c91697401c843b",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
+    },
+    {
+      "id": "paper-space",
+      "original": "paper-space-original.png",
+      "sha256": "f26b564b623d62290a0a9fe4b504f7504b4742b1ddbdd82e107403d31e93fb91",
+      "original_bytes": 2556461,
+      "output": "paper-space.webp",
+      "output_bytes": 208302,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/paper-space.webp",
+        "output_bytes": 7684,
+        "sha256": "77db888edbe459d7742fed310b4d8e1dc7d38111fde6457cb822b64b0b51c677",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
+    },
+    {
+      "id": "animal-bakery",
+      "original": "animal-bakery-original.png",
+      "sha256": "d302afe3721af0b65c9f8f2206114c04d537f9bbd075299e579c87379c9be8e5",
+      "original_bytes": 2594725,
+      "output": "animal-bakery.webp",
+      "output_bytes": 248744,
+      "output_size": [
+        1254,
+        1254
+      ],
+      "webp_quality": 86,
+      "fog": {
+        "output": "fog/animal-bakery.webp",
+        "output_bytes": 5832,
+        "sha256": "f5a701525d7339cf9f37c9e0ee3317e5381c82f29e20d1ef72ba30f82f443aa2",
+        "output_size": [
+          680,
+          680
+        ],
+        "blur_radius": 34.0,
+        "webp_quality": 82,
+        "texture_seed": 20261021,
+        "veil_rgb": [
+          248,
+          252,
+          252
+        ],
+        "veil_center_alpha": 105,
+        "veil_edge_alpha": 135
+      }
     }
   ],
   "added_images_source": "Five images supplied by the user on 2026-10-21. Generation tool and third-party license details were not supplied.",
@@ -222,5 +275,79 @@
       960,
       960
     ]
-  }
+  },
+  "generated_sources": {
+    "dinosaur-splash": {
+      "source": "OpenAI built-in image_gen",
+      "created_on": "2026-11-10",
+      "prompt": "Use case: illustration-story. Create ONE square image, 1536x1536 preferred, for a toddler's wipe-to-reveal window game. Full bleed opaque background, no window frame, no UI, no lettering, no logo, no watermark. Bright saturated colors and very clear large silhouettes, cheerful and safe. Keep all essential characters inside the central 80% of the square. Composition easy for a two-year-old to recognize, with a few charming discoverable details. Avoid generic AI-art aesthetics: no glossy digital airbrush, no cinematic glow, no oversaturated rainbow haze, no overcomplicated decoration, no pseudo-text, no malformed anatomy. Scene: two friendly round dinosaurs playing at a shallow blue puddle in a sunny prehistoric meadow; a big green long-neck dinosaur and a smaller orange triceratops, a red ball and one yellow butterfly. Large joyful splash shapes, simple fern and distant volcano silhouettes. Medium: traditional opaque gouache children's picture-book painting on lightly textured paper, confident slightly irregular brush-painted shapes, rich emerald, orange, cobalt and yellow, minimal simple dot eyes. Handcrafted editorial illustration with intentional flat shapes and visible subtle paint edges. No 3D rendering.",
+      "third_party_assets": "None; generated without input images, external stock assets or named characters.",
+      "usage": {
+        "reviewed_on": "2026-11-10",
+        "terms": "https://openai.com/policies/row-terms-of-use/",
+        "publication_policy": "https://openai.com/policies/sharing-publication-policy/",
+        "allowed_project_uses": [
+          "image conversion",
+          "public repository inclusion",
+          "web distribution"
+        ],
+        "third_party_attribution_required": false,
+        "third_party_license_notice_required": false,
+        "limitations": "Subject to OpenAI terms and applicable law; no claim of exclusive copyright or uniqueness."
+      }
+    },
+    "paper-space": {
+      "source": "OpenAI built-in image_gen",
+      "created_on": "2026-11-10",
+      "prompt": "Use case: illustration-story. The attached ocean image is a STYLE REFERENCE ONLY. Make an entirely DIFFERENT scene with exactly the same charming physical cut-paper craft appearance: visible matte cardstock fibers, clearly cut layers, slightly irregular scissor-cut contours, gentle physical shadows, bold flat colors, simple large shapes, no digital gloss. New subject: a big red-and-white toy-like rocket with a round yellow porthole flying in a deep cobalt blue outer space; one cheerful small astronaut in a simple white suit waving beside it, a large golden ringed planet and a friendly crescent moon, just three large paper stars. No ocean creatures, no seaweed or coral. Recognizable uncluttered square composition for toddlers; main rocket and astronaut large and fully inside margins. Give the astronaut a simple small face visible within the round helmet, no complicated hoses or fingers; a mitten hand. Vivid red, white, yellow, cobalt and teal paper. Full-bleed opaque square image 1254x1254 or larger, no UI, no window frame, no lettering, no branding, no watermark.",
+      "input": {
+        "role": "style reference",
+        "source": "OpenAI built-in image_gen",
+        "created_on": "2026-11-10",
+        "prompt": "Use case: illustration-story. Create ONE square image, 1536x1536 preferred, for a toddler's wipe-to-reveal window game. Full bleed opaque background, no window frame, no UI, no lettering, no logo, no watermark. Bright saturated colors and very clear large silhouettes, cheerful and safe. Keep all essential characters inside the central 80% of the square. Composition easy for a two-year-old to recognize, with a few charming discoverable details. Avoid generic AI-art aesthetics: no glossy digital airbrush, no cinematic glow, no oversaturated rainbow haze, no overcomplicated decoration, no pseudo-text, no malformed anatomy. Scene: a large friendly orange octopus, one yellow fish, one blue fish and a small sea turtle in clear turquoise water; a few broad seaweed shapes, big pink coral and a shell on pale sand. Octopus has anatomically coherent eight arms, simple round eyes; keep subjects separated and clearly legible. Style: a photographed handmade cut-paper collage, matte colored cardstock in vivid solid colors, slight scissor-cut irregularities, a few layered paper edges with shallow natural shadows, beautifully simple picture-book composition. Broad blue water background with a couple of paper bubbles, no tiny fussy details. No gradients, no shiny 3D characters, no digital painting.",
+        "sha256": "9c3acf04d2dc68d9916968e283efc0c29fc5a148464657c479333d83fd139222"
+      },
+      "third_party_assets": "None; input artwork was generated for this project without third-party reference assets.",
+      "usage": {
+        "reviewed_on": "2026-11-10",
+        "terms": "https://openai.com/policies/row-terms-of-use/",
+        "publication_policy": "https://openai.com/policies/sharing-publication-policy/",
+        "allowed_project_uses": [
+          "image conversion",
+          "public repository inclusion",
+          "web distribution"
+        ],
+        "third_party_attribution_required": false,
+        "third_party_license_notice_required": false,
+        "limitations": "Subject to OpenAI terms and applicable law; no claim of exclusive copyright or uniqueness."
+      }
+    },
+    "animal-bakery": {
+      "source": "OpenAI built-in image_gen",
+      "created_on": "2026-11-10",
+      "prompt": "Use case: style-transfer. Reimagine the attached scene of a bear baker, rabbit customer and bread counter as an unusually simple, charming hand-drawn vintage children's picture book illustration. Keep the SUBJECT, but completely change the drawing language. Use economical, spontaneous wax-crayon contours with a few broad opaque gouache fills on warm paper; a human illustrator's deliberately awkward, slightly lopsided shapes, sparse marks, flattened perspective and areas of unpainted paper. Bear and rabbit have tiny solid dot eyes with NO glossy highlights, small closed curved mouths, no big open cartoon grins, no eyelashes, no pink cheek circles, no human eyebrows. The bear has a plain red apron and holds a single golden oval loaf. The small white rabbit holds a baguette. Just three simple bread silhouettes on the low counter. Use a bold sunny yellow background with a little red striped awning so shapes are highly readable for a toddler. Avoid uniform fake texture overlay, dense pencil shading, polished clip art, kawaii mascot proportions, shiny eyes, gradient lighting, 3D volume, elaborate cross-hatching and ornamental details. The art should feel like a few confident handmade marks, expressive through pose rather than generic cute faces. Full-bleed opaque square image, no text, no logo, no watermark.",
+      "input": {
+        "role": "style-transfer target",
+        "source": "OpenAI built-in image_gen",
+        "created_on": "2026-11-10",
+        "prompt": "Use case: illustration-story. Create ONE square image, 1536x1536 preferred, for a toddler's wipe-to-reveal window game. Full bleed opaque background, no window frame, no UI, no lettering, no logo, no watermark. Bright saturated colors and very clear large silhouettes, cheerful and safe. Keep all essential characters inside the central 80% of the square. Composition easy for a two-year-old to recognize, with a few charming discoverable details. Avoid generic AI-art aesthetics: no glossy digital airbrush, no cinematic glow, no oversaturated rainbow haze, no overcomplicated decoration, no pseudo-text, no malformed anatomy. Scene: a friendly brown bear baker behind a low bakery counter presents one enormous golden round loaf, with a white rabbit customer holding a small baguette. A simple tray with three visibly different breads: pretzel, round bun, croissant. Warm yellow shop wall and a bold red-and-white striped awning along the top, no signage. Medium: charming traditional three-to-five-color screenprint and colored-pencil children's picture-book illustration, bold dark brown contour lines, flat warm red yellow teal cream blocks, subtle ink misregistration and sparse pencil hatch texture. Handmade printshop character, readable uncluttered composition, large bread shapes and expressive simple faces. Avoid anthropomorphic food and avoid excessive decorative objects.",
+        "sha256": "e47b3f6814b0733f95be874236ba90aaec41446b70422605d3797eb1018db7a2"
+      },
+      "third_party_assets": "None; input artwork was generated for this project without third-party reference assets.",
+      "usage": {
+        "reviewed_on": "2026-11-10",
+        "terms": "https://openai.com/policies/row-terms-of-use/",
+        "publication_policy": "https://openai.com/policies/sharing-publication-policy/",
+        "allowed_project_uses": [
+          "image conversion",
+          "public repository inclusion",
+          "web distribution"
+        ],
+        "third_party_attribution_required": false,
+        "third_party_license_notice_required": false,
+        "limitations": "Subject to OpenAI terms and applicable law; no claim of exclusive copyright or uniqueness."
+      }
+    }
+  },
+  "source": "User-provided images and OpenAI-generated artwork; see added_images_source and generated_sources for per-source details."
 }

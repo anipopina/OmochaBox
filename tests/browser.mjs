@@ -8,6 +8,9 @@ import assert from 'node:assert/strict';
 
 // Uses a local Chromium binary and its DevTools protocol against Vite builds.
 const root = resolve(import.meta.dirname, '..');
+const windowScenes = JSON.parse(
+  await readFile(join(root, 'src/fukifuki-mado/scenes.json'), 'utf8'),
+);
 const binary = process.env.CHROME_PATH || '/usr/bin/chromium';
 const profile = await mkdtemp(join(tmpdir(), 'hikari-browser-'));
 const errors = [],
@@ -42,7 +45,8 @@ const server = createStaticServer(
           setTimeout(
             resolve,
             fogDelay +
-              (pathname === assetPath('fukifuki-mado/assets/fog/garden.webp')
+              (pathname ===
+              assetPath(`fukifuki-mado/assets/fog/${windowScenes[0].id}.webp`)
                 ? 600
                 : 0),
           ),
@@ -211,7 +215,7 @@ try {
   assert.equal(await evaluate('typeof window.__test'), 'undefined');
   assert.ok(
     await evaluate('document.querySelector(".window img").naturalWidth > 1000'),
-    'Production hashed garden asset loads',
+    'Production hashed window image loads',
   );
   const fogCenter = await evaluate(
     `(()=>{const rect=document.querySelector('#fog').getBoundingClientRect();return {x:rect.x+rect.width/2,y:rect.y+rect.height/2}})()`,
@@ -1168,9 +1172,6 @@ try {
     assert.equal(await fogAlpha(), 255);
   }
   // Force both ends of the random range to verify entry selection without flaky statistics.
-  const windowScenes = JSON.parse(
-    await readFile(join(root, 'src/fukifuki-mado/scenes.json'), 'utf8'),
-  );
   for (const [random, initial] of [
     [0, 0],
     [0.999999, windowScenes.length - 1],
@@ -1232,12 +1233,12 @@ try {
     });
   }
   report(
-    'Window: random first/last selection, all six sharp/fog pairs decode, fog pixels match, wiping, alt text, full cycle and resize preserves scene PASS',
+    `Window: random first/last selection, all ${windowScenes.length} sharp/fog pairs decode, fog pixels match, wiping, alt text, full cycle and resize preserves scene PASS`,
   );
   // Deliberately finish the first fog download last to exercise stale async results.
   await call('Network.enable');
   await call('Network.setCacheDisabled', { cacheDisabled: true });
-  const forcedGarden = await call('Page.addScriptToEvaluateOnNewDocument', {
+  const forcedFirstScene = await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `Math.random = () => 0;
       const decode = HTMLImageElement.prototype.decode;
       HTMLImageElement.prototype.decode = async function() {
@@ -1277,7 +1278,9 @@ try {
   );
   await waitFogReady();
   await assertWindowClip();
-  const latestScene = assetPath('fukifuki-mado/assets/shapes-hello.webp');
+  const latestScene = assetPath(
+    `fukifuki-mado/assets/${windowScenes[5 % windowScenes.length].id}.webp`,
+  );
   assert.equal(
     await evaluate(`document.querySelector('#picture').getAttribute('src')`),
     latestScene,
@@ -1310,7 +1313,7 @@ try {
   await waitFogReady();
   assert.equal(await fogAlpha(), 255, 'Next scene recovers normal fog');
   await call('Page.removeScriptToEvaluateOnNewDocument', {
-    identifier: forcedGarden.identifier,
+    identifier: forcedFirstScene.identifier,
   });
   await call('Network.setCacheDisabled', { cacheDisabled: false });
   report(

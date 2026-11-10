@@ -5,7 +5,9 @@ import triangle from '../assets/characters/shapes/04-yellow-triangle.svg';
 import star from '../assets/characters/shapes/05-coral-star.svg';
 import mint from '../assets/characters/shapes/06-mint-rectangle.svg';
 
-import sea0 from '../assets/characters/aquarium/01-penguin.svg';
+import penguinA from '../assets/characters/aquarium/01-penguin-a.svg';
+import penguinB from '../assets/characters/aquarium/01-penguin-b.svg';
+import penguinE from '../assets/characters/aquarium/01-penguin-e.svg';
 import sea1 from '../assets/characters/aquarium/02-clownfish.svg';
 import sea2 from '../assets/characters/aquarium/03-ray.svg';
 import sea3 from '../assets/characters/aquarium/04-jellyfish.svg';
@@ -42,9 +44,11 @@ export const stampSets: readonly StampSet[] = [
   {
     id: 'aquarium',
     name: 'すいぞくかん',
-    icon: sea0,
+    icon: penguinB,
     items: [
-      { id: 'aquarium/penguin', name: 'ペンギン', src: sea0 },
+      { id: 'aquarium/penguin-a', name: 'まるい ペンギン', src: penguinA },
+      { id: 'aquarium/penguin', name: 'みあげる ペンギン', src: penguinB },
+      { id: 'aquarium/penguin-e', name: 'こどもの ペンギン', src: penguinE },
       { id: 'aquarium/clownfish', name: 'クマノミ', src: sea1 },
       { id: 'aquarium/ray', name: 'エイ', src: sea2 },
       { id: 'aquarium/jellyfish', name: 'クラゲ', src: sea3 },

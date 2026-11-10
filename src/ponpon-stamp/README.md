@@ -1,6 +1,6 @@
 # ぽんぽんスタンプ
 
-図形6体・水族館8体の絵柄を選び、白い紙面をタップしてスタンプを置く創作遊び。URLは `/ponpon-stamp/`。
+図形6体・水族館10体の絵柄を選び、白い紙面をタップしてスタンプを置く創作遊び。URLは `/ponpon-stamp/`。
 
 - キャラを選ぶ → 紙をタップして離す → 大小・小さな傾きのスタンプが一度弾み、その場に残ります。
 - 長押しすると通常のランダムサイズより大きく成長します。光の輪と絵柄のプレビューで大きさを示し、上限では成長・回転を止めます。指を動かしても、離した位置に1個押します。最大10指で別々に操作できます。
@@ -15,7 +15,7 @@
 
 ## 素材
 
-`src/assets/characters/shapes/` の6SVGと `aquarium/` のユーザー手動修正版8SVGを変更せず参照します。[出典・原本一致記録](../../source-assets/characters/README.md) を保持します。顔・手足・輪郭は原本のまま。企画画像は構図参照専用で配信せず、[素材記録](../../source-assets/ponpon-stamp/README.md) に保存します。
+`src/assets/characters/shapes/` の6SVGと `aquarium/` のユーザー提供10SVGを変更せず参照します。[出典・原本一致記録](../../source-assets/characters/README.md) を保持します。顔・手足・輪郭は原本のまま。企画画像は構図参照専用で配信せず、[素材記録](../../source-assets/ponpon-stamp/README.md) に保存します。
 
 ## 検証
 

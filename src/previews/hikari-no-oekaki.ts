@@ -1,6 +1,8 @@
+import cardUrl from '../assets/previews/hikari-no-oekaki.webp';
+
 export default function createPreview() {
   return {
     className: 'garden-preview',
-    html: '<span class="flower"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></span><span class="spark one">✦</span><span class="spark two">✧</span><span class="trail"></span>',
+    html: `<img src="${cardUrl}" width="1200" height="600" alt="" loading="lazy">`,
   };
 }

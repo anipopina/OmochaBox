@@ -100,6 +100,7 @@ window.__test.layerScene = () => {
     color: 0,
     time,
     radius: 55,
+    rotation: 0,
     released: 0,
   });
   push(flowers, FLOWERS, {
@@ -108,6 +109,7 @@ window.__test.layerScene = () => {
     color: 2,
     time,
     radius: 55,
+    rotation: 0,
     released: 0,
   });
   push(flowers, FLOWERS, {
@@ -116,6 +118,7 @@ window.__test.layerScene = () => {
     color: 0,
     time,
     radius: 55,
+    rotation: 0,
     released: 0,
   });
   push(points, LIMIT, {

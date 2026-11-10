@@ -95,6 +95,6 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 ## 公開
 
 - 検証用の [Sites](https://omochabox.ryonchibi.chatgpt.site/) は、`npm run build` の `dist/` を既存プロジェクトへ公開します。全遊びが対象で、改善中の操作も通常の入口・URLから確認します。
-- AWS本番は `https://omochabox.anipopina.com/`。公開対象は [config/production-games.json](config/production-games.json) の `true`／`false` で選びます。`npm run build:production` は対象の遊びだけを `dist-production/` に出力します。
+- AWS本番は `https://omochabox.anipopina.com/`。通常表示する遊びは [config/production-games.json](config/production-games.json) の `true`／`false` で選びます。「しさくひんも みる」をオンにすると全遊びを表示します。`npm run build:production` は全遊びを `dist-production/` に出力します。
 
 AWSの構成・初回準備とデプロイ手順は [infra/README.md](infra/README.md) を参照してください。

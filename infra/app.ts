@@ -9,8 +9,11 @@ const root = resolve(import.meta.dirname, '..');
 const config: HostingConfig = JSON.parse(
   readFileSync(resolve(root, 'infra/config.json'), 'utf8'),
 );
+const catalogue = JSON.parse(
+  readFileSync(resolve(root, 'src/games.json'), 'utf8'),
+);
 const expected = selectGames(
-  JSON.parse(readFileSync(resolve(root, 'src/games.json'), 'utf8')),
+  catalogue,
   JSON.parse(
     readFileSync(resolve(root, 'config/production-games.json'), 'utf8'),
   ),
@@ -20,7 +23,9 @@ const built = JSON.parse(
   readFileSync(resolve(websiteDirectory, 'publication.json'), 'utf8'),
 );
 if (
-  JSON.stringify(expected) !== JSON.stringify(built.games) ||
+  JSON.stringify(expected) !== JSON.stringify(built.defaultGames) ||
+  JSON.stringify(catalogue.map((game: { id: string }) => game.id)) !==
+    JSON.stringify(built.games) ||
   built.origin !== `https://${config.domainName}`
 )
   throw new Error(

@@ -94,6 +94,7 @@ export function plan(mode, targets = []) {
       test('publication', ['build', 'build:production']),
       test('infrastructure', ['build:production']),
       test('branding'),
+      test('home-visibility', ['build', 'build:production']),
       test('characters'),
       {
         id: 'runner',

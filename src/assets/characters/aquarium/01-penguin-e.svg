@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" aria-labelledby="title desc" role="img" version="1.1" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <title id="title">Eのペンギン</title>
+ <desc id="desc">参考画像のEをもとに描いた、青灰色の丸い体と白い顔、小さなオレンジ色のくちばしと足を持つ子ペンギン。背景は透明。</desc>
+ <defs>
+  <linearGradient id="head" x1=".18" x2=".8" y2="1" color-interpolation="linearRGB">
+   <stop stop-color="#65788f" offset="0"/>
+   <stop stop-color="#5b6f89" offset=".35"/>
+   <stop stop-color="#5d718a" offset=".72"/>
+   <stop stop-color="#8799b1" offset="1"/>
+  </linearGradient>
+  <linearGradient id="body" x2=".9" y1=".85" y2=".1" color-interpolation="linearRGB">
+   <stop stop-color="#a5b4cc" offset="0"/>
+   <stop stop-color="#9eaec6" offset=".35"/>
+   <stop stop-color="#a2b2cb" offset=".7"/>
+   <stop stop-color="#afbed4" offset="1"/>
+  </linearGradient>
+  <radialGradient id="face" cx=".45" cy=".35" r=".85" color-interpolation="linearRGB">
+   <stop stop-color="#fffdf5" offset="0"/>
+   <stop stop-color="#fcf9f0" offset=".4"/>
+   <stop stop-color="#f9f6ed" offset=".75"/>
+   <stop stop-color="#f4f0e6" offset="1"/>
+  </radialGradient>
+  <linearGradient id="orange" y2="1" color-interpolation="linearRGB">
+   <stop stop-color="#ffbb27" offset="0"/>
+   <stop stop-color="#ffb41e" offset=".35"/>
+   <stop stop-color="#ffad15" offset=".7"/>
+   <stop stop-color="#ffa90f" offset="1"/>
+  </linearGradient>
+  <linearGradient id="eyes" x2=".7" y2="1" color-interpolation="linearRGB">
+   <stop stop-color="#354254" offset="0"/>
+   <stop stop-color="#29374a" offset=".35"/>
+   <stop stop-color="#233145" offset=".7"/>
+   <stop stop-color="#2c3a4e" offset="1"/>
+  </linearGradient>
+ </defs>
+ <!-- Rounded crown, behind the pale face and shoulders. -->
+ <path d="m96 158c-5-22-3-47 8-70 16-34 50-56 89-58 43-3 81 19 98 54 12 23 15 51 10 74l-14 41h-176z" fill="url(#head)"/>
+ <!-- The face is a single heart-like patch, with two tall eye lobes. -->
+ <path d="m200 127c-7 0-15.648-0.39665-19.648 5.6034 1-26-6.3524-47.603-24.352-57.603-19-11-37 1-45 16-11 19-11 41-3 56 10 19 40 30 91 30 50 0 80-10 91-30 9-17 6-38-3-55-9-16-25-27-42-20-23 9-28.568 30.74-26.568 59.74-6-7-12.432-4.7399-18.432-4.7399z" fill="url(#face)"/>
+ <!-- One continuous silhouette joins the shoulders, flippers and belly. -->
+ <path d="m97 157c-25 19-48 42-63 69-11 18-15 36-12 49 2 10 9 12 18 9 11-4 24-17 38-29-5 27-2 53 10 71 18 26 52 38 110 38 56 0 90-13 108-38 13-19 14-45 9-71 14 14 26 26 36 29 10 4 17-2 18-13 3-17-5-38-17-57-14-22-34-40-51-56-18 11-51 18-101 18s-82-7-103-19z" fill="url(#body)"/>
+ <g fill="url(#eyes)">
+  <ellipse cx="149" cy="119" rx="8" ry="10"/>
+  <ellipse cx="251" cy="119" rx="8" ry="10"/>
+ </g>
+ <path d="m178 129c7-10 17-14 23-14 7 0 19 7 21 13 2 4-12 16-20 17-8 0-22-8-24-13-1-1-1-2 0-3z" fill="url(#orange)"/>
+ <g fill="url(#orange)">
+  <path d="m108.09 345.11c-11.467-1.7555-29.086 6.8921-34.086 14.892-4 6-2 10 6 11h15c-1 5 5 7 12 6 17-2 35.698-9.5612 44.698-16.561-8-6-29.612-12.331-43.612-15.331z"/>
+  <path d="m248.54 359.41c12-7 27.868-13.456 39.868-16.456 13-1.5969 32.59 7.0507 39.59 16.051 4 6 2 9-6 10l-13 1c0 6-6 8-13 7-17-2-36.458-10.595-47.458-17.595z"/>
+ </g>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:title>Eのペンギン</dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+</svg>
