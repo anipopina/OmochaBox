@@ -97,29 +97,9 @@ try {
     }
     assert.fail(`Timed out: ${expression}`);
   };
-  const pages = [
-    'hikari-no-oekaki',
-    'fukifuki-mado',
-    'pukapuka-fusen',
-    'ponpon-stamp',
-    'korokoro-suberidai',
-    'kurukuru-kazaguruma',
-    'kasanete-iroglass',
-    'mizutamari',
-    'mogumogu-tomodachi',
-    'pukupuku-shabon',
-    'poron-guitar',
-    'kotokoto-kisha',
-    'dare-no-ouchi',
-    'pokopoko-popcorn',
-    'tsumitsumi-ice',
-    'biyoon-jelly',
-    'pitatto-magnet',
-    'kurutto-ehon',
-    'oimo-horihori',
-    'munyutto-nendo',
-    'ouchi-barabara',
-  ];
+  const pages = JSON.parse(
+    await readFile(join(root, 'src/games.json'), 'utf8'),
+  ).map((game) => game.id);
   for (const [width, height] of [
     [320, 568],
     [844, 390],
@@ -199,7 +179,7 @@ try {
   assert.equal(license.status, 200);
   assert.match(await license.text(), /Apache License/);
   console.log(
-    'Home button PASS: 21 games / 3 viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS errors',
+    `Home button PASS: ${pages.length} games / 3 viewports, icon color and accessible name, 56px targets, focus, Enter navigation, bundled license, no JS errors`,
   );
 } finally {
   ws?.close();

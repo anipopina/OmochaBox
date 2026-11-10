@@ -2,30 +2,11 @@ import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const root = new URL('../dist/', import.meta.url);
 const base = 'https://omochabox.ryonchibi.chatgpt.site';
-for (const path of [
-  'index.html',
-  'hikari-no-oekaki/index.html',
-  'fukifuki-mado/index.html',
-  'pukapuka-fusen/index.html',
-  'ponpon-stamp/index.html',
-  'korokoro-suberidai/index.html',
-  'kurukuru-kazaguruma/index.html',
-  'kasanete-iroglass/index.html',
-  'mizutamari/index.html',
-  'mogumogu-tomodachi/index.html',
-  'pukupuku-shabon/index.html',
-  'poron-guitar/index.html',
-  'kotokoto-kisha/index.html',
-  'dare-no-ouchi/index.html',
-  'pokopoko-popcorn/index.html',
-  'tsumitsumi-ice/index.html',
-  'biyoon-jelly/index.html',
-  'pitatto-magnet/index.html',
-  'kurutto-ehon/index.html',
-  'oimo-horihori/index.html',
-  'munyutto-nendo/index.html',
-  'ouchi-barabara/index.html',
-]) {
+const games = JSON.parse(
+  await readFile(new URL('../src/games.json', import.meta.url), 'utf8'),
+);
+const pages = ['index.html', ...games.map((game) => game.href + 'index.html')];
+for (const path of pages) {
   const html = await readFile(new URL(path, root), 'utf8');
   assert.equal(
     html.match(/property="og:url"\s+content="([^"]+)"/)?.[1],
@@ -79,5 +60,5 @@ assert.deepEqual(
   [16, 32, 48],
 );
 console.log(
-  'Branding PASS: 21 HTML pages, local references, footer, OGP metadata, PNG dimensions/modes, ICO 16/32/48 frames',
+  `Branding PASS: ${pages.length} HTML pages, local references, footer, OGP metadata, PNG dimensions/modes, ICO 16/32/48 frames`,
 );

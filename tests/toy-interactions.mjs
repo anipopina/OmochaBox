@@ -1,3 +1,4 @@
+import { gameCount } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { Pond } from '../src/mizutamari/model.ts';
 import { spawn } from 'node:child_process';
@@ -159,7 +160,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? `document.querySelectorAll('.game-card').length===${gameCount}`
         : "document.querySelector('canvas')?.dataset.ready === 'true'",
     );
   };

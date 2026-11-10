@@ -1,3 +1,4 @@
+import { gameCount } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -117,7 +118,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? `document.querySelectorAll('.game-card').length===${gameCount}`
         : "document.querySelector('#field')?.dataset.ready === 'true'",
     );
   };
@@ -411,7 +412,9 @@ try {
   await tap(160, 300);
   assert.equal(await count(), 1, 'Resumes after hidden');
   await evaluate("document.querySelector('#back').click()");
-  await waitFor("document.querySelectorAll('.game-card').length===20");
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${gameCount}`,
+  );
   await evaluate(
     'document.querySelector(\'a[href="pukupuku-shabon/"]\').scrollIntoView()',
   );

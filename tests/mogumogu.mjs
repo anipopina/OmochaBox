@@ -1,3 +1,4 @@
+import { gameCount } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
@@ -229,7 +230,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? `document.querySelectorAll('.game-card').length===${gameCount}`
         : "document.querySelector('#friend')?.dataset.ready === 'true'",
     );
   };
@@ -653,7 +654,9 @@ try {
   assert.equal(await evaluate('window.rafCalls'), frames, 'Idle RAF stops');
   await choose('banana');
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${gameCount}`,
+  );
   await evaluate(
     `document.querySelector('a[href="mogumogu-tomodachi/"]').click()`,
   );
@@ -796,7 +799,9 @@ try {
     );
     assert.deepEqual(await evaluate('window.syncFailures'), []);
     await evaluate(`document.querySelector('#back').click()`);
-    await waitFor(`document.querySelectorAll('.game-card').length===20`);
+    await waitFor(
+      `document.querySelectorAll('.game-card').length===${gameCount}`,
+    );
   }
   // A decoded network image is still not presentable until decode() resolves.
   const delayedDecode = await call('Page.addScriptToEvaluateOnNewDocument', {

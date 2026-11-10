@@ -7,6 +7,9 @@ import assert from 'node:assert/strict';
 
 // Uses a local Chromium binary and its DevTools protocol against Vite builds.
 const root = resolve(import.meta.dirname, '..');
+const gameCount = JSON.parse(
+  await readFile(join(root, 'src/games.json'), 'utf8'),
+).length;
 const binary = process.env.CHROME_PATH || '/usr/bin/chromium';
 const profile = await mkdtemp(join(tmpdir(), 'hikari-browser-'));
 const errors = [],
@@ -155,13 +158,15 @@ try {
   for (
     let i = 0;
     i < 100 &&
-    !(await evaluate('document.querySelectorAll(".game-card").length === 21'));
+    !(await evaluate(
+      `document.querySelectorAll(".game-card").length === ${gameCount}`,
+    ));
     i++
   )
     await delay(50);
   assert.equal(
     await evaluate('document.querySelectorAll(".game-card").length'),
-    21,
+    gameCount,
     'Production hub loads bundled modules',
   );
   assert.equal(await evaluate('typeof window.__test'), 'undefined');
@@ -864,7 +869,7 @@ try {
       await delay(300);
       assert.equal(
         await evaluate('document.querySelectorAll(".game-card").length'),
-        21,
+        gameCount,
       );
       assert.equal(
         await evaluate('document.querySelector("h1").textContent'),
@@ -946,7 +951,7 @@ try {
       }
     }
     report(
-      'Hub: 320/390/1180px, simplified copy, twenty-one cards, 56px controls, lifecycle cleanup, return/re-entry x9, no horizontal overflow PASS',
+      `Hub: 320/390/1180px, simplified copy, ${gameCount} cards, 56px controls, lifecycle cleanup, return/re-entry x9, no horizontal overflow PASS`,
     );
   }
   // Real touch input exercises pointer capture and the fog alpha mask.

@@ -1,3 +1,4 @@
+import { gameCount } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -120,7 +121,7 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? `document.querySelectorAll('.game-card').length===${gameCount}`
         : "document.querySelector('#instrument')?.dataset.ready === 'true'",
     );
   };
@@ -275,7 +276,9 @@ const Native=window.AudioContext;window.AudioContext=class extends Native {
   await delay(250);
   assert.equal(await playing(), 0, 'Reduced feedback is short');
   await evaluate(`document.querySelector('#back').click()`);
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${gameCount}`,
+  );
   await evaluate(`document.querySelector('a[href="poron-guitar/"]').click()`);
   await waitFor(
     `document.querySelector('#instrument')?.dataset.ready==='true'`,

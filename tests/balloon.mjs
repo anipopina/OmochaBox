@@ -1,3 +1,4 @@
+import { gameCount } from './catalogue.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -183,7 +184,7 @@ try {
     );
     await waitFor(
       path === '/'
-        ? "document.querySelectorAll('.game-card').length===20"
+        ? `document.querySelectorAll('.game-card').length===${gameCount}`
         : "!!document.querySelector('#pump')",
     );
     // Offscreen lazy hub images may never start loading until scrolled into view.
@@ -539,7 +540,7 @@ try {
   await visit('/');
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    20,
+    gameCount,
   );
   await evaluate(`document.querySelector('a[href="pukapuka-fusen/"]').click()`);
   await waitFor(
@@ -552,10 +553,12 @@ try {
   await evaluate(
     `document.querySelector('#pump').click();document.querySelector('#back').click()`,
   );
-  await waitFor(`document.querySelectorAll('.game-card').length===20`);
+  await waitFor(
+    `document.querySelectorAll('.game-card').length===${gameCount}`,
+  );
   assert.equal(
     await evaluate(`document.querySelectorAll('.game-card').length`),
-    20,
+    gameCount,
   );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(

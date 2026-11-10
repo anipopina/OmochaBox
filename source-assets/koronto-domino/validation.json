@@ -1,0 +1,29 @@
+[
+  {
+    "path": "source-assets/koronto-domino/source/concept.png",
+    "dimensions": [
+      1672,
+      941
+    ],
+    "bytes": 2059788,
+    "sha256": "a8ad913dd2645b6366c45fecb7fd0b7a27d0475663660d9ac2432b6ca1078abf"
+  },
+  {
+    "path": "src/koronto-domino/assets/concept.webp",
+    "dimensions": [
+      800,
+      450
+    ],
+    "bytes": 23880,
+    "sha256": "c9e408d1cf8b93df1f60bc31772ff93ce51d89bf1eb1db51a61a7ce2a24cf089"
+  },
+  {
+    "path": "src/koronto-domino/assets/wood.webp",
+    "dimensions": [
+      114,
+      310
+    ],
+    "bytes": 2660,
+    "sha256": "4ab295c904fe6bbc01ccf58c87247ba6c87cc1e2e8e86287cb0c7dbfedf44d03"
+  }
+]

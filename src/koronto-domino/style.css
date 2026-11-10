@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+}
+body {
+  background: #fff0cb;
+}
+#scene {
+  position: relative;
+  height: 100dvh;
+  overflow: clip;
+  background: radial-gradient(ellipse at 50% 40%, #fff9e9, #f4dca6);
+}
+#domino {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#domino:focus-visible {
+  outline: 4px dashed #176a79;
+  outline-offset: -8px;
+}
+#reset {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 72px;
+  height: 64px;
+  border: 3px solid #835322;
+  border-radius: 24px;
+  background: #fffaf0;
+  color: #835322;
+  font-size: 42px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 0 #83532233;
+}
+#reset:focus-visible {
+  outline: 4px solid #176a79;
+  outline-offset: 3px;
+}
+#reset:active {
+  transform: translateY(3px);
+}
