@@ -28,4 +28,6 @@
 - [おいもほりほり — 完成確認記録](reviews/2026-11-07-oimo-horihori.md)
 - [シャボン：フォーカス保持・線削除の確認候補](shabon-focus-review.md)
 
+- [ころんとドミノ：未公開の実装候補（2026-11-10）](reviews/2026-11-10-koronto-domino.md)
+
 関連するテストログとスクリーンショットは、各記録から参照してください。初期の記録には [検証ログ](verification.txt)、[葉画像の比較](leaf-comparison.png)、[窓の検証ログ](fukifuki-test-results.txt)、[モバイル画面](fukifuki-mobile.png)・[タブレット画面](fukifuki-tablet.png) があります。
