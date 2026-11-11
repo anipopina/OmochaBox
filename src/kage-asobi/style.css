@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+}
+body {
+  background: #ffdc62;
+  font-family: sans-serif;
+}
+#scene {
+  position: relative;
+  height: 100dvh;
+  overflow: clip;
+  touch-action: none;
+  user-select: none;
+  background: radial-gradient(
+    ellipse at var(--light-x) var(--light-y),
+    #fffbd3 0,
+    #ffe986 42%,
+    #ffc947 100%
+  );
+}
+#scene::before {
+  content: '';
+  position: absolute;
+  inset: 13% 4% 29%;
+  border: 4px solid #e1a129;
+  border-radius: 48%;
+  background: #fff4bf66;
+}
+.rabbit {
+  position: absolute;
+  width: auto;
+  max-width: none;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+}
+#shadow {
+  transform-origin: 50% 100%;
+  filter: brightness(0) saturate(100%);
+  opacity: 0.72;
+}
+#rabbit {
+  filter: drop-shadow(0 4px 0 #7c361532);
+}
+#light {
+  position: absolute;
+  left: calc(var(--light-x) - 40px);
+  top: calc(var(--light-y) - 40px);
+  width: 80px;
+  height: 80px;
+  border: 4px solid #b85a00;
+  border-radius: 50%;
+  background: #ffbe00;
+  color: #633000;
+  box-shadow:
+    0 0 0 9px #fff7b9,
+    0 6px 0 9px #c78a2833;
+  font-size: 48px;
+  cursor: grab;
+  touch-action: none;
+}
+#light svg {
+  width: 100%;
+  height: 100%;
+}
+#scene[data-dragging='true'] #light {
+  cursor: grabbing;
+  background: #ffdf45;
+}
+#reset {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  top: max(12px, env(safe-area-inset-top));
+  width: 64px;
+  height: 64px;
+  border: 3px solid #724217;
+  background: #fff8d8;
+  color: #724217;
+  border-radius: 24px;
+  font-size: 40px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+button:focus-visible {
+  outline: 4px solid #124cba;
+  outline-offset: 5px;
+}
+#hint {
+  position: absolute;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  color: #61380f;
+  font-size: clamp(16px, 3vw, 22px);
+  font-weight: bold;
+  pointer-events: none;
+}
+#hint span {
+  display: inline-block;
+  padding: 6px 15px;
+  border-radius: 22px;
+  background: #fff7ce;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}

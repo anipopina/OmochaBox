@@ -1,0 +1,7 @@
+390x844: dimensions, opposite shadow, near/far, drag/cancel, multifinger, repeated input, blur, reset PASS
+1440x900: dimensions, opposite shadow, near/far, drag/cancel, multifinger, repeated input, blur, reset PASS
+844x390: dimensions, opposite shadow, near/far, drag/cancel, multifinger, repeated input, blur, reset PASS
+320x568: dimensions, opposite shadow, near/far, drag/cancel, multifinger, repeated input, blur, reset PASS
+768x1024: dimensions, opposite shadow, near/far, drag/cancel, multifinger, repeated input, blur, reset PASS
+Reduced motion, keyboard, assistive click, visibility, BFCache PASS
+Saved home visibility false/true, switch, return and reentry PASS

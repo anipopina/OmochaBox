@@ -1,0 +1,20 @@
+[
+  {
+    "path": "source-assets/kage-asobi/source/rabbit.png",
+    "bytes": 1455408,
+    "size": [
+      1254,
+      1254
+    ],
+    "sha256": "cd93bb3c4701b9ae92a47d670629772cb1d53f9d5922e5cd7ed6735e864fd620"
+  },
+  {
+    "path": "src/kage-asobi/assets/rabbit.webp",
+    "bytes": 38556,
+    "size": [
+      261,
+      480
+    ],
+    "sha256": "0dbbdebaf40d6536ad3df086364d4672ecc1594bbc1a91495f5efbd877901093"
+  }
+]

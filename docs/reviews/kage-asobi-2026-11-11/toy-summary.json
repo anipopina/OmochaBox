@@ -1,0 +1,39 @@
+{
+  "mode": "toy",
+  "targets": [
+    "kage-asobi"
+  ],
+  "at": "2026-11-11T12:13:00.351Z",
+  "results": [
+    {
+      "id": "build",
+      "status": "PASS",
+      "seconds": 6.73,
+      "code": 0
+    },
+    {
+      "id": "build-output",
+      "status": "PASS",
+      "seconds": 0.08,
+      "code": 0
+    },
+    {
+      "id": "home-button",
+      "status": "PASS",
+      "seconds": 1.06,
+      "code": 0
+    },
+    {
+      "id": "shadow-model",
+      "status": "PASS",
+      "seconds": 0.13,
+      "code": 0
+    },
+    {
+      "id": "shadow",
+      "status": "PASS",
+      "seconds": 6.12,
+      "code": 0
+    }
+  ]
+}

@@ -29,6 +29,7 @@ export const toyTests = {
     'ouchi-sound-review',
   ],
   'koronto-domino': ['domino-model', 'domino'],
+  'kage-asobi': ['shadow-model', 'shadow'],
 };
 export function validateCatalogue() {
   const ids = games.map((game) => game.id);

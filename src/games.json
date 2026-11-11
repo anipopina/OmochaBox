@@ -130,5 +130,11 @@
     "title": "ころんとドミノ",
     "description": "ひとつ ころん。となりへ ぱたぱた！",
     "href": "koronto-domino/"
+  },
+  {
+    "id": "kage-asobi",
+    "title": "のびのび、かげあそび",
+    "description": "ひかりを うごかすと、かげが のびのび！",
+    "href": "kage-asobi/"
   }
 ]

@@ -29,6 +29,7 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 | [むにゅっとねんど](src/munyutto-nendo/README.md)          | 押したくぼみとなぞった溝を残し、丸め直せるねんど遊び   |
 | [おうちバラバラ](src/ouchi-barabara/README.md)            | タップでショベルカーが動き、3Dの家を叩いて崩す遊び     |
 | [ころんとドミノ](src/koronto-domino/README.md)            | 触ったところから隣へぱたぱた伝わる連鎖遊び             |
+| [のびのび、かげあそび](src/kage-asobi/README.md)          | 光を動かして、うさぎの影の向きと長さを変える遊び       |
 
 ## 開発を始める
 
