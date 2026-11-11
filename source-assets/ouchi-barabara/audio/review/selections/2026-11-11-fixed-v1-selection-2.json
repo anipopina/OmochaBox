@@ -1,0 +1,22 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 2,
+  "toy": "ouchi-barabara",
+  "catalog": "ouchi-barabara-audio-fixed-v1",
+  "updatedAt": "2026-11-11T03:14:53.466Z",
+  "additions": [
+    {
+      "id": "2c2b6120-c787-454b-ba5f-46691ee2eb3e",
+      "scene": "途中がくずれる",
+      "timing": "ショベルカーのアタック直後",
+      "sound": "「最後にくずれる」と同系統の音で、「最後にくずれる」よりも短めに。1.5秒程度。",
+      "note": "現状は最後だけくずれる音がありますが、途中の崩壊にも音をつけたいです。"
+    }
+  ],
+  "scenes": {
+    "hit": {"choice": "hit-a", "note": "", "singleConfirmed": false, "gameConfirmed": false},
+    "collapse": {"choice": "redo", "note": "Aの序盤部分が良いので、Aの序盤の雰囲気で、2秒ぐらいでだんだん落ち着いていく音にして。", "singleConfirmed": false, "gameConfirmed": false},
+    "rubble": {"choice": "rubble-e", "note": "", "singleConfirmed": false, "gameConfirmed": false},
+    "drive": {"choice": "drive-c", "note": "", "singleConfirmed": false, "gameConfirmed": false}
+  }
+}

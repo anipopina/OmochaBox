@@ -1,0 +1,115 @@
+{
+  "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930 Copyright (c) 2000-2026 the FFmpeg developers",
+  "cues": [
+    {
+      "id": "hit",
+      "source": "tmp/audio-originals/ouchi-barabara/source/hit.wav",
+      "source_sha256": "b5da6ea0f69431ea2af2291e188cee216c438ab17d5d6903dcb0a3fa18b55586",
+      "output": "src/ouchi-barabara/assets/hit.mp3",
+      "output_sha256": "d18aee91a5a94565e6eaee5bd38e2b6a1e85cf0809ce3489dcf7ba7edc86cf57",
+      "bytes": 6380,
+      "cut_seconds": [
+        0.0,
+        0.7
+      ],
+      "target_rms_dbfs": -25,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "sample_rate": 32000,
+      "channels": 1,
+      "duration_seconds": 0.7,
+      "decoded_peak_dbfs": -10.006709325674496,
+      "decoded_rms_dbfs": -27.270151087518638
+    },
+    {
+      "id": "collapse",
+      "source": "tmp/audio-originals/ouchi-barabara/review/wood/source/collapse-m.wav",
+      "source_sha256": "2070c671086d18325a5e6a655d656c5bd175392d48dc76ea4227bde786e1cbbd",
+      "output": "src/ouchi-barabara/assets/collapse.mp3",
+      "output_sha256": "3257efa543439e0c5437eff7e59845474e37da4a6e8f0e43825e299fc4848e50",
+      "bytes": 16748,
+      "duration_seconds": 2.0,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 1.0,
+      "low_band_hz": 600,
+      "low_band_gain": 0.0,
+      "target_rms_dbfs": -28,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -11.368065188657333,
+      "decoded_rms_dbfs": -46.783014645683714
+    },
+    {
+      "id": "rubble",
+      "source": "src/ouchi-barabara/sound-review/assets/rubble-b.mp3",
+      "source_sha256": "225afee401e704a048ab1a19fa56d1a78425605555997b0ac8829167550be28b",
+      "output": "src/ouchi-barabara/assets/rubble.mp3",
+      "output_sha256": "5e40f22d21938669f58fd63592e0de6e021726d73f6c6580402d1b8b4367682c",
+      "bytes": 8108,
+      "cut_seconds": [
+        0.0,
+        0.65
+      ],
+      "speed": 0.9,
+      "tail_seconds": 0.18,
+      "exponential_decay": 0.0,
+      "duration_seconds": 0.90225,
+      "sample_rate": 32000,
+      "channels": 1,
+      "decoded_peak_dbfs": -11.028340389319023,
+      "decoded_rms_dbfs": -35.057101341347234,
+      "rms_50ms": [
+        0.07241541892290115,
+        0.01819748617708683,
+        0.005974777042865753,
+        0.00330338510684669,
+        0.0018194803269580007,
+        0.0010745417093858123,
+        0.001022820477373898,
+        0.0008070984622463584,
+        0.0009236650657840073,
+        0.0010204692371189594,
+        0.0008251667604781687,
+        0.0007357740541920066,
+        0.0007681406568735838,
+        0.0004021828935947269,
+        9.958606824511662e-05,
+        1.1765458111767657e-05,
+        9.798922064874205e-07,
+        1.4693861700846612e-16,
+        0.0
+      ]
+    },
+    {
+      "id": "drive",
+      "source": "tmp/audio-originals/ouchi-barabara/review/source/drive-c.wav",
+      "source_sha256": "744e4bb070ead9a7f6874778cd6aee0b64c8901f32e718ec8124b04eb62311c7",
+      "output": "src/ouchi-barabara/assets/drive.mp3",
+      "output_sha256": "66263b8612442ffe54c8a87b097994d4329ef1aabde4d5969cd3fe0dda4d3eee",
+      "bytes": 48716,
+      "cut_seconds": [
+        0.0,
+        6.0
+      ],
+      "target_rms_dbfs": -32.95967765223988,
+      "fade_seconds": [
+        0.15,
+        0.3
+      ],
+      "sample_rate": 32000,
+      "channels": 1,
+      "duration_seconds": 6.0,
+      "decoded_peak_dbfs": -20.500474780705105,
+      "decoded_rms_dbfs": -33.32872009683604
+    }
+  ]
+}

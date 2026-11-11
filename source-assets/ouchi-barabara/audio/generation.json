@@ -1,0 +1,52 @@
+{
+  "model": "stabilityai/stable-audio-open-1.0",
+  "revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "generated_on": "2026-11-11",
+  "cues": [
+    {
+      "id": "hit",
+      "seconds": 2,
+      "seed": 1101,
+      "prompt": "A single rounded wooden thump as a toy excavator bucket knocks a wooden block house, followed by a few small wooden clacks, warm playful foley, close dry recording, no music, no voices, no explosions",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "collapse",
+      "seconds": 3,
+      "seed": 1102,
+      "prompt": "A small wooden toy block house tumbling down, a soft low thud followed by a quick cascade of chunky wooden blocks clattering and settling, playful gentle foley, dry close recording, no music, no voices, no explosions, no glass",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "rubble",
+      "seconds": 2,
+      "seed": 1103,
+      "prompt": "A single small wooden block tapped and rolling a short distance, light hollow tok followed by two soft wooden clicks, playful toy foley, dry close recording, no music, no voices",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "drive",
+      "seconds": 7,
+      "seed": 1104,
+      "prompt": "A small battery powered toy excavator driving steadily, soft low electric motor whir with gentle rubber track rattling, continuous even mechanical purr, playful quiet toy, close dry recording, no voices, no music, no horn",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    }
+  ],
+  "tools": {
+    "python": "3.12.3",
+    "torch": "2.6.0+cu124",
+    "diffusers": "0.42.1",
+    "transformers": "5.22.2",
+    "accelerate": "1.15.0",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4"
+  },
+  "dtype": "float16",
+  "device": "CUDA with model CPU offload",
+  "output": "44100 Hz stereo float32 WAV",
+  "originals_directory": "tmp/audio-originals/ouchi-barabara/source"
+}

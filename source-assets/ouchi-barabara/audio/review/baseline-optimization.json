@@ -1,0 +1,93 @@
+{
+  "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930 Copyright (c) 2000-2026 the FFmpeg developers",
+  "cues": [
+    {
+      "id": "hit",
+      "source": "tmp/audio-originals/ouchi-barabara/source/hit.wav",
+      "source_sha256": "b5da6ea0f69431ea2af2291e188cee216c438ab17d5d6903dcb0a3fa18b55586",
+      "output": "src/ouchi-barabara/assets/hit.mp3",
+      "output_sha256": "d18aee91a5a94565e6eaee5bd38e2b6a1e85cf0809ce3489dcf7ba7edc86cf57",
+      "bytes": 6380,
+      "cut_seconds": [
+        0.0,
+        0.7
+      ],
+      "target_rms_dbfs": -25,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "sample_rate": 32000,
+      "channels": 1,
+      "duration_seconds": 0.7,
+      "decoded_peak_dbfs": -10.006709325674496,
+      "decoded_rms_dbfs": -27.270151087518638
+    },
+    {
+      "id": "collapse",
+      "source": "tmp/audio-originals/ouchi-barabara/source/collapse.wav",
+      "source_sha256": "8e8584545b4065436c519e552d8d6a2535b94d1106b540ea453a31e41d01f540",
+      "output": "src/ouchi-barabara/assets/collapse.mp3",
+      "output_sha256": "11d5ba8a24e65e2ce491e3d16153ddf0c766c183ad58d62cd26ae791b96d3dfb",
+      "bytes": 17612,
+      "cut_seconds": [
+        0.0,
+        2.1
+      ],
+      "target_rms_dbfs": -25,
+      "fade_seconds": [
+        0.005,
+        0.12
+      ],
+      "sample_rate": 32000,
+      "channels": 1,
+      "duration_seconds": 2.1,
+      "decoded_peak_dbfs": -9.759231319060763,
+      "decoded_rms_dbfs": -27.10917445881507
+    },
+    {
+      "id": "rubble",
+      "source": "tmp/audio-originals/ouchi-barabara/source/rubble.wav",
+      "source_sha256": "b047bb2a96ac68a03b560cea8aa420b5d2e2aeecadc11c7397c28c50b889cffa",
+      "output": "src/ouchi-barabara/assets/rubble.mp3",
+      "output_sha256": "e71bb328f4c2888c28bd9ce9c85358fba2b72319e9a26256b44215f39a566614",
+      "bytes": 6092,
+      "cut_seconds": [
+        0.0,
+        0.65
+      ],
+      "target_rms_dbfs": -28,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "sample_rate": 32000,
+      "channels": 1,
+      "duration_seconds": 0.65,
+      "decoded_peak_dbfs": -11.486899013228562,
+      "decoded_rms_dbfs": -28.442045251683147
+    },
+    {
+      "id": "drive",
+      "source": "tmp/audio-originals/ouchi-barabara/source/drive.wav",
+      "source_sha256": "41009b61c3f55a2ec34d9992c3417cc0e30722e463809089197a21e9650ade04",
+      "output": "src/ouchi-barabara/assets/drive.mp3",
+      "output_sha256": "7f75610990ca2e4cb32d81435d69b96e937a82ed9d1f72a7d32c95f3e31a01a1",
+      "bytes": 48716,
+      "cut_seconds": [
+        0.0,
+        6.0
+      ],
+      "target_rms_dbfs": -33,
+      "fade_seconds": [
+        0.15,
+        0.3
+      ],
+      "sample_rate": 32000,
+      "channels": 1,
+      "duration_seconds": 6.0,
+      "decoded_peak_dbfs": -19.98479934847234,
+      "decoded_rms_dbfs": -33.35967765223988
+    }
+  ]
+}

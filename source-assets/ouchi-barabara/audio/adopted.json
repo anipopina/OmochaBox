@@ -1,0 +1,31 @@
+{
+  "cues": {
+    "drive": {
+      "candidate": "drive-c",
+      "source": "src/ouchi-barabara/sound-review/assets/drive-c.mp3",
+      "metadata": "review/optimization.json",
+      "original": "tmp/audio-originals/ouchi-barabara/review/source/drive-c.wav",
+      "selection": "review/selections/2026-11-11-v1.json"
+    },
+    "rubble": {
+      "candidate": "rubble-e",
+      "source": "src/ouchi-barabara/sound-review/assets/rubble-e.mp3",
+      "metadata": "review/round-2-optimization.json",
+      "original": "src/ouchi-barabara/sound-review/assets/rubble-b.mp3",
+      "selection": "review/selections/2026-11-11-fixed-v1-selection-2.json"
+    },
+    "collapse": {
+      "candidate": "collapse-m",
+      "source": "src/ouchi-barabara/sound-review/assets/collapse-m.mp3",
+      "metadata": "review/wood/optimization.json",
+      "original": "tmp/audio-originals/ouchi-barabara/review/wood/source/collapse-m.wav",
+      "selection": "review/selections/2026-11-11-final.json"
+    }
+  },
+  "disabled": {
+    "crumble": {
+      "choice": "none",
+      "selection": "review/selections/2026-11-11-final.json"
+    }
+  }
+}

@@ -22,7 +22,12 @@ export const toyTests = {
   'kurutto-ehon': ['ehon'],
   'oimo-horihori': ['oimo-model', 'oimo'],
   'munyutto-nendo': ['clay-model', 'clay'],
-  'ouchi-barabara': ['ouchi-model', 'ouchi'],
+  'ouchi-barabara': [
+    'ouchi-model',
+    'ouchi',
+    'ouchi-sound-review-model',
+    'ouchi-sound-review',
+  ],
   'koronto-domino': ['domino-model', 'domino'],
 };
 export function validateCatalogue() {

@@ -1,0 +1,84 @@
+{
+  "model": "stabilityai/stable-audio-open-1.0",
+  "revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "generated_on": "2026-11-11",
+  "cues": [
+    {
+      "id": "hit-b",
+      "seconds": 2,
+      "seed": 2101,
+      "prompt": "A single soft hollow wooden knock, a toy bucket hitting a thick wooden building block, rounded low tok and very short wooden rattle, dry close foley, no music, no voices, no explosions",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "hit-c",
+      "seconds": 2,
+      "seed": 3101,
+      "prompt": "One chunky plastic toy block struck by a small toy excavator, a short bouncy hollow clunk with a soft low thud, playful gentle toy foley, no music, no voices, no explosions",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "collapse-b",
+      "seconds": 3,
+      "seed": 2102,
+      "prompt": "A pile of chunky wooden building blocks gently toppling over all at once, a quick dense tumbling wooden clatter fading to a few soft knocks, warm close dry toy foley, no music, no voices, no glass, no explosions",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "collapse-c",
+      "seconds": 3,
+      "seed": 3102,
+      "prompt": "A small house of hollow plastic toy bricks falling down in one quick cascade, lightweight rounded clunks and little bounces then settling, cheerful gentle close foley, no music, no voices, no glass, no explosions",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "rubble-b",
+      "seconds": 2,
+      "seed": 2103,
+      "prompt": "One little wooden cube knocked sideways, a short quiet hollow clok followed by a soft tumble and stop, close dry toy sound effect, no music, no voices",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "rubble-c",
+      "seconds": 2,
+      "seed": 3103,
+      "prompt": "A small hollow plastic toy brick lightly tapped once and bouncing twice on a wooden tabletop, gentle short tok tick tick, dry close foley, no music, no voices",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "drive-b",
+      "seconds": 7,
+      "seed": 2104,
+      "prompt": "Steady low soft electric motor humming in a small battery powered toy truck, gentle even rubber wheel rattle, continuous quiet warm mechanical purr, close dry recording, no music, no voices, no horn",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    },
+    {
+      "id": "drive-c",
+      "seconds": 7,
+      "seed": 3104,
+      "prompt": "Small toy excavator tracks rolling steadily, light rhythmic plastic gear chatter and soft low electric motor whir, continuous gentle mechanical toy sound, close dry recording, no music, no voices, no horn",
+      "negative_prompt": "Low quality",
+      "num_inference_steps": 100
+    }
+  ],
+  "tools": {
+    "python": "3.12.3",
+    "torch": "2.6.0+cu124",
+    "diffusers": "0.42.1",
+    "transformers": "5.22.2",
+    "accelerate": "1.15.0",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4"
+  },
+  "dtype": "float16",
+  "device": "CUDA with model CPU offload",
+  "output": "44100 Hz stereo float32 WAV",
+  "originals_directory": "tmp/audio-originals/ouchi-barabara/review/source"
+}

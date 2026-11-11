@@ -1,0 +1,33 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 1,
+  "toy": "ouchi-barabara",
+  "catalog": "ouchi-barabara-audio-2026-11-11-v1",
+  "updatedAt": "2026-11-11T02:30:00.429Z",
+  "scenes": {
+    "hit": {
+      "choice": "hit-a",
+      "note": "最後の1撃は「最後にくずれる」音しか再生されないけど、家を叩いているのは同じなので、この音も併せて再生してほしい。",
+      "singleConfirmed": false,
+      "gameConfirmed": true
+    },
+    "collapse": {
+      "choice": "redo",
+      "note": "Aの雰囲気でいいけど、Aは長い上にうしろのほうが音がおおきくなっている。崩れる音だから、最初のほうが大きくて、だんだん落ち着く感じにしてほしい。",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    },
+    "rubble": {
+      "choice": "redo",
+      "note": "Bがかなり近いけど、もうちょっとだけ重くして、かすかな余韻もつけてほしい。",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    },
+    "drive": {
+      "choice": "drive-c",
+      "note": "",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    }
+  }
+}

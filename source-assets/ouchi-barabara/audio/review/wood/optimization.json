@@ -1,0 +1,155 @@
+{
+  "selection": "../selections/2026-11-11-fixed-v1-selection-3.json",
+  "cues": [
+    {
+      "id": "collapse-k",
+      "source": "tmp/audio-originals/ouchi-barabara/review/wood/source/collapse-k.wav",
+      "source_sha256": "8fbfd1a39fdb8bc997b311cd6024f4842f76f7ed0aa63454cea8643839599d9c",
+      "output": "src/ouchi-barabara/sound-review/assets/collapse-k.mp3",
+      "output_sha256": "2080ca5b522ded9f0c59f49aaaf2aeaf59e66420c5ce9a5389919978b60204ca",
+      "bytes": 16748,
+      "duration_seconds": 2.0,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 1.0,
+      "low_band_hz": 600,
+      "low_band_gain": 0.0,
+      "target_rms_dbfs": -28,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -11.915557475547223,
+      "decoded_rms_dbfs": -39.43806368094054
+    },
+    {
+      "id": "collapse-l",
+      "source": "tmp/audio-originals/ouchi-barabara/review/wood/source/collapse-l.wav",
+      "source_sha256": "a66cfa856a3cdfa4e68232b1c0a55f4aa13d0339a0f50a8e607f639de78e0e8a",
+      "output": "src/ouchi-barabara/sound-review/assets/collapse-l.mp3",
+      "output_sha256": "aebb6b98d1567ec60f2f2ef6d3465291306c572346dc5a2ee3105667cb7ec0ac",
+      "bytes": 16748,
+      "duration_seconds": 2.0,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 1.0,
+      "low_band_hz": 600,
+      "low_band_gain": 0.0,
+      "target_rms_dbfs": -28,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -11.638922751187604,
+      "decoded_rms_dbfs": -40.95439934796274
+    },
+    {
+      "id": "collapse-m",
+      "source": "tmp/audio-originals/ouchi-barabara/review/wood/source/collapse-m.wav",
+      "source_sha256": "2070c671086d18325a5e6a655d656c5bd175392d48dc76ea4227bde786e1cbbd",
+      "output": "src/ouchi-barabara/sound-review/assets/collapse-m.mp3",
+      "output_sha256": "3257efa543439e0c5437eff7e59845474e37da4a6e8f0e43825e299fc4848e50",
+      "bytes": 16748,
+      "duration_seconds": 2.0,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 1.0,
+      "low_band_hz": 600,
+      "low_band_gain": 0.0,
+      "target_rms_dbfs": -28,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -11.368065188657333,
+      "decoded_rms_dbfs": -46.783014645683714
+    },
+    {
+      "id": "crumble-h",
+      "source": "tmp/audio-originals/ouchi-barabara/review/wood/source/crumble-h.wav",
+      "source_sha256": "21025ec31cf3daa6f7b50cd6389940893c971871bcd5bfd7c006670c788492de",
+      "output": "src/ouchi-barabara/sound-review/assets/crumble-h.mp3",
+      "output_sha256": "8da0ecd4f9f5fade440075d2d4c8ade5afbb8e98fb1b9039630bad8c9e7cf135",
+      "bytes": 12716,
+      "duration_seconds": 1.5,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 1.0,
+      "low_band_hz": 600,
+      "low_band_gain": 0.0,
+      "target_rms_dbfs": -31,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -11.498524063128322,
+      "decoded_rms_dbfs": -39.81221571374971
+    },
+    {
+      "id": "crumble-f",
+      "source": "src/ouchi-barabara/sound-review/assets/crumble-d.mp3",
+      "source_sha256": "dece1cd0ba1686582a76f58d873404deb9393e4d1d5fecdc015436d656f79f69",
+      "output": "src/ouchi-barabara/sound-review/assets/crumble-f.mp3",
+      "output_sha256": "b4820f1d98661f7d81d27c8f1deb25e1ad8933a3eda55a82c04ac46024a2d767",
+      "bytes": 12716,
+      "duration_seconds": 1.5,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 0.97,
+      "low_band_hz": 600,
+      "low_band_gain": 0.15,
+      "target_rms_dbfs": -31,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -11.793111327853953,
+      "decoded_rms_dbfs": -39.830516216066634
+    },
+    {
+      "id": "crumble-g",
+      "source": "src/ouchi-barabara/sound-review/assets/crumble-d.mp3",
+      "source_sha256": "dece1cd0ba1686582a76f58d873404deb9393e4d1d5fecdc015436d656f79f69",
+      "output": "src/ouchi-barabara/sound-review/assets/crumble-g.mp3",
+      "output_sha256": "fd30d351ff5ce8a6f27e35c3f1bdeae5fc94fd2b70a916027dfd924acf244cb7",
+      "bytes": 12716,
+      "duration_seconds": 1.5,
+      "sample_rate": 32000,
+      "channels": 1,
+      "speed": 0.94,
+      "low_band_hz": 600,
+      "low_band_gain": 0.25,
+      "target_rms_dbfs": -31,
+      "fade_seconds": [
+        0.005,
+        0.08
+      ],
+      "filter_hz": [
+        65,
+        6500
+      ],
+      "decoded_peak_dbfs": -12.198842546194177,
+      "decoded_rms_dbfs": -39.825589602213164
+    }
+  ]
+}

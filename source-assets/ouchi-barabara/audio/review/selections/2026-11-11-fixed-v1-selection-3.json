@@ -1,0 +1,15 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 2,
+  "toy": "ouchi-barabara",
+  "catalog": "ouchi-barabara-audio-fixed-v1",
+  "updatedAt": "2026-11-11T04:25:55.020Z",
+  "additions": [],
+  "scenes": {
+    "hit": { "choice": "hit-a", "note": "", "singleConfirmed": false, "gameConfirmed": false },
+    "collapse": { "choice": "redo", "note": "Cの素材を木製ブロックにして。", "singleConfirmed": false, "gameConfirmed": false },
+    "rubble": { "choice": "rubble-e", "note": "", "singleConfirmed": false, "gameConfirmed": false },
+    "drive": { "choice": "drive-c", "note": "", "singleConfirmed": false, "gameConfirmed": false },
+    "crumble": { "choice": "pending", "note": "Dをもうすこし重い木片にして", "singleConfirmed": false, "gameConfirmed": false }
+  }
+}

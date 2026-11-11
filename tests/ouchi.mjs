@@ -93,6 +93,37 @@ try {
   };
   await call('Runtime.enable');
   await call('Page.enable');
+  await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `
+window.soundTest={contexts:[],starts:[],active:new Set(),maximum:0,fetches:[],decodes:0,loads:[],resumes:[]};
+const originalFetch=window.fetch;
+window.fetch=async (...args)=>{
+  if(/\\.mp3(?:$|\\?)/.test(String(args[0]))){
+    soundTest.fetches.push(String(args[0]));
+    if(soundTest.failLoads)return new Response('',{status:503});
+    if(soundTest.holdLoads)await new Promise(r=>soundTest.loads.push(r));
+  }
+  return originalFetch(...args);
+};
+const NativeAudio=window.AudioContext;
+window.AudioContext=class extends NativeAudio {
+  constructor(...args){super(...args);soundTest.contexts.push(this)}
+  get state(){return soundTest.holdResume?'suspended':super.state}
+  resume(){const result=super.resume();return soundTest.holdResume?new Promise(r=>soundTest.resumes.push(()=>result.then(r))):result}
+  async decodeAudioData(...args){const buffer=await super.decodeAudioData(...args);soundTest.decodes++;return buffer}
+  createBufferSource(){
+    const source=super.createBufferSource(),start=source.start.bind(source),stop=source.stop.bind(source);
+    source.start=(...args)=>{
+      soundTest.starts.push({duration:source.buffer.duration,time:performance.now()});
+      soundTest.active.add(source);soundTest.maximum=Math.max(soundTest.maximum,soundTest.active.size);
+      source.addEventListener('ended',()=>soundTest.active.delete(source),{once:true});
+      return start(...args);
+    };
+    source.stop=(...args)=>{soundTest.active.delete(source);return stop(...args)};
+    return source;
+  }
+};`,
+  });
   const waitFor = async (expression, timeout = 20000) => {
     const end = Date.now() + timeout;
     while (Date.now() < end) {
@@ -154,6 +185,11 @@ try {
       mobile: true,
     });
     await visit();
+    assert.equal(
+      await evaluate('soundTest.contexts.length'),
+      0,
+      'No audio before input',
+    );
     // Count how often the next-house button (and its entrance animation)
     // appears.
     await evaluate(`window.nextShows = 0; new MutationObserver(() => {
@@ -173,6 +209,11 @@ try {
       'Tap starts an attack at once',
     );
     await waitFor("document.querySelector('#field').dataset.hits==='1'");
+    await waitFor('soundTest.decodes===4');
+    assert.ok(
+      await evaluate('soundTest.starts.some(s=>Math.abs(s.duration-0.7)<0.01)'),
+      `A real decoded impact sample plays at the first hit: ${JSON.stringify(await evaluate('({starts:soundTest.starts,states:soundTest.contexts.map(c=>c.state)})'))}`,
+    );
     await delay(250);
     await shot(`ouchi-${width}x${height}-hit`);
     const error = Number(await field('impactError'));
@@ -193,6 +234,22 @@ try {
     await idle();
     assert.equal(await field('hits'), '4', 'House collapses in four hits');
     assert.equal(await field('standing'), '0', 'No piece is left standing');
+    assert.ok(
+      await evaluate('soundTest.starts.some(s=>Math.abs(s.duration-2.0)<0.01)'),
+      'The final impact uses the longer collapse sample',
+    );
+    assert.equal(
+      await evaluate(
+        'soundTest.starts.filter(s=>Math.abs(s.duration-0.7)<0.01).length',
+      ),
+      4,
+      'Every demolition hit, including the final hit, keeps its impact sound',
+    );
+    assert.ok(
+      await evaluate(`(()=>{const sounds=soundTest.starts;const collapse=sounds.findIndex(s=>Math.abs(s.duration-2.0)<0.01);
+      return collapse>0&&Math.abs(sounds[collapse].time-sounds[collapse-1].time)<10})()`),
+      'Final impact and collapse play together',
+    );
     await delay(300);
     await shot(`ouchi-${width}x${height}-rubble`);
     assert.equal(
@@ -207,6 +264,12 @@ try {
     // Rubble play: a tap knocks debris instead of doing nothing.
     await tap(width * 0.6, height * 0.5);
     await waitFor("document.querySelector('#field').dataset.pokes==='1'");
+    assert.ok(
+      await evaluate(
+        'soundTest.starts.some(s=>Math.abs(s.duration-0.902)<0.01)',
+      ),
+      'Rubble play uses the lighter sample',
+    );
     await idle();
     assert.equal(
       await field('hits'),
@@ -263,6 +326,10 @@ try {
       await shot(`ouchi-${width}x${height}-travel`);
       await idle();
       assert.equal(await field('houses'), '1', 'Arrived at the next house');
+      assert.ok(
+        await evaluate('soundTest.starts.some(s=>Math.abs(s.duration-6)<0.01)'),
+        'Driving starts the motor sample',
+      );
       assert.equal(
         await field('camera'),
         '0.00',
@@ -287,6 +354,30 @@ try {
       );
       await idle();
     }
+    assert.equal(
+      await evaluate('soundTest.contexts.length'),
+      1,
+      'One context per visit',
+    );
+    assert.equal(
+      await evaluate('soundTest.fetches.length'),
+      4,
+      'Each sample fetched once',
+    );
+    assert.ok(
+      await evaluate('soundTest.maximum<=3'),
+      'At most three concurrent voices',
+    );
+    assert.equal(
+      await evaluate('soundTest.active.size'),
+      0,
+      'Idle leaves no playing nodes',
+    );
+    assert.equal(
+      await evaluate('soundTest.contexts[0].state'),
+      'suspended',
+      'Idle suspends audio',
+    );
     report(
       `${width}x${height}: tap, queue cap, 4-hit collapse, rubble play, idle loop stop PASS`,
     );
@@ -331,6 +422,11 @@ try {
     document.dispatchEvent(new Event('visibilitychange'))`);
   assert.equal(await field('running'), 'false');
   assert.equal(await field('queued'), '0');
+  assert.equal(
+    await evaluate('soundTest.active.size'),
+    0,
+    'Hidden page stops all sound',
+  );
   const hitsWhileHidden = await field('hits');
   await tap(400, 400);
   await delay(300);
@@ -345,7 +441,113 @@ try {
     window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))`);
   assert.equal(await field('hits'), '0');
   assert.equal(await field('state'), 'ready');
+  assert.equal(
+    await evaluate('soundTest.contexts[0].state'),
+    'closed',
+    'Pagehide closes audio',
+  );
   report('Keyboard, hidden-page stop, bfcache reset PASS');
+
+  // Loading or resuming may finish after the action or after a page is hidden.
+  await visit();
+  await evaluate('soundTest.holdLoads=true');
+  await tap(400, 400);
+  await waitFor("document.querySelector('#field').dataset.hits==='1'");
+  assert.equal(await evaluate('soundTest.starts.length'), 0);
+  await evaluate(
+    'soundTest.holdLoads=false;soundTest.loads.splice(0).forEach(r=>r())',
+  );
+  await waitFor('soundTest.decodes===4');
+  await delay(200);
+  assert.equal(
+    await evaluate('soundTest.starts.length'),
+    0,
+    'Late load never replays an impact',
+  );
+  await idle();
+  await tap(400, 400);
+  await waitFor("document.querySelector('#field').dataset.hits==='2'");
+  assert.ok(
+    await evaluate('soundTest.starts.length>0'),
+    'Later gesture can use loaded audio',
+  );
+
+  await visit();
+  await evaluate('soundTest.holdResume=true');
+  await tap(400, 400);
+  await waitFor("document.querySelector('#field').dataset.hits==='1'");
+  await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});
+    document.dispatchEvent(new Event('visibilitychange'));
+    soundTest.holdResume=false;soundTest.resumes.splice(0).forEach(r=>r())`);
+  await delay(250);
+  assert.equal(
+    await evaluate('soundTest.starts.length'),
+    0,
+    'Late resume stays silent while hidden',
+  );
+  await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});
+    document.dispatchEvent(new Event('visibilitychange'))`);
+  await delay(250);
+  assert.equal(
+    await evaluate('soundTest.starts.length'),
+    0,
+    'Visibility restoration does not resume sound',
+  );
+
+  await visit();
+  await evaluate('soundTest.failLoads=true');
+  await tap(400, 400);
+  await waitFor("document.querySelector('#field').dataset.hits==='1'");
+  await evaluate(`for(let i=0;i<100;i++)document.querySelector('#field').dispatchEvent(
+    new KeyboardEvent('keydown',{key:'Enter',bubbles:true}))`);
+  assert.equal(
+    await evaluate('soundTest.fetches.length'),
+    4,
+    'Failures do not trigger a fetch storm',
+  );
+  assert.equal(await evaluate('soundTest.starts.length'), 0);
+
+  await visit();
+  await evaluate(
+    "window.AudioContext=class {constructor(){throw new Error('unavailable')}}",
+  );
+  await tap(400, 400);
+  await waitFor("document.querySelector('#field').dataset.hits==='1'");
+  report(
+    'Decoded audio, cue timing, voice/cache limits, delayed load/resume, HTTP503 and unavailable audio PASS',
+  );
+
+  await visit();
+  await tap(400, 400);
+  await waitFor('soundTest.starts.length===1');
+  await evaluate("window.dispatchEvent(new Event('blur'))");
+  assert.equal(
+    await evaluate('soundTest.active.size'),
+    0,
+    'Blur stops a playing impact',
+  );
+  await delay(350);
+  assert.equal(
+    await evaluate('soundTest.starts.length'),
+    1,
+    'Blur never schedules a replacement',
+  );
+  await waitFor("document.querySelector('#field').dataset.state==='ready'");
+  await call('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: 400, y: 400, id: 1 }],
+  });
+  await waitFor("document.querySelector('#field').dataset.hits==='2'");
+  await call('Input.dispatchTouchEvent', {
+    type: 'touchCancel',
+    touchPoints: [],
+  });
+  assert.equal(
+    await evaluate('soundTest.active.size'),
+    0,
+    'Pointer cancellation stops sound',
+  );
+  report('Audio stops on blur and trusted touch cancellation PASS');
 
   // Reduced motion still breaks the house visibly.
   await call('Emulation.setEmulatedMedia', {

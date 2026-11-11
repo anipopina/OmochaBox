@@ -26,11 +26,13 @@ import {
 } from './rig';
 import { Quality } from './quality';
 import { Scenery, SITE_SPACING } from './scenery';
+import { Sounds } from './sound';
 
 const canvas = requireElement('#field', HTMLCanvasElement);
 const fallback = requireElement('#fallback', HTMLElement);
 const nextButton = requireElement('#next', HTMLButtonElement);
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const sounds = new Sounds();
 // Developer switches: `?fps` shows frame rate and quality level; `?quality=max`
 // pins full quality (checks and screenshots).
 const params = new URLSearchParams(location.search);
@@ -531,6 +533,7 @@ function startNext() {
 /** One tap or key press. Reacts at once when idle; otherwise queues a little. */
 function request() {
   if (!active || document.hidden || transitioning() || nextRequested) return;
+  sounds.unlock();
   if (!phases.length) startNext();
   else {
     const remaining = demolished()
@@ -583,6 +586,9 @@ function impact(swing: Swing) {
     pokeImpact(swing, target, reduced);
     return;
   }
+  sounds.play('hit');
+  if (swing.final) sounds.play('collapse');
+  else sounds.play('crumble');
   const power = (swing.power ?? 1) * (reduced ? 0.5 : 1);
   const colors = new Set<number>();
   for (const piece of house.pieces) {
@@ -619,6 +625,7 @@ function impact(swing: Swing) {
 
 /** Rubble play hit: send the chosen piece flying and jostle its neighbours. */
 function pokeImpact(swing: Swing, target: THREE.Vector3, reduced: boolean) {
+  sounds.play('rubble');
   const power = reduced ? 0.6 : 1;
   const piece = swing.poke;
   if (piece) {
@@ -775,6 +782,7 @@ function beginTransition() {
 
 function requestNext() {
   if (!active || document.hidden || !nextShown || transitioning()) return;
+  sounds.unlock();
   hideNext();
   if (phases.length) nextRequested = true;
   else beginTransition();
@@ -788,6 +796,7 @@ function requestNext() {
  * repeats every site, so the shift is invisible.
  */
 function arrive() {
+  sounds.stopDrive();
   if (previous) {
     previous.removeBodies();
     retiring?.house.dispose();
@@ -818,6 +827,7 @@ function updatePhases(dt: number) {
       }
       phase.from = excavator.pose;
       phase.fromX = excavator.root.position.x;
+      if (phase.kind === 'travel') sounds.play('drive');
     }
     const step = Math.min(remaining, phase.duration - phase.elapsed);
     phase.elapsed += step;
@@ -1110,18 +1120,23 @@ function sleep() {
   if (!running) return;
   running = false;
   renderer.setAnimationLoop(null);
+  sounds.stop();
   report();
 }
 
 function release() {
-  if (press && canvas.hasPointerCapture(press.id))
-    canvas.releasePointerCapture(press.id);
+  const pointer = press;
   press = null;
   holding = false;
+  // Releasing capture can synchronously dispatch lostpointercapture. A normal
+  // finger lift must not be mistaken for cancellation of the current swing.
+  if (pointer && canvas.hasPointerCapture(pointer.id))
+    canvas.releasePointerCapture(pointer.id);
 }
 
 /** Stop input and animation; finished debris stays where it is. */
 function suspend() {
+  sounds.stop();
   queued = 0;
   release();
   sleep();
@@ -1172,11 +1187,20 @@ canvas.addEventListener('pointermove', (event) => {
   if (press?.id === event.pointerId) aimAt(event.clientX, event.clientY);
 });
 const endPress = (event: PointerEvent) => {
-  if (press?.id === event.pointerId) release();
+  if (press?.id !== event.pointerId) return;
+  // Touch activation is granted on finger lift in some browsers. The swing
+  // still begins on pointerdown, and unlocking never replays a missed sound.
+  if (active && !document.hidden) sounds.unlock();
+  release();
 };
 canvas.addEventListener('pointerup', endPress);
-canvas.addEventListener('pointercancel', endPress);
-canvas.addEventListener('lostpointercapture', endPress);
+const cancelPress = (event: PointerEvent) => {
+  if (press?.id !== event.pointerId) return;
+  sounds.stop();
+  release();
+};
+canvas.addEventListener('pointercancel', cancelPress);
+canvas.addEventListener('lostpointercapture', cancelPress);
 canvas.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter' && event.key !== ' ') return;
   event.preventDefault();
@@ -1198,6 +1222,7 @@ document.addEventListener('visibilitychange', () => {
   else wake();
 });
 window.addEventListener('blur', () => {
+  sounds.stop();
   queued = 0;
   release();
   report();
@@ -1205,6 +1230,7 @@ window.addEventListener('blur', () => {
 window.addEventListener('pagehide', () => {
   active = false;
   suspend();
+  sounds.dispose();
 });
 window.addEventListener('pageshow', (event) => {
   active = true;

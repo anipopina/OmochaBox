@@ -1,0 +1,15 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 2,
+  "toy": "ouchi-barabara",
+  "catalog": "ouchi-barabara-audio-fixed-v1",
+  "updatedAt": "2026-11-11T04:43:45.375Z",
+  "additions": [],
+  "scenes": {
+    "hit": {"choice": "hit-a", "note": "", "singleConfirmed": false, "gameConfirmed": false},
+    "collapse": {"choice": "collapse-m", "note": "", "singleConfirmed": false, "gameConfirmed": false},
+    "rubble": {"choice": "rubble-e", "note": "", "singleConfirmed": false, "gameConfirmed": false},
+    "drive": {"choice": "drive-c", "note": "", "singleConfirmed": false, "gameConfirmed": false},
+    "crumble": {"choice": "none", "note": "", "singleConfirmed": false, "gameConfirmed": false}
+  }
+}
