@@ -36,6 +36,7 @@ test('daily scope excludes AWS and unrelated detail; legacy shared suites are ex
     ['build', 'build-output', 'home-button'],
   );
   const full = plan('full');
+  assert.ok(full.some((step) => step.id === 'sound-review-framework'));
   assert.equal(new Set(full.map((step) => step.id)).size, full.length);
   for (const suite of new Set(Object.values(toyTests).flat()))
     assert.ok(full.some((step) => step.id === suite));

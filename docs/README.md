@@ -5,6 +5,7 @@
 - [全体README](../README.md)：概要・遊び一覧・環境構築・公開
 - [共通方針](../AGENTS.md)：制作・開発・文書・検証のルール
 - [開発ガイド](development.md)：ページと素材の追加・テストの仕組み
+- [効果音の制作・選定](sound-review.md)：候補の反復・共通比較ツール・最終採用
 - [キャラクターと共有素材](branding.md)：なかまたち・favicon・OGP
 - [AWS本番公開](../infra/README.md)：本番構成と公開手順
 - [素材原本と出典](../source-assets/)：原本・利用条件・変換記録

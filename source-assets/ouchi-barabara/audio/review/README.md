@@ -1,6 +1,6 @@
 # おうちバラバラ・聴き比べ候補
 
-音源IDと固定記号は [registry.ts](../../../../src/ouchi-barabara/sound-review/registry.ts)、対応するファイルとSHA-256は [candidate-identities.json](candidate-identities.json) に保持します。以下の生成記録は初回A・B・Cのもので、追加候補はD以降へ追記します。採用状態を変えても記号とファイルの対応を変えません。
+音源IDと固定記号は [review.json](../../../../src/ouchi-barabara/sound-review/review.json)、対応するファイルとSHA-256は [candidate-identities.json](candidate-identities.json) に保持します。以下の生成記録は初回A・B・Cのもので、追加候補はD以降へ追記します。採用状態を変えても記号とファイルの対応を変えません。
 
 | 場面 | Bの生成意図 | Cの生成意図 |
 | --- | --- | --- |
@@ -40,6 +40,10 @@ Aの冒頭の細かい崩れと、後半の反復ノックは別の要素とし�
 ## 木製素材・重量感の追加候補（2026-11-11）
 
 [選定メモ](selections/2026-11-11-fixed-v1-selection-3.json) に基づき、最後の崩壊Cを木製にしたK・L・Mと、途中の崩壊Dを少し重い木片にしたF・G・Hを追加しました。[wood/](wood/README.md) に参照音・新しい生成原本・生成条件・加工条件を保持します。途中のF・GはDを直接加工し、Hは音声を参考にした再生成です。比較元C・Dも含め、以前の候補は変更しません。
+
+## 共通の候補追加
+
+追加・試聴・採用の手順は [効果音の制作・選定](../../../../docs/sound-review.md) を参照してください。候補を `sound-review add` で追加すると、固定IDとハッシュ・加工記録の対応をこの台帳へ追記します。既存候補は再加工・置換しません。
 
 ## 最終選定と原本保管（2026-11-11）
 

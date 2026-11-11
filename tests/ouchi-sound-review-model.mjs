@@ -20,36 +20,6 @@ const identities = JSON.parse(
     'utf8',
   ),
 );
-const initial = JSON.parse(
-  await readFile(
-    'source-assets/ouchi-barabara/audio/review/baseline-optimization.json',
-    'utf8',
-  ),
-).cues;
-const generated = JSON.parse(
-  await readFile(
-    'source-assets/ouchi-barabara/audio/review/optimization.json',
-    'utf8',
-  ),
-).cues;
-const revised = JSON.parse(
-  await readFile(
-    'source-assets/ouchi-barabara/audio/review/round-2-optimization.json',
-    'utf8',
-  ),
-).cues;
-const third = JSON.parse(
-  await readFile(
-    'source-assets/ouchi-barabara/audio/review/round-3-optimization.json',
-    'utf8',
-  ),
-).cues;
-const fresh = JSON.parse(
-  await readFile(
-    'source-assets/ouchi-barabara/audio/review/fresh/optimization.json',
-    'utf8',
-  ),
-).cues;
 const wood = JSON.parse(
   await readFile(
     'source-assets/ouchi-barabara/audio/review/wood/optimization.json',
@@ -81,12 +51,10 @@ for (const id of ['crumble-f', 'crumble-g'])
     'Weight variations use intermediate D',
   );
 for (const identity of identities) {
-  const [scene, letter] = identity.id.split('-');
-  const provenance =
-    [...generated, ...revised, ...third, ...fresh, ...wood].find(
-      (entry) => entry.id === identity.id,
-    ) ??
-    (letter === 'a' ? initial.find((entry) => entry.id === scene) : undefined);
+  const record = JSON.parse(await readFile(identity.provenance, 'utf8'));
+  const provenance = (record.cues ?? [record]).find(
+    (entry) => entry.output_sha256 === identity.sha256,
+  );
   assert.equal(
     identity.sha256,
     provenance.output_sha256,
@@ -132,12 +100,12 @@ for (const { id } of SCENES) {
 assert.equal(initialReview().scenes.drive.choice, 'drive-c');
 assert.equal(initialReview().scenes.collapse.choice, 'collapse-m');
 assert.equal(initialReview().scenes.crumble.choice, 'none');
-assert.equal(isCandidate('hit', 'hit-d'), false);
+assert.equal(isCandidate('hit', 'hit-zzzz'), false);
 assert.equal(isCandidate('collapse', 'collapse-d'), true);
 assert.equal(isCandidate('collapse', 'collapse-j'), true);
 assert.equal(isCandidate('crumble', 'crumble-e'), true);
 assert.equal(isCandidate('collapse', 'collapse-k'), true);
-assert.equal(isCandidate('collapse', 'collapse-n'), false);
+assert.equal(isCandidate('collapse', 'collapse-zzzz'), false);
 assert.equal(isCandidate('crumble', 'crumble-h'), true);
 assert.equal(letterAt(25), 'z');
 assert.equal(letterAt(26), 'aa');

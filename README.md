@@ -86,6 +86,7 @@ HTMLはビルド時に自動検出され、`/<slug>/` で開けます。素材�
 各遊びの戻るボタンは [共通コンポーネント](src/shared/home-button.ts) を使い、ページに合う見た目に調整します。Google Homeアイコンの出典・ライセンスは [素材メモ](src/shared/icons/README.md) を参照してください。
 
 - [AGENTS.md](AGENTS.md)：幼児向けの視認性・操作・演出、素材利用の共通方針
+- [効果音の制作・選定](docs/sound-review.md)：軽量な候補追加・聴き比べ・採用の手順
 - [シリーズ別SVG素材](src/assets/characters/README.md)：図形6点・水族館手動修正版8点と出典
 - [キャラクターと共有素材](docs/branding.md)：なかまたち・favicon・OGPの仕様と出典
 - [資料一覧](docs/README.md)：開発資料と過去の検証記録

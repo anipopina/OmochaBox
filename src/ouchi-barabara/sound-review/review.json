@@ -1,0 +1,313 @@
+{
+  "toy": "ouchi-barabara",
+  "catalog": "ouchi-barabara-audio-fixed-v1",
+  "storageKey": "ouchi-barabara:sound-review:fixed-v1",
+  "title": "おうちの音をえらぶ",
+  "subtitle": "おうちバラバラ・効果音の聴き比べ",
+  "symbol": "🚜",
+  "intro": [
+    "決定した音は打撃A・最後の崩壊M・瓦礫E・走行Cです。途中の崩壊は採用せず、音なしです。",
+    "最後の一撃では打撃音と崩壊音が重なります。"
+  ],
+  "links": [
+    {
+      "candidate": "collapse-k",
+      "label": "木製の崩壊 K・L・Mへ"
+    },
+    {
+      "candidate": "crumble-f",
+      "label": "重めの途中崩壊 F・G・Hへ"
+    }
+  ],
+  "playback": {
+    "gain": 0.6,
+    "attack": 0.008,
+    "release": 0.06
+  },
+  "current": {
+    "hit": "hit-a",
+    "collapse": "collapse-m",
+    "rubble": "rubble-e",
+    "drive": "drive-c",
+    "crumble": null
+  },
+  "initialChoices": {
+    "crumble": "none"
+  },
+  "scenes": [
+    {
+      "id": "hit",
+      "title": "家をたたく",
+      "symbol": "🔨",
+      "timing": "バケットが家に当たる瞬間",
+      "duration": "0.7秒",
+      "interval": 0.95,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "木のおもちゃの打撃",
+          "file": "hit-original.mp3",
+          "seconds": 0.7,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "低く空洞に響く木の音",
+          "file": "hit-b.mp3",
+          "seconds": 0.7,
+          "round": 1
+        },
+        {
+          "letter": "c",
+          "name": "弾むプラスチックの音",
+          "file": "hit-c.mp3",
+          "seconds": 0.7,
+          "round": 1
+        }
+      ]
+    },
+    {
+      "id": "collapse",
+      "title": "最後にくずれる",
+      "symbol": "🏠",
+      "timing": "最後の打撃で家が全壊するとき",
+      "duration": "0.9〜2.1秒",
+      "interval": 2.8,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "積み木が落ち着く音",
+          "file": "collapse-original.mp3",
+          "seconds": 2.1,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "まとまって倒れる木の音",
+          "file": "collapse-b.mp3",
+          "seconds": 2.1,
+          "round": 1
+        },
+        {
+          "letter": "c",
+          "name": "軽いプラスチックの崩れ",
+          "file": "collapse-c.mp3",
+          "seconds": 2.1,
+          "round": 1
+        },
+        {
+          "letter": "d",
+          "name": "Aの音色・短く、前半から減衰",
+          "file": "collapse-d.mp3",
+          "seconds": 1.14,
+          "round": 2
+        },
+        {
+          "letter": "e",
+          "name": "Aの音色・さらに短く、早く減衰",
+          "file": "collapse-e.mp3",
+          "seconds": 0.9,
+          "round": 2
+        },
+        {
+          "letter": "f",
+          "name": "Aの序盤から、2秒で落ち着く",
+          "file": "collapse-f.mp3",
+          "seconds": 2,
+          "round": 3
+        },
+        {
+          "letter": "g",
+          "name": "Aの序盤から、2秒でやわらかく減衰",
+          "file": "collapse-g.mp3",
+          "seconds": 2,
+          "round": 3
+        },
+        {
+          "letter": "h",
+          "name": "軽い木の積み木が一斉に崩れる",
+          "file": "collapse-h.mp3",
+          "seconds": 2,
+          "round": 4
+        },
+        {
+          "letter": "i",
+          "name": "小さな積み木がさらっと崩れる",
+          "file": "collapse-i.mp3",
+          "seconds": 2,
+          "round": 4
+        },
+        {
+          "letter": "j",
+          "name": "軽い木の塔が横へ崩れる",
+          "file": "collapse-j.mp3",
+          "seconds": 2,
+          "round": 4
+        },
+        {
+          "letter": "k",
+          "name": "Cを参考に・木製ブロック",
+          "file": "collapse-k.mp3",
+          "seconds": 2,
+          "round": 5
+        },
+        {
+          "letter": "l",
+          "name": "Cのコンセプトで・木製ブロック",
+          "file": "collapse-l.mp3",
+          "seconds": 2,
+          "round": 5
+        },
+        {
+          "letter": "m",
+          "name": "Cを参考に・厚みのある木製ブロック",
+          "file": "collapse-m.mp3",
+          "seconds": 2,
+          "round": 5
+        }
+      ]
+    },
+    {
+      "id": "rubble",
+      "title": "がれきをつつく",
+      "symbol": "🧱",
+      "timing": "全壊後、瓦礫や地面に当たる瞬間",
+      "duration": "0.65〜0.9秒",
+      "interval": 0.95,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "木片をつついて転がす音",
+          "file": "rubble-original.mp3",
+          "seconds": 0.65,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "小さな木のころんとした音",
+          "file": "rubble-b.mp3",
+          "seconds": 0.65,
+          "round": 1
+        },
+        {
+          "letter": "c",
+          "name": "小さなブロックが弾む音",
+          "file": "rubble-c.mp3",
+          "seconds": 0.65,
+          "round": 1
+        },
+        {
+          "letter": "d",
+          "name": "Bを少し重く・かすかな余韻",
+          "file": "rubble-d.mp3",
+          "seconds": 0.811,
+          "round": 2
+        },
+        {
+          "letter": "e",
+          "name": "Bをもう少し低く・長めの余韻",
+          "file": "rubble-e.mp3",
+          "seconds": 0.902,
+          "round": 2
+        }
+      ]
+    },
+    {
+      "id": "drive",
+      "title": "次の家へはしる",
+      "symbol": "🚜",
+      "timing": "走り始めから次の家に着くまで",
+      "duration": "6秒",
+      "interval": 6.5,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "玩具モーターとキャタピラ",
+          "file": "drive-original.mp3",
+          "seconds": 6,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "低めでやわらかいモーター",
+          "file": "drive-b.mp3",
+          "seconds": 6,
+          "round": 1
+        },
+        {
+          "letter": "c",
+          "name": "軽い歯車とキャタピラ",
+          "file": "drive-c.mp3",
+          "seconds": 6,
+          "round": 1
+        }
+      ]
+    },
+    {
+      "id": "crumble",
+      "title": "途中がくずれる",
+      "symbol": "🧩",
+      "timing": "最後以外のアタック直後に、打撃音と重ねる",
+      "duration": "1.5秒",
+      "interval": 1.8,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "A系の木の崩れ・1.5秒で落ち着く",
+          "file": "crumble-a.mp3",
+          "seconds": 1.5,
+          "round": 3
+        },
+        {
+          "letter": "b",
+          "name": "A系の木の崩れ・1.5秒で早めに減衰",
+          "file": "crumble-b.mp3",
+          "seconds": 1.5,
+          "round": 3
+        },
+        {
+          "letter": "c",
+          "name": "少量の軽い積み木が崩れる",
+          "file": "crumble-c.mp3",
+          "seconds": 1.5,
+          "round": 4
+        },
+        {
+          "letter": "d",
+          "name": "軽い木片が一度にこぼれる",
+          "file": "crumble-d.mp3",
+          "seconds": 1.5,
+          "round": 4
+        },
+        {
+          "letter": "e",
+          "name": "小さな木の塔の一部が崩れる",
+          "file": "crumble-e.mp3",
+          "seconds": 1.5,
+          "round": 4
+        },
+        {
+          "letter": "f",
+          "name": "Dの崩れ方・少し重い木片",
+          "file": "crumble-f.mp3",
+          "seconds": 1.5,
+          "round": 5
+        },
+        {
+          "letter": "g",
+          "name": "Dの崩れ方・少し低めで重い木片",
+          "file": "crumble-g.mp3",
+          "seconds": 1.5,
+          "round": 5
+        },
+        {
+          "letter": "h",
+          "name": "Dを参考に・重めの木片を再生成",
+          "file": "crumble-h.mp3",
+          "seconds": 1.5,
+          "round": 5
+        }
+      ]
+    }
+  ]
+}

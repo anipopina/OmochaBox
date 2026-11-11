@@ -28,7 +28,10 @@
     "test:smoke": "node tests/run.mjs smoke",
     "test:full": "node tests/run.mjs full",
     "test:runner": "node --test tests/runner.test.mjs",
-    "test:list": "node tests/run.mjs list"
+    "test:list": "node tests/run.mjs list",
+    "sound-review": "node --import tsx scripts/sound-review.mjs",
+    "sound-review:check": "node --import tsx scripts/sound-review.mjs check",
+    "test:sound-review": "node --import tsx --test tests/sound-review.test.mjs"
   },
   "engines": {
     "node": "^22.13.0 || >=24.0.0"

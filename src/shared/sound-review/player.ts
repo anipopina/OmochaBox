@@ -1,3 +1,4 @@
+import type { Playback } from './catalogue';
 /** One transport owns every node and scheduled repeat. No playback survives stop. */
 export class ReviewPlayer {
   private context: AudioContext | null = null;
@@ -8,6 +9,7 @@ export class ReviewPlayer {
   private generation = 0;
   constructor(
     private update: (message: string, candidate: string | null) => void,
+    private playback: Playback,
   ) {}
 
   async play(
@@ -48,8 +50,18 @@ export class ReviewPlayer {
         const start = now + i * interval;
         // Match the game's master gain and short playback envelope.
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(0.6, start + 0.008);
-        gain.gain.setValueAtTime(0.6, start + buffer.duration - 0.06);
+        gain.gain.linearRampToValueAtTime(
+          this.playback.gain,
+          start + Math.min(this.playback.attack, buffer.duration / 4),
+        );
+        gain.gain.setValueAtTime(
+          this.playback.gain,
+          start +
+            Math.max(
+              buffer.duration / 2,
+              buffer.duration - this.playback.release,
+            ),
+        );
         gain.gain.linearRampToValueAtTime(0, start + buffer.duration);
         source.connect(gain).connect(context.destination);
         this.sources.add(source);

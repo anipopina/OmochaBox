@@ -107,6 +107,12 @@ export function plan(mode, targets = []) {
         args: ['--test', 'tests/runner.test.mjs'],
         needs: [],
       },
+      {
+        id: 'sound-review-framework',
+        command: 'npm',
+        args: ['run', 'test:sound-review'],
+        needs: [],
+      },
     );
   for (const suite of suites)
     steps.push(
