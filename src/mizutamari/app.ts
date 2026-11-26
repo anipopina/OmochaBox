@@ -1,57 +1,50 @@
 import '../shared/home-button';
-import { requireElement } from '../shared/dom';
-import { Pond, RIPPLE_LIFE } from './model';
+import { requireContext2d, requireElement } from '../shared/dom';
+import { Pond } from './model';
+import type { Leaf } from './model';
+import { PondSound } from './sound';
+import { drawWaterSurface } from './water-surface';
 import greenLeaf from './assets/leaf-green.webp';
 import tealLeaf from './assets/leaf-teal.webp';
+import willowLeaf from './assets/leaf-willow.webp';
+import ivyLeaf from './assets/leaf-ivy.webp';
 
 const canvas = requireElement('#water', HTMLCanvasElement);
-const context = canvas.getContext('2d');
-if (!context) throw new Error('Canvas 2D unavailable');
-const ctx = context;
+const refractionCanvas = requireElement('#refraction', HTMLCanvasElement);
+const gravel = requireElement('#gravel', HTMLImageElement);
+const ctx = requireContext2d(canvas);
+const refraction = requireContext2d(refractionCanvas);
 const pond = new Pond();
+const sounds = new PondSound();
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 pond.reduced = motion.matches;
-const leafUrls = [greenLeaf, tealLeaf];
-const images: HTMLImageElement[] = [];
+const leafUrls: Record<Leaf['art'], string> = {
+  green: greenLeaf,
+  teal: tealLeaf,
+  willow: willowLeaf,
+  ivy: ivyLeaf,
+};
+const images = new Map<string, HTMLImageElement>();
 let ready = false;
 let frame = 0;
 let previous = 0;
 const keyboard = { x: 0.5, y: 0.55, visible: false };
-const pointers = new Map<number, { x: number; y: number; time: number }>();
+const pointers = new Map<
+  number,
+  { x: number; y: number; time: number; soundUntil: number }
+>();
 
 function draw(now: number) {
   ctx.clearRect(0, 0, pond.width, pond.height);
-  for (const ripple of pond.ripples) {
-    const age = Math.max(0, now - ripple.born);
-    const progress = age / (pond.reduced ? 500 : RIPPLE_LIFE);
-    const radius = pond.reduced
-      ? 48
-      : 16 +
-        Math.sqrt(progress) *
-          Math.min(200, Math.min(pond.width, pond.height) * 0.48);
-    const opacity = Math.max(0, 1 - progress);
-    for (let ring = 0; ring < 3; ring++) {
-      const r = radius * (1 - ring * 0.22);
-      ctx.beginPath();
-      ctx.ellipse(ripple.x, ripple.y, r, r * 0.82, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(35,116,137,${opacity * 0.25})`;
-      ctx.lineWidth = 6 - ring;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.ellipse(ripple.x, ripple.y - 1.8, r, r * 0.82, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255,255,246,${opacity * 0.95})`;
-      ctx.lineWidth = 3 - ring * 0.5;
-      ctx.stroke();
-    }
-  }
+  drawWaterSurface(ctx, refraction, gravel, pond, now);
   for (const leaf of pond.leaves) {
-    const img = images[leaf.art];
+    const img = images.get(leaf.art);
     if (!img) continue;
     ctx.save();
     ctx.translate(leaf.x, leaf.y);
     ctx.rotate(leaf.angle + leaf.tilt);
     const h = (leaf.size * img.naturalHeight) / img.naturalWidth;
-    ctx.shadowColor = '#377f9255';
+    ctx.shadowColor = '#09374180';
     ctx.shadowBlur = 9;
     ctx.shadowOffsetY = 4;
     ctx.drawImage(img, -leaf.size / 2, -h / 2, leaf.size, h);
@@ -93,6 +86,7 @@ function cancelInputs() {
 }
 function stop() {
   cancelInputs();
+  sounds.stop();
   cancelAnimationFrame(frame);
   frame = previous = 0;
   pond.clear();
@@ -102,14 +96,37 @@ function stop() {
 function resize() {
   stop();
   const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
   const dpr = Math.min(
     devicePixelRatio || 1,
     2,
     Math.sqrt(3_000_000 / Math.max(1, rect.width * rect.height)),
   );
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  canvas.width = Math.max(1, Math.round(rect.width * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  ctx.setTransform(
+    canvas.width / rect.width,
+    0,
+    0,
+    canvas.height / rect.height,
+    0,
+    0,
+  );
+  // The refraction can be softer than the foreground and needs only CSS-pixel detail.
+  const lensScale = Math.min(
+    1,
+    Math.sqrt(1_200_000 / (rect.width * rect.height)),
+  );
+  refractionCanvas.width = Math.max(1, Math.round(rect.width * lensScale));
+  refractionCanvas.height = Math.max(1, Math.round(rect.height * lensScale));
+  refraction.setTransform(
+    refractionCanvas.width / rect.width,
+    0,
+    0,
+    refractionCanvas.height / rect.height,
+    0,
+    0,
+  );
   pond.resize(rect.width, rect.height);
   draw(performance.now());
 }
@@ -128,9 +145,17 @@ canvas.addEventListener('pointerdown', (event) => {
   keyboard.visible = false;
   const p = point(event);
   const now = performance.now();
-  pointers.set(event.pointerId, { ...p, time: now });
+  // Touch releases can activate Web Audio when the initial contact cannot.
+  const deferSound =
+    event.pointerType !== 'mouse' && sounds.needsTouchActivation;
+  pointers.set(event.pointerId, {
+    ...p,
+    time: now,
+    soundUntil: deferSound ? now + 240 : 0,
+  });
   canvas.setPointerCapture(event.pointerId);
   splash(p.x, p.y, now);
+  if (!deferSound) sounds.play();
 });
 canvas.addEventListener('pointermove', (event) => {
   const previousPoint = pointers.get(event.pointerId);
@@ -143,7 +168,7 @@ canvas.addEventListener('pointermove', (event) => {
     Math.hypot(p.x - previousPoint.x, p.y - previousPoint.y) < 36
   )
     return;
-  pointers.set(event.pointerId, { ...p, time: now });
+  pointers.set(event.pointerId, { ...p, time: now, soundUntil: 0 });
   splash(p.x, p.y, now);
 });
 for (const type of [
@@ -152,9 +177,19 @@ for (const type of [
   'lostpointercapture',
 ] as const) {
   canvas.addEventListener(type, (event) => {
+    const pointer = pointers.get(event.pointerId);
     pointers.delete(event.pointerId);
     if (canvas.hasPointerCapture(event.pointerId))
       canvas.releasePointerCapture(event.pointerId);
+    if (type === 'pointercancel' && pointer) sounds.stop();
+    if (
+      type === 'pointerup' &&
+      pointer &&
+      performance.now() <= pointer.soundUntil
+    ) {
+      const p = point(event);
+      if (Math.hypot(p.x - pointer.x, p.y - pointer.y) <= 16) sounds.play();
+    }
   });
 }
 canvas.addEventListener('keydown', (event) => {
@@ -168,12 +203,14 @@ canvas.addEventListener('keydown', (event) => {
   event.preventDefault();
   keyboard.visible = true;
   if (event.key === ' ' || event.key === 'Enter') {
-    if (!event.repeat)
+    if (!event.repeat) {
       splash(
         keyboard.x * pond.width,
         keyboard.y * pond.height,
         performance.now(),
       );
+      sounds.play();
+    }
   } else {
     keyboard.x = Math.max(
       0.05,
@@ -204,11 +241,15 @@ canvas.addEventListener('keydown', (event) => {
 });
 canvas.addEventListener('blur', () => {
   cancelInputs();
+  sounds.stop();
   keyboard.visible = false;
   draw(performance.now());
 });
 window.addEventListener('blur', stop);
-window.addEventListener('pagehide', stop);
+window.addEventListener('pagehide', (event) => {
+  stop();
+  if (!event.persisted) sounds.dispose();
+});
 window.addEventListener('pageshow', resize);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) stop();
@@ -219,23 +260,15 @@ motion.addEventListener('change', () => {
 });
 new ResizeObserver(resize).observe(canvas);
 resize();
-void Promise.all(
-  leafUrls.map(async (url) => {
+void Promise.allSettled(
+  Object.entries(leafUrls).map(async ([art, url]) => {
     const image = new Image();
     image.src = url;
     await image.decode();
-    return image;
+    images.set(art, image);
   }),
-)
-  .then((loaded) => {
-    images.push(...loaded);
-    ready = loaded.length === leafUrls.length;
-    canvas.dataset.ready = String(ready);
-    draw(performance.now());
-  })
-  .catch(() => {
-    // Ripples remain playable when a decorative image fails to decode.
-    ready = true;
-    canvas.dataset.ready = 'true';
-    draw(performance.now());
-  });
+).then(() => {
+  ready = true;
+  canvas.dataset.ready = 'true';
+  draw(performance.now());
+});

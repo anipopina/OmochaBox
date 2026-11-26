@@ -40,12 +40,20 @@
   </head>
   <body>
     <main id="pond">
+      <picture id="pond-bed">
+        <source
+          media="(max-aspect-ratio: 3/4)"
+          srcset="assets/gravel-portrait.webp"
+        />
+        <img id="gravel" src="assets/gravel.webp" alt="" />
+      </picture>
       <canvas
         id="water"
         tabindex="0"
         role="application"
         aria-label="みずたまり。さわったところに波紋が広がります。矢印キーで場所を動かし、Enterかスペースで波紋を作れます。"
       ></canvas>
+      <canvas id="refraction" aria-hidden="true"></canvas>
       <a
         id="back"
         data-home-button
@@ -54,6 +62,6 @@
       ></a>
       <h1 class="sr-only">みずたまり</h1>
     </main>
-    <script type="module" src="app.ts"></script>
+    <script type="module" src="entry.ts"></script>
   </body>
 </html>

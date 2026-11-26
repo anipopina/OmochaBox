@@ -1,0 +1,47 @@
+{
+  "toy": "mizutamari",
+  "catalog": "mizutamari-audio-fixed-v1",
+  "storageKey": "mizutamari:sound-review:fixed-v1",
+  "title": "みずたまりの音をえらぶ",
+  "subtitle": "みずたまり・効果音の聴き比べ",
+  "symbol": "💧",
+  "intro": [
+    "短い水音を単音と3回再生で聴き比べ、遊びの中で触れたときの鳴り方を確認します。"
+  ],
+  "links": [],
+  "playback": { "gain": 0.55, "attack": 0.005, "release": 0.03 },
+  "current": { "tap": null },
+  "scenes": [
+    {
+      "id": "tap",
+      "title": "水面に触れたとき",
+      "symbol": "💧",
+      "timing": "水面を最初に触れたときに鳴ります。指をなぞってできる波紋には音を重ねません。遊びの中では再生速度が少しずつ変わります。",
+      "duration": "短い一滴",
+      "interval": 0.43147,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "短い「ぽちょっ」",
+          "file": "tap-a.mp3",
+          "seconds": 0.09603,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "丸い「ぽちょん」",
+          "file": "tap-b.mp3",
+          "seconds": 0.18147,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "軽い「ぽちょっ」",
+          "file": "tap-c.mp3",
+          "seconds": 0.17703,
+          "round": 3
+        }
+      ]
+    }
+  ]
+}

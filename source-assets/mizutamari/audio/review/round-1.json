@@ -1,0 +1,110 @@
+{
+  "generated_on": "2026-11-26",
+  "model": "stabilityai/stable-audio-open-1.0",
+  "model_revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "runner": "Stable Audio Open local gen.py (Diffusers)",
+  "tool_versions": {
+    "diffusers": "0.42.1",
+    "torch": "2.6.0+cu124",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4",
+    "accelerate": "1.15.0"
+  },
+  "generation": {
+    "source_format": "44.1 kHz stereo float WAV",
+    "steps": 80,
+    "negative_prompt": "Low quality",
+    "precision": "torch.float16 with model CPU offload"
+  },
+  "processing": {
+    "channel_mix": "stereo channel mean",
+    "filtering": "third-order Butterworth, zero-phase",
+    "fades": "linear",
+    "normalization": "RMS with tanh soft limiting at -12.5 dBFS before encoding",
+    "output_format": "32 kHz mono 64 kbps MP3 (libmp3lame)",
+    "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930"
+  },
+  "cues": [
+    {
+      "key": "short-plip",
+      "name": "短い「ぽちょっ」",
+      "seed": 52813,
+      "prompt": "One single very small natural finger tap on the still surface of a shallow puddle. A close, soft, rounded wet plip with a tiny liquid bubble onset and an immediately dry quiet tail, intimate field-recorded ASMR sound effect. Just one discrete droplet-like sound near the start and then silence. Soft attack, no sharp high frequencies, not a big splash. No bubbling stream, no ambient water, no voices, no music, no room echo.",
+      "scene": "tap",
+      "seconds": 2,
+      "source_path": "tmp/audio-originals/mizutamari/generated/short-plip.wav",
+      "source_sha256": "0188a4b059972119d7c72e82992313d5b43148f7993bfc656a3bc5cc68a69e75",
+      "trim_seconds": [
+        0.391,
+        0.487
+      ],
+      "leading_pad_seconds": 0,
+      "bandpass_hz": [
+        155,
+        4500
+      ],
+      "fade_in_seconds": 0.0015,
+      "fade_out_seconds": 0.031,
+      "target_rms_dbfs": -31,
+      "output_sha256": "6acd4fa8651d66454b46a455c94a3ebee8895982bd32222a6c0ac126900ad356",
+      "bytes": 1484,
+      "duration_seconds": 0.09603,
+      "decoded_peak_dbfs": -14.02,
+      "decoded_rms_dbfs": -33.28
+    },
+    {
+      "key": "round-plonk",
+      "name": "丸い「ぽちょん」",
+      "seed": 52814,
+      "prompt": "One single tiny drop landing in a shallow quiet puddle, a gentle rounded close-miked liquid plonk with a short lower pitched droplet resonance and natural quick decay, like quietly touching the surface with one fingertip. Exactly one water drop near the start and then silence, muted and soft. No follow-up splash, no drips in a row, no continuous water, no hiss, no voices, no music, no echo.",
+      "scene": "tap",
+      "seconds": 2,
+      "source_path": "tmp/audio-originals/mizutamari/generated/round-plonk.wav",
+      "source_sha256": "f2029bf9ee7d9825545a31c5bfce0fecf19e4c83def89b56c5243992eb8ba239",
+      "trim_seconds": [
+        0.081,
+        0.262
+      ],
+      "leading_pad_seconds": 0,
+      "bandpass_hz": [
+        130,
+        5000
+      ],
+      "fade_in_seconds": 0.0015,
+      "fade_out_seconds": 0.031,
+      "target_rms_dbfs": -30,
+      "output_sha256": "2f0d6e4011801b3f40663577a648a51e129f73a6e882abc431906bf452d403c8",
+      "bytes": 2348,
+      "duration_seconds": 0.18147,
+      "decoded_peak_dbfs": -14.5,
+      "decoded_rms_dbfs": -31.84
+    },
+    {
+      "key": "light-plop",
+      "name": "軽い「ぽちょっ」",
+      "seed": 52815,
+      "prompt": "Isolated foley of one tiny tap touching the top of a finger-deep puddle. One light wet tick with a little round plop directly underneath, delicate natural liquid movement, softer and brighter than a deep bubble, very short dry decay. One event and then silence, no repeated drops, no running water, no background noise, no voices, no music, no reverb.",
+      "scene": "tap",
+      "seconds": 2,
+      "source_path": "tmp/audio-originals/mizutamari/generated/light-plop.wav",
+      "source_sha256": "09b1502c06446cbd9291513b4d78a83bd9e76bd908f5833e1286f7c49080788b",
+      "trim_seconds": [
+        0,
+        0.169
+      ],
+      "leading_pad_seconds": 0.008,
+      "bandpass_hz": [
+        155,
+        5100
+      ],
+      "fade_in_seconds": 0.0015,
+      "fade_out_seconds": 0.031,
+      "target_rms_dbfs": -31,
+      "output_sha256": "18cd71a50fc13b54977e04efd82948533a9f110776b8012e00a23f814ef78d8d",
+      "bytes": 2060,
+      "duration_seconds": 0.17703,
+      "decoded_peak_dbfs": -12.59,
+      "decoded_rms_dbfs": -35.11
+    }
+  ]
+}

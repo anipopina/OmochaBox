@@ -1,12 +1,12 @@
 {
   "hikari-no-oekaki": true,
   "fukifuki-mado": true,
-  "pukapuka-fusen": false,
+  "pukapuka-fusen": true,
   "ponpon-stamp": true,
   "korokoro-suberidai": false,
   "kurukuru-kazaguruma": false,
   "kasanete-iroglass": false,
-  "mizutamari": false,
+  "mizutamari": true,
   "pukupuku-shabon": false,
   "oimo-horihori": true,
   "ouchi-barabara": true

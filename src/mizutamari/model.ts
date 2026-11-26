@@ -1,6 +1,15 @@
 // Coordinates and distances are CSS pixels; the renderer owns device scaling.
 export const MAX_RIPPLES = 32;
 export const RIPPLE_LIFE = 2200;
+const LEAF_LAYOUT = [
+  [0.22, 0.24, -0.45, 1, 'green'],
+  [0.79, 0.35, 0.6, 0.82, 'teal'],
+  [0.39, 0.74, 0.25, 0.94, 'willow'],
+  [0.67, 0.76, -0.8, 0.88, 'green'],
+  [0.49, 0.19, 0.55, 0.8, 'ivy'],
+  [0.18, 0.6, -0.2, 0.83, 'teal'],
+  [0.8, 0.57, 0.9, 0.72, 'green'],
+] as const;
 export interface Ripple {
   x: number;
   y: number;
@@ -15,7 +24,7 @@ export interface Leaf {
   tilt: number;
   spin: number;
   size: number;
-  art: number;
+  art: (typeof LEAF_LAYOUT)[number][4];
 }
 export class Pond {
   width = 1;
@@ -27,22 +36,26 @@ export class Pond {
     this.width = Math.max(1, width);
     this.height = Math.max(1, height);
     this.ripples = [];
-    const size = Math.min(112, Math.max(84, Math.min(width, height) * 0.25));
-    this.leaves = [
-      [0.22, 0.24, -0.45],
-      [0.79, 0.35, 0.6],
-      [0.39, 0.74, 0.25],
-    ].map(([nx, ny, angle], art) => ({
-      x: nx * this.width,
-      y: ny * this.height,
-      vx: 0,
-      vy: 0,
-      angle,
-      tilt: 0,
-      spin: 0,
-      size: art === 1 ? size * 0.82 : size,
-      art: art % 2,
-    }));
+    const shortSide = Math.min(this.width, this.height);
+    const size = Math.min(
+      154,
+      Math.max(64, shortSide * 0.225),
+      shortSide * 0.25,
+    );
+    const count = 2 + Math.floor((this.width * this.height) / 250_000);
+    this.leaves = LEAF_LAYOUT.slice(0, count).map(
+      ([nx, ny, angle, scale, art]) => ({
+        x: nx * this.width,
+        y: ny * this.height,
+        vx: 0,
+        vy: 0,
+        angle,
+        tilt: 0,
+        spin: 0,
+        size: size * scale,
+        art,
+      }),
+    );
   }
   splash(x: number, y: number, now: number) {
     if (!Number.isFinite(x + y + now)) return;

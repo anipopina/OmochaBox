@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tap-a",
+    "file": "tap-a.mp3",
+    "sha256": "6acd4fa8651d66454b46a455c94a3ebee8895982bd32222a6c0ac126900ad356",
+    "provenance": "source-assets/mizutamari/audio/review/round-1.json"
+  },
+  {
+    "id": "tap-b",
+    "file": "tap-b.mp3",
+    "sha256": "2f0d6e4011801b3f40663577a648a51e129f73a6e882abc431906bf452d403c8",
+    "provenance": "source-assets/mizutamari/audio/review/round-1.json"
+  },
+  {
+    "id": "tap-c",
+    "file": "tap-c.mp3",
+    "sha256": "18cd71a50fc13b54977e04efd82948533a9f110776b8012e00a23f814ef78d8d",
+    "provenance": "source-assets/mizutamari/audio/review/round-1.json"
+  }
+]

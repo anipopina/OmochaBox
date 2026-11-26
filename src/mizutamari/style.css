@@ -18,21 +18,50 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: radial-gradient(
-    ellipse at 45% 40%,
-    #d8f5ec 0%,
-    #b8e9e9 48%,
-    #84cbd5 100%
-  );
+  background-color: #b1c9c3;
 }
-canvas {
+
+#pond-bed,
+#refraction,
+#pond::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#gravel,
+#refraction {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#gravel {
+  object-fit: cover;
+}
+
+#pond::after {
+  content: '';
+  background-image:
+    radial-gradient(
+      ellipse at 40% 33%,
+      #edf6e72c 8%,
+      #a4b9b536 66%,
+      #536e7559 100%
+    ),
+    linear-gradient(143deg, #c7def240, #a3bde040);
+}
+
+#water {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
   touch-action: none;
   outline-offset: -5px;
 }
-canvas:focus-visible {
+#water:focus-visible {
   outline: 4px solid #226c83;
 }
 
