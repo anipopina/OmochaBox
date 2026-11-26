@@ -1,0 +1,128 @@
+{
+  "toy": "oimo-horihori",
+  "catalog": "oimo-horihori-audio-fixed-v1",
+  "storageKey": "oimo-horihori:sound-review:fixed-v1",
+  "title": "おいもほりほりの音をえらぶ",
+  "subtitle": "おいもほりほり・効果音の聴き比べ",
+  "symbol": "🍠",
+  "intro": [
+    "土をなぞり、おいもを掘り出してカゴへ入れるまでの4つの音を試せます。"
+  ],
+  "links": [],
+  "playback": {
+    "gain": 0.55,
+    "attack": 0.005,
+    "release": 0.045
+  },
+  "current": {
+    "dig": "dig-a",
+    "ready": "ready-c",
+    "pick": "pick-a",
+    "basket": "basket-b"
+  },
+  "scenes": [
+    {
+      "id": "dig",
+      "title": "土を掘るとき",
+      "symbol": "🤲",
+      "timing": "新しく土が削れたときに鳴ります。ドラッグ中は間隔を間引き、遊びの中では再生速度も少し変わります。",
+      "duration": "短いひと掻き",
+      "interval": 0.6,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "やわらかく土を払う音",
+          "file": "dig-a.mp3",
+          "seconds": 0.211,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "細かい砂粒がこすれる音",
+          "file": "dig-b.mp3",
+          "seconds": 0.19603,
+          "round": 2
+        }
+      ]
+    },
+    {
+      "id": "ready",
+      "title": "おいもを取れるようになったとき",
+      "symbol": "✨",
+      "timing": "おいもが十分に見えて光り始めたときに鳴ります。",
+      "duration": "短い発見の音",
+      "interval": 1.1,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "やわらかな木の一音",
+          "file": "ready-a.mp3",
+          "seconds": 0.365,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "軽く上がる二音",
+          "file": "ready-b.mp3",
+          "seconds": 0.36803,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "コトンと鳴る発見音（カゴのA案）",
+          "file": "ready-c.mp3",
+          "seconds": 0.27503,
+          "round": 3
+        }
+      ]
+    },
+    {
+      "id": "pick",
+      "title": "おいもを取るとき",
+      "symbol": "🍠",
+      "timing": "おいもをタップして土から持ち上がったときに鳴ります。",
+      "duration": "短い引き抜き音",
+      "interval": 0.8,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "土がほぐれて抜ける音",
+          "file": "pick-a.mp3",
+          "seconds": 0.17103,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "根が抜ける短い音",
+          "file": "pick-b.mp3",
+          "seconds": 0.21903,
+          "round": 2
+        }
+      ]
+    },
+    {
+      "id": "basket",
+      "title": "おいもがカゴに入ったとき",
+      "symbol": "🧺",
+      "timing": "おいもがカゴに着いて、カゴが弾んだときに鳴ります。",
+      "duration": "短い着地音",
+      "interval": 0.8,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "コトンと着地する音",
+          "file": "basket-a.mp3",
+          "seconds": 0.27503,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "カゴがかすかに鳴る着地音",
+          "file": "basket-b.mp3",
+          "seconds": 0.22397,
+          "round": 2
+        }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import depthUrl from './assets/soil-depth.webp';
 import clodsUrl from './assets/soil-clods.webp';
 import { Digging, columns, rows, potatoLayout, basketPotato } from './model';
 import { requireElement } from '../shared/dom';
+import { GardenSound } from './sound';
 
 const patch = requireElement('#patch', HTMLDivElement);
 const canvas = requireElement('#soil', HTMLCanvasElement);
@@ -16,6 +17,7 @@ const basket = requireElement('#basket', HTMLDivElement);
 const cheer = requireElement('#cheer', HTMLDivElement);
 const ctx = canvas.getContext('2d')!;
 const game = new Digging();
+const sounds = new GardenSound();
 const soilArtwork = new Image();
 soilArtwork.src = soilUrl;
 const soilDetails = [depthUrl, clodsUrl].map((url) => {
@@ -33,6 +35,7 @@ const maskPixels = maskCtx.createImageData(columns, rows);
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 let pointer: number | null = null;
 let previous = { x: 0, y: 0 };
+let pendingTap: { cue: 'dig' | 'ready'; time: number } | null = null;
 let timer = 0;
 const artwork = new Image();
 artwork.src = potatoUrl;
@@ -56,10 +59,18 @@ function cacheSurface() {
   const tileSize = parseFloat(
     getComputedStyle(patch).getPropertyValue('--soil-tile-size'),
   );
-  const scale =
-    (tileSize * (canvas.width / patch.clientWidth)) / soilArtwork.naturalWidth;
+  const { width, height } = canvas.getBoundingClientRect();
+  if (width === 0 || height === 0) return;
+  const scale = tileSize / soilArtwork.naturalWidth;
   const pattern = surfaceCtx.createPattern(soilArtwork, 'repeat')!;
-  pattern.setTransform(new DOMMatrix().scale(scale));
+  // The pixel buffer rounds each dimension separately. Match the CSS tile
+  // on both axes so it stays aligned with the deeper layer after a resize.
+  pattern.setTransform(
+    new DOMMatrix().scaleSelf(
+      (scale * canvas.width) / width,
+      (scale * canvas.height) / height,
+    ),
+  );
   surfaceCtx.fillStyle = pattern;
   surfaceCtx.fillRect(0, 0, surface.width, surface.height);
 }
@@ -139,14 +150,23 @@ function scatter(x: number, y: number) {
 }
 function dig(x: number, y: number) {
   const r = patch.getBoundingClientRect();
-  if (
-    game.dig((x - r.left) / r.width, (y - r.top) / r.height, r.width, r.height)
-  ) {
-    scatter(x, y);
-    update();
-  }
+  const changed = game.dig(
+    (x - r.left) / r.width,
+    (y - r.top) / r.height,
+    r.width,
+    r.height,
+  );
+  if (changed) scatter(x, y);
+  return changed;
 }
-function finish() {
+function digFeedback(fromDrag: boolean) {
+  update();
+  const cue = game.phase === 'ready' ? 'ready' : 'dig';
+  const played = cue === 'ready' ? sounds.play(cue) : sounds.dig(fromDrag);
+  if (!fromDrag && !played && pointer !== null)
+    pendingTap = { cue, time: performance.now() };
+}
+function finish(audible = false) {
   clearTimeout(timer);
   timer = 0;
   if (game.phase !== 'harvesting') return;
@@ -163,12 +183,15 @@ function finish() {
   basket.append(saved);
   basket.dataset.count = String(game.round + 1);
   basket.animate([{ scale: '1.1' }, { scale: '1' }], { duration: 300 });
+  if (audible) sounds.play('basket');
   game.next();
   plant();
 }
 function harvest() {
   if (!game.harvest()) return;
+  sounds.unlock();
   stopInput();
+  sounds.play('pick');
   const img = roots.querySelector('img')!,
     r = img.getBoundingClientRect(),
     b = basket.getBoundingClientRect();
@@ -186,12 +209,13 @@ function harvest() {
     { duration: 850, fill: 'forwards', easing: 'ease-in-out' },
   );
   update();
-  timer = window.setTimeout(finish, 900);
+  timer = window.setTimeout(() => finish(true), 900);
 }
 function stopInput() {
   if (pointer !== null && patch.hasPointerCapture(pointer))
     patch.releasePointerCapture(pointer);
   pointer = null;
+  pendingTap = null;
 }
 patch.addEventListener('pointerdown', (e) => {
   if (pointer !== null || e.button !== 0 || document.hidden || !artworkReady)
@@ -209,25 +233,36 @@ patch.addEventListener('pointerdown', (e) => {
     return;
   }
   if (game.phase !== 'digging') return;
+  sounds.unlock();
   pointer = e.pointerId;
   patch.setPointerCapture(pointer);
   previous = { x: e.clientX, y: e.clientY };
-  dig(e.clientX, e.clientY);
+  if (dig(e.clientX, e.clientY)) digFeedback(false);
 });
 patch.addEventListener('pointermove', (e) => {
   if (e.pointerId !== pointer || game.phase !== 'digging') return;
   const distance = Math.hypot(e.clientX - previous.x, e.clientY - previous.y);
   if (distance < 12) return;
+  pendingTap = null;
   const steps = Math.min(40, Math.ceil(distance / 16));
+  let changed = false;
   for (let i = 1; i <= steps; i++)
-    dig(
-      previous.x + ((e.clientX - previous.x) * i) / steps,
-      previous.y + ((e.clientY - previous.y) * i) / steps,
-    );
+    changed =
+      dig(
+        previous.x + ((e.clientX - previous.x) * i) / steps,
+        previous.y + ((e.clientY - previous.y) * i) / steps,
+      ) || changed;
+  if (changed) digFeedback(true);
   previous = { x: e.clientX, y: e.clientY };
 });
 patch.addEventListener('pointerup', (e) => {
   if (e.pointerId !== pointer) return;
+  // Some touch browsers activate audio upon release, rather than at contact.
+  sounds.unlock();
+  if (pendingTap && performance.now() - pendingTap.time < 180) {
+    if (pendingTap.cue === 'dig') sounds.dig(false);
+    else sounds.play('ready');
+  }
   stopInput();
 });
 for (const event of ['pointercancel', 'lostpointercapture'])
@@ -242,13 +277,16 @@ patch.addEventListener('keydown', (e) => {
       (i) => !game.cleared.has(i),
     );
     if (remaining !== undefined) {
-      game.dig(
-        ((remaining % columns) + 0.5) / columns,
-        (Math.floor(remaining / columns) + 0.5) / rows,
-        patch.clientWidth,
-        patch.clientHeight,
-      );
-      update();
+      sounds.unlock();
+      if (
+        game.dig(
+          ((remaining % columns) + 0.5) / columns,
+          (Math.floor(remaining / columns) + 0.5) / rows,
+          patch.clientWidth,
+          patch.clientHeight,
+        )
+      )
+        digFeedback(false);
     }
   }
 });
@@ -257,11 +295,15 @@ patch.addEventListener('click', (e) => {
 });
 function cleanup() {
   stopInput();
+  sounds.stop();
   finish();
   scene.querySelectorAll('.clod').forEach((el) => el.remove());
 }
 window.addEventListener('blur', cleanup);
-window.addEventListener('pagehide', cleanup);
+window.addEventListener('pagehide', () => {
+  cleanup();
+  sounds.dispose();
+});
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) cleanup();
 });
@@ -310,16 +352,15 @@ function layout() {
     return weights;
   });
   game.setTargets(targets, width, height);
-  update();
 }
 function resize() {
-  layout();
   const r = patch.getBoundingClientRect(),
     dpr = Math.min(devicePixelRatio || 1, 2);
   canvas.width = Math.round(r.width * dpr);
   canvas.height = Math.round(r.height * dpr);
   cacheSurface();
-  paint();
+  layout();
+  update();
 }
 basket.addEventListener('click', () =>
   basket.animate(
@@ -333,7 +374,6 @@ basket.addEventListener('keydown', (e) => {
     basket.click();
   }
 });
-cacheSurface();
 plant();
 resize();
 
@@ -345,6 +385,7 @@ void Promise.all(
     patch.dataset.artworkReady = 'true';
     cacheSurface();
     layout();
+    update();
   })
   .catch(() => {
     cheer.textContent = '↻';

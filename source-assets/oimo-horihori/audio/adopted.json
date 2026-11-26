@@ -1,0 +1,42 @@
+{
+  "selection": "review/selections/2026-11-27-final.json",
+  "cues": {
+    "dig": [
+      {
+        "candidate": "dig-a",
+        "source": "src/oimo-horihori/sound-review/assets/dig-a.mp3",
+        "output": "src/oimo-horihori/assets/dig.mp3",
+        "sha256": "dbe71a3af945e9249344e756396c657d85f3997281c3b45655a4e1eaf7a4db32",
+        "provenance": "source-assets/oimo-horihori/audio/review/round-1.json"
+      }
+    ],
+    "ready": [
+      {
+        "candidate": "ready-c",
+        "source": "src/oimo-horihori/sound-review/assets/ready-c.mp3",
+        "output": "src/oimo-horihori/assets/ready.mp3",
+        "sha256": "dfd9ae2815fc1d1b49bccef9303470ba190e99df2fd881ecc68f9fec4c43589e",
+        "provenance": "source-assets/oimo-horihori/audio/review/round-1.json",
+        "originalCandidate": "basket-a"
+      }
+    ],
+    "pick": [
+      {
+        "candidate": "pick-a",
+        "source": "src/oimo-horihori/sound-review/assets/pick-a.mp3",
+        "output": "src/oimo-horihori/assets/pick.mp3",
+        "sha256": "f35f5b74d73de550641da57f453a7ebd3a9a4ceacc99428c843a3f8a04f3c68c",
+        "provenance": "source-assets/oimo-horihori/audio/review/round-1.json"
+      }
+    ],
+    "basket": [
+      {
+        "candidate": "basket-b",
+        "source": "src/oimo-horihori/sound-review/assets/basket-b.mp3",
+        "output": "src/oimo-horihori/assets/basket.mp3",
+        "sha256": "607ad52f999c293bfef48dcf023611d204619f1eaf27e37c34273014bb0d1fa3",
+        "provenance": "source-assets/oimo-horihori/audio/review/round-1.json"
+      }
+    ]
+  }
+}

@@ -89,7 +89,9 @@ try {
   await call('Runtime.enable');
   await call('Page.enable');
   await call('Page.addScriptToEvaluateOnNewDocument', {
-    source: `window.__rectangularCuts=0;const fillRect=CanvasRenderingContext2D.prototype.fillRect;CanvasRenderingContext2D.prototype.fillRect=function(...args){if(this.globalCompositeOperation==='destination-out')window.__rectangularCuts++;return fillRect.apply(this,args);};`,
+    source: `window.__rectangularCuts=0;const fillRect=CanvasRenderingContext2D.prototype.fillRect;CanvasRenderingContext2D.prototype.fillRect=function(...args){if(this.globalCompositeOperation==='destination-out')window.__rectangularCuts++;return fillRect.apply(this,args);};
+    const setPatternTransform=CanvasPattern.prototype.setTransform;
+    CanvasPattern.prototype.setTransform=function(matrix){window.__soilScale=[matrix.a,matrix.d];return setPatternTransform.call(this,matrix);};`,
   });
   const waitFor = async (expression) => {
     for (let i = 0; i < 100; i++) {
@@ -170,7 +172,7 @@ try {
     await call('Emulation.setDeviceMetricsOverride', {
       width,
       height,
-      deviceScaleFactor: 1,
+      deviceScaleFactor: width === 1180 ? 1.25 : 1,
       mobile: true,
     });
     await call('Emulation.setTouchEmulationEnabled', { enabled: true });
@@ -182,12 +184,17 @@ try {
     );
     const texture = await evaluate(`(()=>{
       const c=document.querySelector('#soil'),ctx=c.getContext('2d');
+      const patchStyle=getComputedStyle(document.querySelector('#patch'));
+      const {width,height}=c.getBoundingClientRect();
+      const tileSize=parseFloat(patchStyle.getPropertyValue('--soil-tile-size'));
       const colors=new Set();
       for(let y=10;y<c.height;y+=23) for(let x=10;x<c.width;x+=23){
         const p=ctx.getImageData(x,y,1,1).data;
         colors.add([p[0],p[1],p[2]].join(','));
       }
-      return {colors:colors.size,depth:getComputedStyle(document.querySelector('#patch')).backgroundImage};
+      const [x,y]=window.__soilScale;
+      return {colors:colors.size,depth:patchStyle.backgroundImage,depthSize:patchStyle.backgroundSize,
+        surfaceSize:[x * 1024 * width / c.width,y * 1024 * height / c.height],tileSize};
     })()`);
     assert.ok(
       texture.colors > 100,
@@ -197,6 +204,13 @@ try {
       texture.depth,
       /soil-depth.*\.webp/,
       'textured excavation floor',
+    );
+    assert.equal(texture.depthSize, texture.tileSize + 'px auto');
+    assert.ok(
+      texture.surfaceSize.every(
+        (size) => Math.abs(size - texture.tileSize) < 0.001,
+      ),
+      `soil surface keeps ${texture.tileSize}px square tiles: ${texture.surfaceSize.join(' × ')}`,
     );
     await shot('oimo-covered-' + width);
     await tap(0.5, 0.5);

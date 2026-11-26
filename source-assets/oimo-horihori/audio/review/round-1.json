@@ -1,0 +1,306 @@
+{
+  "generated_on": "2026-11-27",
+  "model": "stabilityai/stable-audio-open-1.0",
+  "model_revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "tool_versions": {
+    "diffusers": "0.42.1",
+    "torch": "2.6.0+cu124",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4",
+    "accelerate": "1.15.0"
+  },
+  "generation": {
+    "source_format": "44.1 kHz stereo float WAV",
+    "steps": 60,
+    "negative_prompt": "Low quality, loud, harsh, noisy background, voices",
+    "precision": "torch.float16 with model CPU offload"
+  },
+  "processing": {
+    "channel_mix": "stereo channel mean",
+    "filtering": "third-order Butterworth, zero-phase",
+    "fades": "linear",
+    "normalization": "per-segment RMS with tanh soft limiting at -13 dBFS after assembly",
+    "output_format": "32 kHz mono 64 kbps MP3 (libmp3lame)",
+    "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "cues": [
+    {
+      "key": "dig-a",
+      "scene": "dig",
+      "prompt": "Close-up dry foley of one short sweep of a hand through loose fine garden soil, freshly tilled crumbly dirt grains brushing away. Compact soft shrrk sound with granular earthy detail, quiet and gentle, a single gesture, no footsteps, no tools hitting stones, no music or voices.",
+      "seed": 27101,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/dig-a.wav",
+      "source_sha256": "69e9f4bc08d93c08472eea56dc1efe9c87c32072027f5e5d5582bab1e29ed80c",
+      "bandpass_hz": [
+        140,
+        5200
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.028,
+            0.239
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -29,
+          "fade_in_seconds": 0.009,
+          "fade_out_seconds": 0.044
+        }
+      ],
+      "output_sha256": "dbe71a3af945e9249344e756396c657d85f3997281c3b45655a4e1eaf7a4db32",
+      "bytes": 2348,
+      "duration_seconds": 0.211,
+      "decoded_peak_dbfs": -16.12,
+      "decoded_rms_dbfs": -29.9
+    },
+    {
+      "key": "dig-b",
+      "scene": "dig",
+      "prompt": "One short soft handful of dry potting soil scooped aside on a garden bed, close-microphone foley, warm low crumbly scritch with tiny clods crumbling and a gentle tail, a single soft scoop, no metallic noise, no voices, no music.",
+      "seed": 27102,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/dig-b.wav",
+      "source_sha256": "b0ee4e4a2d569ac280b3247acaceff40221150e3056874434d410854fa5aad68",
+      "bandpass_hz": [
+        160,
+        4600
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.012,
+            0.208
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -29,
+          "fade_in_seconds": 0.009,
+          "fade_out_seconds": 0.044
+        }
+      ],
+      "output_sha256": "5d37707eda9d35833fd22d20612b310038c6b5d1b81a1a7c17848abec9130e25",
+      "bytes": 2348,
+      "duration_seconds": 0.19603,
+      "decoded_peak_dbfs": -13.46,
+      "decoded_rms_dbfs": -31.51
+    },
+    {
+      "key": "ready-a",
+      "scene": "ready",
+      "prompt": "A very short gentle two-note ascending pentatonic marimba toy cue for discovering a hidden sweet potato, soft padded mallet on wood, light hopeful rising interval, one isolated cue with small tail, no voices, no background music or other instruments.",
+      "seed": 27111,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/ready-a.wav",
+      "source_sha256": "88ee0657c5f537ad29e4c09cde358918349a899fb80a009f0005c816057de6d2",
+      "bandpass_hz": [
+        320,
+        3900
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0,
+            0.365
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -27,
+          "fade_in_seconds": 0.008,
+          "fade_out_seconds": 0.064
+        }
+      ],
+      "output_sha256": "a1baca408a019699d134546b28579336f1b96f1471e57f10662af609a2f2a14d",
+      "bytes": 3788,
+      "duration_seconds": 0.365,
+      "decoded_peak_dbfs": -14.72,
+      "decoded_rms_dbfs": -28.22
+    },
+    {
+      "key": "ready-b",
+      "scene": "ready",
+      "prompt": "One gentle small set of two soft high-to-higher ceramic chime notes as a hidden vegetable becomes visible, rounded quiet glint with a short warm tail, playful and delicate, no sharp attack, no voices, no background music.",
+      "seed": 27112,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/ready-b.wav",
+      "source_sha256": "b077a4566bf6b9c585f8a42be6e50256b638a04423b0ca77244630b77aef9454",
+      "bandpass_hz": [
+        460,
+        3400
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            1.2,
+            1.369
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -33,
+          "fade_in_seconds": 0.012,
+          "fade_out_seconds": 0.065
+        },
+        {
+          "trim_seconds": [
+            0,
+            0.25
+          ],
+          "offset_seconds": 0.118,
+          "target_rms_dbfs": -28,
+          "fade_in_seconds": 0.01,
+          "fade_out_seconds": 0.065
+        }
+      ],
+      "output_sha256": "d68f1cd16b9afbded4b26b9e8d738c13e8a7904cd6aba97e1f649ce92a8c939b",
+      "bytes": 3788,
+      "duration_seconds": 0.36803,
+      "decoded_peak_dbfs": -15.35,
+      "decoded_rms_dbfs": -29.71,
+      "source_transform": {
+        "additional_segment_start_seconds": 1.2,
+        "copied_source_seconds": [
+          0,
+          0.209
+        ],
+        "speed": 0.8
+      }
+    },
+    {
+      "key": "pick-a",
+      "scene": "pick",
+      "prompt": "Close-up foley of a single small vegetable gently pulling free from a garden bed, short fibrous ruffle and tiny crumbly thunk, an intimate gentle release, organic and soft, no metal, no voices, no music.",
+      "seed": 27121,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/pick-a.wav",
+      "source_sha256": "8953611ccb207bf7600e58df4ba01bd8562951edfcac4e44af5ce5bd8b629e3f",
+      "bandpass_hz": [
+        175,
+        5700
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.244,
+            0.415
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -28,
+          "fade_in_seconds": 0.012,
+          "fade_out_seconds": 0.039
+        }
+      ],
+      "output_sha256": "f35f5b74d73de550641da57f453a7ebd3a9a4ceacc99428c843a3f8a04f3c68c",
+      "bytes": 2060,
+      "duration_seconds": 0.17103,
+      "decoded_peak_dbfs": -12.72,
+      "decoded_rms_dbfs": -33.18
+    },
+    {
+      "key": "pick-b",
+      "scene": "pick",
+      "prompt": "A single gentle clean pluck and small dry pat as a sweet potato is lifted out of soft soil, short cozy tactile foley for a small toy, like a soft root breaking loose, no sharp high pop, no voices, no music.",
+      "seed": 27122,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/pick-b.wav",
+      "source_sha256": "988580c47496894c257eaff436709ea9edf1a29ae80ae1af8d6a728e65712e07",
+      "bandpass_hz": [
+        145,
+        4600
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0,
+            0.219
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -28,
+          "fade_in_seconds": 0.011,
+          "fade_out_seconds": 0.041
+        }
+      ],
+      "output_sha256": "d0bcd1bf3d83646437370d02d05527593c0451c7551964cfcdf03b836e9b87ad",
+      "bytes": 2636,
+      "duration_seconds": 0.21903,
+      "decoded_peak_dbfs": -12.42,
+      "decoded_rms_dbfs": -33.73
+    },
+    {
+      "key": "basket-a",
+      "scene": "basket",
+      "prompt": "One sweet potato falling a short distance into a woven wicker basket, a soft low woody bumper thump followed by a brief dry rattan rattle. Close-up realistic small object foley, warm, quiet muted impact, no music, no voices.",
+      "seed": 27131,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/basket-a.wav",
+      "source_sha256": "33abd021d8f7756e1949ebe8e05e805cd2884a0ec59da9865f0705e3e1c4875c",
+      "bandpass_hz": [
+        95,
+        3500
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.122,
+            0.397
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -27,
+          "fade_in_seconds": 0.009,
+          "fade_out_seconds": 0.05
+        }
+      ],
+      "output_sha256": "dfd9ae2815fc1d1b49bccef9303470ba190e99df2fd881ecc68f9fec4c43589e",
+      "bytes": 2924,
+      "duration_seconds": 0.27503,
+      "decoded_peak_dbfs": -13.6,
+      "decoded_rms_dbfs": -31.52
+    },
+    {
+      "key": "basket-b",
+      "scene": "basket",
+      "prompt": "Soft padded pap and a tiny wicker creak as a small root vegetable settles onto other vegetables in a shallow woven basket, close-miked foley, warm low soft sound, one compact impact, no repeated bounces, no music or voices.",
+      "seed": 27132,
+      "generated_seconds": 1.2,
+      "source_path": "tmp/audio-originals/oimo-horihori/basket-b.wav",
+      "source_sha256": "907243c44d72da04d8584962de194a02e705fe746201f34607f74b1e3f9d2984",
+      "bandpass_hz": [
+        1200,
+        5100
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.088,
+            0.312
+          ],
+          "offset_seconds": 0,
+          "target_rms_dbfs": -28,
+          "fade_in_seconds": 0.009,
+          "fade_out_seconds": 0.05
+        }
+      ],
+      "output_sha256": "607ad52f999c293bfef48dcf023611d204619f1eaf27e37c34273014bb0d1fa3",
+      "bytes": 2636,
+      "duration_seconds": 0.22397,
+      "decoded_peak_dbfs": -13.43,
+      "decoded_rms_dbfs": -31.17,
+      "source_transform": {
+        "additional_source_path": "tmp/audio-originals/oimo-horihori/basket-a.wav",
+        "source_sha256": "33abd021d8f7756e1949ebe8e05e805cd2884a0ec59da9865f0705e3e1c4875c",
+        "prompt": "One sweet potato falling a short distance into a woven wicker basket, a soft low woody bumper thump followed by a brief dry rattan rattle. Close-up realistic small object foley, warm, quiet muted impact, no music, no voices.",
+        "seed": 27131,
+        "generated_seconds": 1.2,
+        "bandpass_hz": [
+          100,
+          920
+        ],
+        "trim_seconds": [
+          0.143,
+          0.342
+        ],
+        "offset_seconds": 0.095,
+        "target_rms_dbfs": -29,
+        "fade_in_seconds": 0.008,
+        "fade_out_seconds": 0.042,
+        "main_target_rms_dbfs": -35
+      }
+    }
+  ]
+}

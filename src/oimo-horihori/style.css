@@ -28,7 +28,7 @@ body {
   inset: 0;
   --soil-tile-size: 640px;
   background: #67432d url('./assets/soil-depth.webp') repeat 0 0 /
-    var(--soil-tile-size) var(--soil-tile-size);
+    var(--soil-tile-size) auto;
   cursor: grab;
   outline-offset: -5px;
 }
