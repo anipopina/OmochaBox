@@ -56,7 +56,12 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
   return {
     root: sourceRoot,
     appType: 'mpa',
-    server: { host: '127.0.0.1', port: 4173, strictPort: true },
+    server: {
+      host: '127.0.0.1',
+      port: 5173,
+      strictPort: true,
+      allowedHosts: ['.ts.net'],
+    },
     preview: { host: '127.0.0.1', port: 4173, strictPort: true },
     plugins: [release.plugin, ...(mode === 'test' ? [regressionHooks()] : [])],
     build: {

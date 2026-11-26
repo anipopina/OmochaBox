@@ -18,6 +18,20 @@ Vite自体は型チェックを行いません。`pnpm run build` は型チェ�
 
 VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vscode/) にあります。原本の `source-assets/`、検証資料の `docs/`、`AGENTS.md`、生成物は一括整形の対象外です。
 
+### Tailscaleから開発サーバーを開く
+
+開発サーバーは `pnpm dev` で `127.0.0.1:5173` に起動し、Tailscaleの `.ts.net` ホスト名を許可します。ポート番号なしのTailscale URLがすでにローカルの5173番へ転送されていれば、そのURLを使えます。5173番を使う開発サーバーは交代で起動します。
+
+転送が未設定の場合は、Tailscaleが動くホストで次を実行し、表示されたHTTPS URLをtailnet内の端末で開きます。
+
+```sh
+tailscale serve --bg http://127.0.0.1:5173
+```
+
+WSLで開発サーバーを動かし、Windows側でTailscaleを使う場合は、Windows側から `http://127.0.0.1:5173` に到達できることを確認します。
+
+両方の開発サーバーを同時に使う場合は、おもちゃボックスを `pnpm dev --port 4173` などで別ポートに起動し、Tailscale Serveにも別のHTTPSポートを割り当てます。
+
 ## 新しい遊びの開発とレビュー
 
 1. 最新の `main` から作品ごとのブランチ `feat/<slug>` を作ります。本体・素材・一覧のカード・詳細検査を同じブランチで揃えます。途中で差分を共有するときはDraft PRを使えます。[ページと素材の追加](#ページと素材の追加)

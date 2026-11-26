@@ -38,7 +38,7 @@ Node.js 24を推奨します。対応範囲は22.13以降の22系、または24�
 ```sh
 pnpm install --frozen-lockfile
 pnpm run dev
-# http://127.0.0.1:4173
+# http://127.0.0.1:5173
 ```
 
 `src/` を編集するとブラウザーへ反映されます。
