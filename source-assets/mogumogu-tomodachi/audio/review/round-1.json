@@ -1,0 +1,206 @@
+{
+  "generated_on": "2026-11-27",
+  "model": "stabilityai/stable-audio-open-1.0",
+  "model_revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "tool_versions": {
+    "diffusers": "0.42.1",
+    "torch": "2.6.0+cu124",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4",
+    "accelerate": "1.15.0"
+  },
+  "generation": {
+    "source_format": "44.1 kHz stereo float WAV",
+    "steps": 70,
+    "negative_prompt": "Low quality, loud, harsh",
+    "precision": "torch.float16 with model CPU offload"
+  },
+  "processing": {
+    "channel_mix": "stereo channel mean",
+    "filtering": "third-order Butterworth, zero-phase",
+    "fades": "linear",
+    "normalization": "RMS with tanh soft limiting at -12.5 dBFS before encoding",
+    "output_format": "32 kHz mono 64 kbps MP3 (libmp3lame)",
+    "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "cues": [
+    {
+      "key": "chew-a",
+      "scene": "chew",
+      "prompt": "Three evenly spaced soft muffled nom nom bites of a tiny cartoon creature in a toddler game, each a small rounded cushioned mouth pop, gentle dry foley, low soft attack, very clean quiet background, sound effect only, no voices, no music",
+      "seed": 84121,
+      "generated_seconds": 1.6,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/chew-a.wav",
+      "source_sha256": "1e71dd5ce9f833bed81e9948135fb38821df84c3c96df8e7315c2a3a6841df22",
+      "trim_seconds": [
+        0.0,
+        0.198
+      ],
+      "bandpass_hz": [
+        125,
+        4600
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.033,
+      "target_rms_dbfs": -25,
+      "output_sha256": "f35d37eee2bbd1f50942fa523335dfd1834f28425063bbd113692f21893c4a7a",
+      "bytes": 8972,
+      "duration_seconds": 1.01803,
+      "decoded_peak_dbfs": -13.5,
+      "decoded_rms_dbfs": -30.82,
+      "repeat_offset_seconds_and_gain": [
+        [
+          0.1,
+          1
+        ],
+        [
+          0.46,
+          0.88
+        ],
+        [
+          0.82,
+          0.74
+        ]
+      ]
+    },
+    {
+      "key": "chew-b",
+      "scene": "chew",
+      "prompt": "A quick series of three gentle, bouncy squishy snack nibbles, soft toy rubber foley, round and light, three spaced little chomps in the foreground, child-friendly clean studio sound effect, no speech, no music",
+      "seed": 84122,
+      "generated_seconds": 1.6,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/chew-b.wav",
+      "source_sha256": "606ccf5de89178454dc159e83740bee1a2400cfafe63471a24a1d3207e3eb785",
+      "trim_seconds": [
+        0.0,
+        0.276
+      ],
+      "bandpass_hz": [
+        130,
+        5200
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.033,
+      "target_rms_dbfs": -26,
+      "output_sha256": "a9c1582e7e1b55cf06d432917c77ffc4957b82180189416c682d06139ba51de5",
+      "bytes": 9548,
+      "duration_seconds": 1.09603,
+      "decoded_peak_dbfs": -12.36,
+      "decoded_rms_dbfs": -35.24,
+      "repeat_offset_seconds_and_gain": [
+        [
+          0.1,
+          1
+        ],
+        [
+          0.46,
+          0.88
+        ],
+        [
+          0.82,
+          0.74
+        ]
+      ]
+    },
+    {
+      "key": "gulp-a",
+      "scene": "gulp",
+      "prompt": "One tiny soft cartoon gulp as a toy swallows a snack, low rounded water bubble bloop with a short playful downward bend and soft attack, dry studio isolated sound effect, no voice, no music",
+      "seed": 84131,
+      "generated_seconds": 1.1,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/gulp-a.wav",
+      "source_sha256": "9501edd18f4d707533049c5414c84ee5a6fc21d14da3a349f7f3e9d964b3a730",
+      "trim_seconds": [
+        0.0,
+        0.155
+      ],
+      "bandpass_hz": [
+        115,
+        4100
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.033,
+      "target_rms_dbfs": -27,
+      "output_sha256": "b284b2cf278025fd2ccdf414620da317d08baaeb00317266aa4bfdb5558242d0",
+      "bytes": 2060,
+      "duration_seconds": 0.15503,
+      "decoded_peak_dbfs": -16.56,
+      "decoded_rms_dbfs": -28.22
+    },
+    {
+      "key": "gulp-b",
+      "scene": "gulp",
+      "prompt": "Single gentle ploop, a small low bubble rolling and popping inside a tiny wooden cartoon toy, very short mellow muted sound for swallowing a bite in a preschool game, no voice, no music",
+      "seed": 84132,
+      "generated_seconds": 1.1,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/gulp-b.wav",
+      "source_sha256": "064800ffb67235ed2bb4f6f80d7ac5834b45c8da4f25b0e532e54f929dc77844",
+      "trim_seconds": [
+        0.0,
+        0.156
+      ],
+      "bandpass_hz": [
+        110,
+        4500
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.033,
+      "target_rms_dbfs": -28,
+      "output_sha256": "636844e5895f9d7c9e70866dc008d8c74c7882858af2c8516881b89bd2ba8f61",
+      "bytes": 2060,
+      "duration_seconds": 0.15603,
+      "decoded_peak_dbfs": -14.43,
+      "decoded_rms_dbfs": -29.88
+    },
+    {
+      "key": "arrival-a",
+      "scene": "arrival",
+      "prompt": "Soft ascending pair of rounded wooden toy bell notes for a cheerful friend arriving in a preschool game, warm mellow wooden marimba plunks, gentle attack, short clean tail, a single compact sound effect, no background music or voices",
+      "seed": 84141,
+      "generated_seconds": 1.4,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/arrival-a.wav",
+      "source_sha256": "460dcb850c7870bc11dedb3a1cbf294661ee36ac96782abe933af9c867c2362e",
+      "trim_seconds": [
+        0.0,
+        0.67
+      ],
+      "bandpass_hz": [
+        160,
+        5700
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.05,
+      "target_rms_dbfs": -27,
+      "output_sha256": "ec5e4bddaa0b80472abefb3f1859f33ee13d2f8938a3f44468e8c722fe84ff93",
+      "bytes": 6092,
+      "duration_seconds": 0.67,
+      "decoded_peak_dbfs": -14.25,
+      "decoded_rms_dbfs": -28.09
+    },
+    {
+      "key": "arrival-b",
+      "scene": "arrival",
+      "prompt": "An isolated short playful welcome flourish, two soft rising hollow toy pops with a little springy lift, rounded and friendly mellow sound for a new character, quiet background, no voices, no background music",
+      "seed": 84142,
+      "generated_seconds": 1.4,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/arrival-b.wav",
+      "source_sha256": "27c39fdffba22fb348c9e83471149aa144729b2067acc0efd15bf9d4166c787f",
+      "trim_seconds": [
+        0.043,
+        0.232
+      ],
+      "bandpass_hz": [
+        150,
+        5200
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.05,
+      "target_rms_dbfs": -27,
+      "output_sha256": "e7bb39f31d2e18809cbaaff8f1d4e97d2872f229805798a2517c82f0e40670b7",
+      "bytes": 2348,
+      "duration_seconds": 0.18903,
+      "decoded_peak_dbfs": -13.94,
+      "decoded_rms_dbfs": -29.74
+    }
+  ]
+}

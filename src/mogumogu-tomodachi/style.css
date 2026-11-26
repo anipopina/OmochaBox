@@ -276,7 +276,8 @@ a:focus-visible {
   height: 100%;
   pointer-events: none;
 }
-#foods [data-away='true'] img {
+#foods [data-away='true'] img,
+#friend:not([data-art-state='ready']) ~ #foods img {
   visibility: hidden;
 }
 #foods [aria-disabled='true'] {
@@ -285,16 +286,44 @@ a:focus-visible {
 #friend[data-phase='changing'] .friend-art {
   animation: farewell 700ms ease-in both;
 }
+#friend[data-arriving] .friend-art {
+  --arrival-offset: 64px;
+  animation: arrive 680ms ease-out backwards;
+}
+#friend[data-arriving] ~ #foods img {
+  --arrival-offset: 24px;
+  animation: arrive 500ms 140ms ease-out backwards;
+}
+#friend[data-arriving] ~ #foods [data-food='banana'] img {
+  animation-delay: 205ms;
+}
+#friend[data-arriving] ~ #foods [data-food='carrot'] img {
+  animation-delay: 270ms;
+}
 @keyframes farewell {
   to {
     opacity: 0;
     translate: 0 70px;
   }
 }
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--arrival-offset));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   #friend[data-phase='changing'] .friend-art {
     animation: none;
     opacity: 0.65;
+  }
+  #friend[data-arriving] .friend-art,
+  #friend[data-arriving] ~ #foods img {
+    --arrival-offset: 0px;
   }
 }
 

@@ -1,0 +1,198 @@
+{
+  "generated_on": "2026-11-27",
+  "model": "stabilityai/stable-audio-open-1.0",
+  "model_revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "tool_versions": {
+    "diffusers": "0.42.1",
+    "torch": "2.6.0+cu124",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4",
+    "accelerate": "1.15.0"
+  },
+  "generation": {
+    "source_format": "44.1 kHz stereo float WAV",
+    "steps": 60,
+    "negative_prompt": "synthetic cartoon sound, sharp pop, pitched whistle, chime, speech, music, harsh transients",
+    "precision": "torch.float16 with model CPU offload"
+  },
+  "processing": {
+    "channel_mix": "stereo channel mean",
+    "filtering": "third-order Butterworth, zero-phase",
+    "fades": "linear",
+    "normalization": "per-segment RMS with tanh soft limiting at -13 dBFS after assembly",
+    "output_format": "32 kHz mono 64 kbps MP3 (libmp3lame)",
+    "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "cues": [
+    {
+      "key": "chew-c",
+      "scene": "chew",
+      "prompt": "Extreme close-up dry foley recording of a small crisp baby carrot being bitten, three little crunchy chewing sounds separated in time. Tightly detailed irregular crackle from vegetable fibers between teeth, first bite then two quieter small crunches. Soft intimate ASMR, no voice, no breathing, no music, no cartoon effects.",
+      "seed": 91901,
+      "generated_seconds": 1.42,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/chew-c.wav",
+      "source_sha256": "cc6ae2fcf575a9211ca8e591293296e89c3209fc1c2df547b8257cce9cf339d5",
+      "bandpass_hz": [
+        135,
+        6500
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.032,
+            0.141
+          ],
+          "offset_seconds": 0.04,
+          "target_rms_dbfs": -25,
+          "fade_in_seconds": 0.008,
+          "fade_out_seconds": 0.026
+        },
+        {
+          "trim_seconds": [
+            0.165,
+            0.27
+          ],
+          "offset_seconds": 0.39,
+          "target_rms_dbfs": -28,
+          "fade_in_seconds": 0.009,
+          "fade_out_seconds": 0.028
+        },
+        {
+          "trim_seconds": [
+            0.305,
+            0.477
+          ],
+          "offset_seconds": 0.75,
+          "target_rms_dbfs": -29,
+          "fade_in_seconds": 0.013,
+          "fade_out_seconds": 0.038
+        }
+      ],
+      "output_sha256": "ae6701d0c6f709f1d377681b41f10da431b15b2543d6574de1aeba3678603ce0",
+      "bytes": 8108,
+      "duration_seconds": 0.92203,
+      "decoded_peak_dbfs": -12.48,
+      "decoded_rms_dbfs": -34.77
+    },
+    {
+      "key": "chew-d",
+      "scene": "chew",
+      "prompt": "Close-miked foley of chewing a small wedge of ripe soft pear with closed lips, three gentle irregular damp chews. Short sticky fruit pulp and soft mouth contact, intimate dry studio with quiet spaces between chews. No speech or vocalization, no music, no chime, no synthetic pop.",
+      "seed": 91902,
+      "generated_seconds": 1.42,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/chew-d.wav",
+      "source_sha256": "8ef2eb18860f9bd7e15edd52a01024aa753735662d8de7a65fb17500945c2f2c",
+      "bandpass_hz": [
+        125,
+        3150
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.165,
+            0.327
+          ],
+          "offset_seconds": 0.035,
+          "target_rms_dbfs": -30,
+          "fade_in_seconds": 0.015,
+          "fade_out_seconds": 0.036
+        },
+        {
+          "trim_seconds": [
+            0.371,
+            0.493
+          ],
+          "offset_seconds": 0.37,
+          "target_rms_dbfs": -27,
+          "fade_in_seconds": 0.012,
+          "fade_out_seconds": 0.037
+        },
+        {
+          "trim_seconds": [
+            0.586,
+            0.761
+          ],
+          "offset_seconds": 0.74,
+          "target_rms_dbfs": -30,
+          "fade_in_seconds": 0.018,
+          "fade_out_seconds": 0.044
+        }
+      ],
+      "output_sha256": "c823e0c43ab3e9ad2c04bfaf7438978fef5c5df19bc9d3dc99b6a9eb19717c2d",
+      "bytes": 8108,
+      "duration_seconds": 0.915,
+      "decoded_peak_dbfs": -13.9,
+      "decoded_rms_dbfs": -33.9
+    },
+    {
+      "key": "gulp-c",
+      "scene": "gulp",
+      "prompt": "Natural close microphone foley recording of a single audible human swallow of a small sip of still water. Soft two-part anatomical sound: a low muffled wet sound descending inside the throat, then a subtle closing sound after it goes down. Heavy muted physical throat movement, quiet soft onset. No voice, no slurp before swallow, no bottle, no pouring, no external splashing, no bubble pop, no swoosh, no music.",
+      "seed": 91911,
+      "generated_seconds": 1.05,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/gulp-c.wav",
+      "source_sha256": "4442093c287adafe5f6a2600a565b697c774a801c8fcda058844941a81274b4e",
+      "bandpass_hz": [
+        88,
+        2150
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.109,
+            0.437
+          ],
+          "offset_seconds": 0.0,
+          "target_rms_dbfs": -28,
+          "fade_in_seconds": 0.016,
+          "fade_out_seconds": 0.047
+        }
+      ],
+      "output_sha256": "72c61f9a08a16aa2d26e90132465364312ebce6e99168f80a685c8f659d4d484",
+      "bytes": 3500,
+      "duration_seconds": 0.32803,
+      "decoded_peak_dbfs": -14.59,
+      "decoded_rms_dbfs": -29.44
+    },
+    {
+      "key": "gulp-d",
+      "scene": "gulp",
+      "prompt": "Single natural dry food swallow, recorded by a contact microphone on the lower throat. A brief low rolling glk sound and soft closing click barely audible, damped and hollow, small and intimate. No speech, no voiced vowel, no drinking noises, no bubbles, no pitchy cartoon pop, no music.",
+      "seed": 91912,
+      "generated_seconds": 1.05,
+      "source_path": "tmp/audio-originals/mogumogu-tomodachi/gulp-d.wav",
+      "source_sha256": "0589728ad1d31f30547ebe9c3198babe7a1871b6d5b33f82067e9119464f76a0",
+      "bandpass_hz": [
+        99,
+        1670
+      ],
+      "tracks": [
+        {
+          "trim_seconds": [
+            0.067,
+            0.273
+          ],
+          "offset_seconds": 0.0,
+          "target_rms_dbfs": -29,
+          "fade_in_seconds": 0.016,
+          "fade_out_seconds": 0.045
+        },
+        {
+          "trim_seconds": [
+            0.293,
+            0.407
+          ],
+          "offset_seconds": 0.112,
+          "target_rms_dbfs": -39,
+          "fade_in_seconds": 0.022,
+          "fade_out_seconds": 0.04
+        }
+      ],
+      "output_sha256": "0f82261c6ca146f77e0e960b44bd70313935aceca30c11d7bf8b67687f7942c1",
+      "bytes": 2636,
+      "duration_seconds": 0.22603,
+      "decoded_peak_dbfs": -15.38,
+      "decoded_rms_dbfs": -30.6
+    }
+  ]
+}

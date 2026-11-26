@@ -490,6 +490,9 @@ try {
       ),
       '1',
     );
+    const mouth = `document.querySelector('.mouth-closed').getAttribute('d')`;
+    const firstShape = await evaluate(mouth);
+    await waitFor(`(${mouth})!==${JSON.stringify(firstShape)}`);
     await shot(`mogu-${food}-chewing`);
     await waitFor(`document.querySelector('#friend').dataset.phase==='happy'`);
     await shot(`mogu-${food}-happy`);
@@ -505,6 +508,14 @@ try {
     ),
     3,
   );
+  assert.deepEqual(
+    await evaluate(`[...document.querySelectorAll('.friend-art, #foods img')].map(node=>{
+      const [animation] = node.getAnimations();
+      return animation?.effect.getTiming().delay;
+    })`),
+    [0, 140, 205, 270],
+    'Friend and food begin their entrances in order',
+  );
   await choose('strawberry');
   await evaluate(
     `for(let i=0;i<100;i++)document.querySelector('#foods button[data-food="banana"]').click();document.querySelector('#foods button[data-food="carrot"]').click()`,
@@ -518,7 +529,9 @@ try {
     'strawberry',
   );
   assert.ok(
-    await evaluate(`document.getAnimations().length<=3`),
+    await evaluate(
+      `[...document.querySelectorAll('#foods button')].every(button=>button.getAnimations().length<=1)`,
+    ),
     'Repeated input animations bounded',
   );
   assert.ok(

@@ -1,0 +1,24 @@
+{
+  "selection": "review/selections/2026-11-27-final.json",
+  "cues": {
+    "chew": [
+      {
+        "candidate": "chew-a",
+        "source": "src/mogumogu-tomodachi/sound-review/assets/chew-a.mp3",
+        "output": "src/mogumogu-tomodachi/assets/chew.mp3",
+        "sha256": "f35d37eee2bbd1f50942fa523335dfd1834f28425063bbd113692f21893c4a7a",
+        "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+      }
+    ],
+    "gulp": [
+      {
+        "candidate": "gulp-c",
+        "source": "src/mogumogu-tomodachi/sound-review/assets/gulp-c.mp3",
+        "output": "src/mogumogu-tomodachi/assets/gulp.mp3",
+        "sha256": "72c61f9a08a16aa2d26e90132465364312ebce6e99168f80a685c8f659d4d484",
+        "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-2.json"
+      }
+    ],
+    "arrival": []
+  }
+}

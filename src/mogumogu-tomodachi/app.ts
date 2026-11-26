@@ -1,6 +1,7 @@
 import '../shared/home-button';
 import '../shared/play-media';
-import { Friend, friends, type Food } from './model';
+import { durations, Friend, friends, type Food } from './model';
+import { MealSound } from './sound';
 import body from './assets/body.webp';
 import ghost from './assets/ghost-body.webp';
 import bear from './assets/bear-body.webp';
@@ -13,10 +14,13 @@ const bodies = { monster: body, ghost, bear };
 const friendNames = { monster: 'かいじゅう', ghost: 'おばけ', bear: 'くま' };
 const names = { strawberry: 'いちご', banana: 'バナナ', carrot: 'にんじん' };
 const friend = new Friend();
+const sounds = new MealSound();
 const character = document.querySelector<HTMLButtonElement>('#friend')!;
 const artwork = document.querySelector<HTMLSpanElement>('.friend-art')!;
 const flying = document.querySelector<HTMLImageElement>('#flying-food')!;
 const mouthFood = document.querySelector<SVGImageElement>('#mouth-food')!;
+const closedMouth = document.querySelector<SVGPathElement>('.mouth-closed')!;
+const restingMouth = closedMouth.getAttribute('d')!;
 const status = document.querySelector<HTMLSpanElement>('#status')!;
 const buttons = [
   ...document.querySelectorAll<HTMLButtonElement>('#foods [data-food]'),
@@ -27,6 +31,7 @@ const message = document.querySelector<HTMLSpanElement>('.friend-message')!;
 const bodyLoads = new Map<number, Promise<HTMLImageElement>>();
 let shownCharacter = -1;
 let requestedCharacter = -1;
+let pendingArrival = false;
 let artState: 'loading' | 'ready' | 'error' = 'loading';
 
 function loadBody(index: number) {
@@ -48,6 +53,8 @@ function preloadBodies() {
 void preloadBodies();
 
 function showBody(index: number, image: HTMLImageElement) {
+  const arriving = pendingArrival && !document.hidden;
+  pendingArrival = false;
   // Insert the already decoded node; never change src on the visible image.
   bodyArtwork.replaceWith(image);
   bodyArtwork = image;
@@ -56,12 +63,14 @@ function showBody(index: number, image: HTMLImageElement) {
   character.dataset.artState = artState;
   character.dataset.character = friends[index];
   character.dataset.ready = 'true';
+  character.toggleAttribute('data-arriving', arriving);
   character.setAttribute(
     'aria-label',
     `${friendNames[friends[index]!]}に ふれる`,
   );
   message.textContent = '';
   render();
+  if (arriving) sounds.play('arrival');
 }
 function prepareCharacter() {
   if (requestedCharacter === friend.character) return;
@@ -121,7 +130,17 @@ function render() {
       : '0deg';
   character.dataset.food = friend.food;
   character.dataset.reaction = String(friend.reaction);
-  character.style.setProperty('--chew', String(Math.sin(friend.elapsed / 115)));
+  const chewing = friend.phase === 'chewing' && !reduced.matches;
+  const chew = chewing ? Math.sin(friend.elapsed / 115) : 0;
+  character.style.setProperty('--chew', String(chew));
+  const width = Math.abs(chew) * 5;
+  const middle = 250 + chew * 6;
+  closedMouth.setAttribute(
+    'd',
+    chewing
+      ? `M${218 - width} 281Q234 ${292 + chew * 9} ${middle} ${281 + width}Q266 ${292 - chew * 9} ${282 + width} 281`
+      : restingMouth,
+  );
   for (const button of buttons) {
     const food = button.dataset.food as Food;
     const eaten = !friend.available.has(food);
@@ -149,8 +168,12 @@ function render() {
     previous = phaseKey;
     if (friend.phase === 'happy')
       status.textContent = `${names[friend.food]}、おいしい！`;
-    if (friend.phase === 'changing')
+    if (friend.phase === 'changing') {
+      character.removeAttribute('data-arriving');
       status.textContent = 'ごちそうさま！ つぎの おともだち';
+    }
+    if (friend.phase === 'chewing') sounds.play('chew');
+    if (friend.phase === 'swallowing') sounds.play('gulp');
     if (friend.phase === 'idle' && friend.available.size === 3)
       status.textContent = 'たべものを どうぞ';
     if (friend.phase === 'offering') {
@@ -161,7 +184,7 @@ function render() {
   flying.hidden = friend.phase !== 'offering';
   mouthFood.style.opacity = '0';
   if (friend.phase !== 'offering') return;
-  const p = Math.min(1, friend.elapsed / 650);
+  const p = Math.min(1, friend.elapsed / durations.offering);
   const source = buttons
     .find((button) => button.dataset.food === friend.food)!
     .querySelector('img')!
@@ -196,7 +219,9 @@ function render() {
 }
 function tick(time: number) {
   frame = 0;
+  const oldCharacter = friend.character;
   friend.step(last ? time - last : 0);
+  if (friend.character !== oldCharacter) pendingArrival = true;
   last = time;
   render();
   if (friend.phase !== 'idle' || friend.touchRemaining > 0)
@@ -236,6 +261,7 @@ for (const button of buttons) {
       );
       return;
     }
+    sounds.unlock();
     friend.offer(food);
     render();
     if (!frame) frame = requestAnimationFrame(tick);
@@ -244,6 +270,9 @@ for (const button of buttons) {
 function reset() {
   cancelAnimationFrame(frame);
   frame = last = 0;
+  pendingArrival = false;
+  character.removeAttribute('data-arriving');
+  sounds.stop();
   friend.reset();
   buttons.forEach((button) =>
     button.getAnimations().forEach((animation) => animation.cancel()),
@@ -252,7 +281,10 @@ function reset() {
   render();
 }
 window.addEventListener('blur', reset);
-window.addEventListener('pagehide', reset);
+window.addEventListener('pagehide', () => {
+  reset();
+  sounds.dispose();
+});
 window.addEventListener('pageshow', reset);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) reset();

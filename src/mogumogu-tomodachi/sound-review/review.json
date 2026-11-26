@@ -1,0 +1,127 @@
+{
+  "toy": "mogumogu-tomodachi",
+  "catalog": "mogumogu-tomodachi-audio-fixed-v1",
+  "storageKey": "mogumogu-tomodachi:sound-review:fixed-v1",
+  "title": "もぐもぐともだちの音をえらぶ",
+  "subtitle": "もぐもぐともだち・効果音の聴き比べ",
+  "symbol": "🍓",
+  "intro": [
+    "「選んだ音で遊ぶ」で食べ物をあげると、もぐもぐ、ごっくんの順に鳴ります。3つ食べ終えると交代の音を確認できます。"
+  ],
+  "links": [],
+  "playback": {
+    "gain": 0.55,
+    "attack": 0.005,
+    "release": 0.045
+  },
+  "current": {
+    "chew": "chew-a",
+    "gulp": "gulp-c",
+    "arrival": null
+  },
+  "scenes": [
+    {
+      "id": "chew",
+      "title": "もぐもぐするとき",
+      "symbol": "🍓",
+      "timing": "食べ物が口に入って、もぐもぐを始めたときに一度鳴ります。",
+      "duration": "もぐもぐが続く短い音",
+      "interval": 1.7,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "丸いひと口を3回",
+          "file": "chew-a.mp3",
+          "seconds": 1.01803,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "軽いひと口を3回",
+          "file": "chew-b.mp3",
+          "seconds": 1.09603,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "パリッとした野菜のもぐもぐ",
+          "file": "chew-c.mp3",
+          "seconds": 0.92203,
+          "round": 3
+        },
+        {
+          "letter": "d",
+          "name": "やわらかい果肉のもぐもぐ",
+          "file": "chew-d.mp3",
+          "seconds": 0.915,
+          "round": 4
+        }
+      ]
+    },
+    {
+      "id": "gulp",
+      "title": "ごっくんするとき",
+      "symbol": "💧",
+      "timing": "もぐもぐのあと、飲み込む動きに合わせて鳴ります。",
+      "duration": "短いひと音",
+      "interval": 0.7,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "小さな気泡のごっくん",
+          "file": "gulp-a.mp3",
+          "seconds": 0.15503,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "こもったごっくん",
+          "file": "gulp-b.mp3",
+          "seconds": 0.15603,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "水分を飲み込む低いごっくん",
+          "file": "gulp-c.mp3",
+          "seconds": 0.32803,
+          "round": 3
+        },
+        {
+          "letter": "d",
+          "name": "ひと口を飲み込む短いごっくん",
+          "file": "gulp-d.mp3",
+          "seconds": 0.22603,
+          "round": 4
+        }
+      ]
+    },
+    {
+      "id": "arrival",
+      "title": "新しいともだちが来るとき",
+      "symbol": "✨",
+      "timing": "3つ食べ終えて、新しいともだちが見え始めたときに鳴ります。",
+      "duration": "短い歓迎の音",
+      "interval": 1.3,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "余韻の残る登場音",
+          "file": "arrival-a.mp3",
+          "seconds": 0.67,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "短く弾む登場音",
+          "file": "arrival-b.mp3",
+          "seconds": 0.18903,
+          "round": 2
+        }
+      ]
+    }
+  ],
+  "initialChoices": {
+    "arrival": "none"
+  }
+}

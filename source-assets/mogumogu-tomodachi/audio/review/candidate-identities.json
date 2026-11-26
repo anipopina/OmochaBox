@@ -1,0 +1,62 @@
+[
+  {
+    "id": "chew-a",
+    "file": "chew-a.mp3",
+    "sha256": "f35d37eee2bbd1f50942fa523335dfd1834f28425063bbd113692f21893c4a7a",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+  },
+  {
+    "id": "chew-b",
+    "file": "chew-b.mp3",
+    "sha256": "a9c1582e7e1b55cf06d432917c77ffc4957b82180189416c682d06139ba51de5",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+  },
+  {
+    "id": "chew-c",
+    "file": "chew-c.mp3",
+    "sha256": "ae6701d0c6f709f1d377681b41f10da431b15b2543d6574de1aeba3678603ce0",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-2.json"
+  },
+  {
+    "id": "chew-d",
+    "file": "chew-d.mp3",
+    "sha256": "c823e0c43ab3e9ad2c04bfaf7438978fef5c5df19bc9d3dc99b6a9eb19717c2d",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-2.json"
+  },
+  {
+    "id": "gulp-a",
+    "file": "gulp-a.mp3",
+    "sha256": "b284b2cf278025fd2ccdf414620da317d08baaeb00317266aa4bfdb5558242d0",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+  },
+  {
+    "id": "gulp-b",
+    "file": "gulp-b.mp3",
+    "sha256": "636844e5895f9d7c9e70866dc008d8c74c7882858af2c8516881b89bd2ba8f61",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+  },
+  {
+    "id": "gulp-c",
+    "file": "gulp-c.mp3",
+    "sha256": "72c61f9a08a16aa2d26e90132465364312ebce6e99168f80a685c8f659d4d484",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-2.json"
+  },
+  {
+    "id": "gulp-d",
+    "file": "gulp-d.mp3",
+    "sha256": "0f82261c6ca146f77e0e960b44bd70313935aceca30c11d7bf8b67687f7942c1",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-2.json"
+  },
+  {
+    "id": "arrival-a",
+    "file": "arrival-a.mp3",
+    "sha256": "ec5e4bddaa0b80472abefb3f1859f33ee13d2f8938a3f44468e8c722fe84ff93",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+  },
+  {
+    "id": "arrival-b",
+    "file": "arrival-b.mp3",
+    "sha256": "e7bb39f31d2e18809cbaaff8f1d4e97d2872f229805798a2517c82f0e40670b7",
+    "provenance": "source-assets/mogumogu-tomodachi/audio/review/round-1.json"
+  }
+]

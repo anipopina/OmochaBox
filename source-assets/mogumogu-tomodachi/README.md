@@ -13,3 +13,7 @@
 ## 2026-11-09 くまの輪郭改善
 
 [新くま素材パック](https://drive.google.com/file/d/1Sk6uRlY0sk3VM2Xe-Z-k1QwclJ8YRjb-/view)の実物WebPと確認画像を視認し採用。大きな丸耳・内耳・頭と胴の区別・淡色マズルを持つテディベア。原本と生成指示要旨、検証記録は [bear-v3](bear-v3/README.md)。768角透過WebP 62,698 bytesを再変換せず配信。旧原本は保持。くまだけSVGの目を40座標上へ移動し、マズル上部に鼻を追加。丸耳が収まるよう、くまの画像と顔の共通枠を他2体より少し小さく表示。共通の口・クリップ・給餌座標を維持。
+
+## 入口カード
+
+[原本PNG](card-original.png)は、既存の入口カードのSVGの顔と、遊びで使用する怪獣・食べ物のWebPを使い、同じ背景色で1200×600に再構成したものです。[配信用WebP](../../src/assets/previews/mogumogu-tomodachi.webp)はChromiumで書き出しました。

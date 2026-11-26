@@ -1,0 +1,28 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 2,
+  "toy": "mogumogu-tomodachi",
+  "catalog": "mogumogu-tomodachi-audio-fixed-v1",
+  "updatedAt": "2026-11-26T16:22:02.604Z",
+  "additions": [],
+  "scenes": {
+    "chew": {
+      "choice": "chew-a",
+      "note": "",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    },
+    "gulp": {
+      "choice": "gulp-c",
+      "note": "",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    },
+    "arrival": {
+      "choice": "none",
+      "note": "",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    }
+  }
+}

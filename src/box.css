@@ -254,6 +254,7 @@ a:focus-visible {
 .balloon-preview,
 .stamp-preview,
 .pond-preview,
+.mogu-preview,
 .barabara-preview {
   position: relative;
   height: 232px;
@@ -268,7 +269,8 @@ a:focus-visible {
 .oimo-preview img,
 .balloon-preview img,
 .stamp-preview img,
-.pond-preview img {
+.pond-preview img,
+.mogu-preview img {
   display: block;
   width: 100%;
   height: 100%;
@@ -475,6 +477,7 @@ footer p {
   .balloon-preview,
   .stamp-preview,
   .pond-preview,
+  .mogu-preview,
   .barabara-preview {
     height: 212px;
   }
@@ -583,34 +586,6 @@ footer p {
   background: #ff26bd;
   border-radius: 0;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
-.mogu-preview {
-  height: 190px;
-  position: relative;
-  overflow: hidden;
-  background: #ffe7b8;
-}
-.mogu-preview .mogu-body,
-.mogu-preview svg {
-  position: absolute;
-  width: 190px;
-  height: 190px;
-  top: -20px;
-  left: calc(50% - 95px);
-}
-.mogu-preview > div {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  bottom: 7px;
-  width: 100%;
-  gap: 15px;
-}
-.mogu-preview > div img {
-  width: 58px;
-  height: 58px;
-  object-fit: contain;
 }
 
 .bubble-preview {
