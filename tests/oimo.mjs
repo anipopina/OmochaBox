@@ -126,9 +126,9 @@ try {
   };
   const touch = (type, points = []) =>
     call('Input.dispatchTouchEvent', { type, touchPoints: points });
-  const point = async (x, y) =>
+  const point = async (x, y, id = 1) =>
     evaluate(
-      `(()=>{const r=document.querySelector('#patch').getBoundingClientRect();return {x:r.x+r.width*${x},y:r.y+r.height*${y},id:1}})()`,
+      `(()=>{const r=document.querySelector('#patch').getBoundingClientRect();return {x:r.x+r.width*${x},y:r.y+r.height*${y},id:${id}}})()`,
     );
   const tap = async (x, y) => {
     await touch('touchStart', [await point(x, y)]);
@@ -350,6 +350,29 @@ try {
     'bounded abundant basket',
   );
   await evaluate("document.querySelector('#basket').click()");
+  await visit();
+  const soilAlpha = (x, y) =>
+    `(()=>{const c=document.querySelector('#soil');return c.getContext('2d').getImageData(Math.floor(c.width*${x}),Math.floor(c.height*${y}),1,1).data[3]})()`;
+  await touch('touchStart', [
+    await point(0.2, 0.22),
+    await point(0.82, 0.7, 2),
+  ]);
+  const firstFinger = await point(0.4, 0.22);
+  await touch('touchMove', [firstFinger, await point(0.68, 0.7, 2)]);
+  await waitFor(`${soilAlpha(0.3, 0.22)} < 8 && ${soilAlpha(0.75, 0.7)} < 8`);
+  assert.equal(
+    await evaluate(soilAlpha(0.54, 0.46)),
+    255,
+    'independent strokes',
+  );
+  await touch('touchEnd', [firstFinger]);
+  await touch('touchMove', [await point(0.51, 0.7, 2)]);
+  await waitFor(`${soilAlpha(0.51, 0.7)} < 8`);
+  await touch('touchEnd');
+  await shot('oimo-multitouch-strokes');
+  report(
+    'Oimo multitouch PASS: independent strokes and continued digging after lifting one finger',
+  );
   await visit();
   await touch('touchStart', [await point(0.2, 0.2)]);
   const n = await evaluate("document.querySelector('#patch').dataset.cleared");

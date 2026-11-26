@@ -33,9 +33,13 @@ mask.height = rows;
 const maskCtx = mask.getContext('2d')!;
 const maskPixels = maskCtx.createImageData(columns, rows);
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-let pointer: number | null = null;
-let previous = { x: 0, y: 0 };
-let pendingTap: { cue: 'dig' | 'ready'; time: number } | null = null;
+type DigStroke = {
+  x: number;
+  y: number;
+  pendingTap: { cue: 'dig' | 'ready'; time: number } | null;
+};
+const MAX_STROKES = 10;
+const strokes = new Map<number, DigStroke>();
 let timer = 0;
 const artwork = new Image();
 artwork.src = potatoUrl;
@@ -159,12 +163,12 @@ function dig(x: number, y: number) {
   if (changed) scatter(x, y);
   return changed;
 }
-function digFeedback(fromDrag: boolean) {
+function digFeedback(fromDrag: boolean, stroke?: DigStroke) {
   update();
   const cue = game.phase === 'ready' ? 'ready' : 'dig';
   const played = cue === 'ready' ? sounds.play(cue) : sounds.dig(fromDrag);
-  if (!fromDrag && !played && pointer !== null)
-    pendingTap = { cue, time: performance.now() };
+  if (!fromDrag && !played && stroke)
+    stroke.pendingTap = { cue, time: performance.now() };
 }
 function finish(audible = false) {
   clearTimeout(timer);
@@ -211,16 +215,17 @@ function harvest() {
   update();
   timer = window.setTimeout(() => finish(true), 900);
 }
+function stopStroke(id: number) {
+  if (strokes.delete(id) && patch.hasPointerCapture(id))
+    patch.releasePointerCapture(id);
+}
 function stopInput() {
-  if (pointer !== null && patch.hasPointerCapture(pointer))
-    patch.releasePointerCapture(pointer);
-  pointer = null;
-  pendingTap = null;
+  for (const id of strokes.keys()) stopStroke(id);
 }
 patch.addEventListener('pointerdown', (e) => {
-  if (pointer !== null || e.button !== 0 || document.hidden || !artworkReady)
-    return;
+  if (e.button !== 0 || document.hidden || !artworkReady) return;
   if (game.phase === 'ready') {
+    if (strokes.size) return;
     const r = roots.querySelector('img')!.getBoundingClientRect();
     if (
       e.clientX < r.left - 20 ||
@@ -232,41 +237,45 @@ patch.addEventListener('pointerdown', (e) => {
     harvest();
     return;
   }
-  if (game.phase !== 'digging') return;
+  if (game.phase !== 'digging' || strokes.size >= MAX_STROKES) return;
   sounds.unlock();
-  pointer = e.pointerId;
-  patch.setPointerCapture(pointer);
-  previous = { x: e.clientX, y: e.clientY };
-  if (dig(e.clientX, e.clientY)) digFeedback(false);
+  const stroke = { x: e.clientX, y: e.clientY, pendingTap: null };
+  strokes.set(e.pointerId, stroke);
+  patch.setPointerCapture(e.pointerId);
+  if (dig(stroke.x, stroke.y)) digFeedback(false, stroke);
 });
 patch.addEventListener('pointermove', (e) => {
-  if (e.pointerId !== pointer || game.phase !== 'digging') return;
-  const distance = Math.hypot(e.clientX - previous.x, e.clientY - previous.y);
+  const stroke = strokes.get(e.pointerId);
+  if (!stroke || game.phase !== 'digging') return;
+  const dx = e.clientX - stroke.x;
+  const dy = e.clientY - stroke.y;
+  const distance = Math.hypot(dx, dy);
   if (distance < 12) return;
-  pendingTap = null;
+  stroke.pendingTap = null;
   const steps = Math.min(40, Math.ceil(distance / 16));
   let changed = false;
   for (let i = 1; i <= steps; i++)
     changed =
-      dig(
-        previous.x + ((e.clientX - previous.x) * i) / steps,
-        previous.y + ((e.clientY - previous.y) * i) / steps,
-      ) || changed;
+      dig(stroke.x + (dx * i) / steps, stroke.y + (dy * i) / steps) || changed;
   if (changed) digFeedback(true);
-  previous = { x: e.clientX, y: e.clientY };
+  stroke.x = e.clientX;
+  stroke.y = e.clientY;
 });
 patch.addEventListener('pointerup', (e) => {
-  if (e.pointerId !== pointer) return;
+  const stroke = strokes.get(e.pointerId);
+  if (!stroke) return;
   // Some touch browsers activate audio upon release, rather than at contact.
   sounds.unlock();
+  const { pendingTap } = stroke;
   if (pendingTap && performance.now() - pendingTap.time < 180) {
-    if (pendingTap.cue === 'dig') sounds.dig(false);
-    else sounds.play('ready');
+    if (pendingTap.cue === 'dig' && game.phase === 'digging') sounds.dig(false);
+    if (pendingTap.cue === 'ready' && game.phase === 'ready')
+      sounds.play('ready');
   }
-  stopInput();
+  stopStroke(e.pointerId);
 });
-for (const event of ['pointercancel', 'lostpointercapture'])
-  patch.addEventListener(event, stopInput);
+for (const event of ['pointercancel', 'lostpointercapture'] as const)
+  patch.addEventListener(event, (e) => stopStroke(e.pointerId));
 patch.addEventListener('keydown', (e) => {
   if (!artworkReady || (e.key !== ' ' && e.key !== 'Enter')) return;
   e.preventDefault();
