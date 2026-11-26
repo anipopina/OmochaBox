@@ -118,7 +118,7 @@ const oldFirst = await readFile(
 );
 const first = parseReview(oldFirst);
 assert.equal(first.scenes.drive.choice, 'drive-c');
-assert.equal(first.scenes.hit.gameConfirmed, true);
+assert.deepEqual(Object.keys(first.scenes.hit), ['choice', 'note']);
 const second = blankReview();
 delete second.scenes.crumble;
 second.catalog = 'ouchi-barabara-audio-2026-11-11-v2';
@@ -145,8 +145,10 @@ assert.equal(migrated.scenes.collapse.choice, 'collapse-d');
 assert.equal(migrated.scenes.rubble.choice, 'rubble-e');
 assert.equal(migrated.scenes.drive.choice, 'drive-c');
 assert.deepEqual(migrated.additions, second.additions);
-assert.equal(migrated.scenes.collapse.gameConfirmed, true);
-assert.equal(migrated.scenes.collapse.note, 'keep');
+assert.deepEqual(migrated.scenes.collapse, {
+  choice: 'collapse-d',
+  note: 'keep',
+});
 second.scenes.collapse.choice = 'collapse-d';
 assert.throws(() => parseReview(JSON.stringify(second)));
 const unknown = { ...second, catalog: 'unissued' };
@@ -164,12 +166,12 @@ const submitted = parseReview(
 );
 assert.equal(submitted.scenes.rubble.choice, 'rubble-e');
 assert.equal(submitted.scenes.crumble.choice, 'pending');
-assert.equal(submitted.scenes.crumble.gameConfirmed, false);
+assert.deepEqual(Object.keys(submitted.scenes.crumble), ['choice', 'note']);
 assert.equal(
   submitted.additions.length,
   1,
   'Four-scene reviews retain their addition request',
 );
 console.log(
-  'Sound review model PASS: immutable sample identities, adoption, append sequence, issued-data migrations preserve notes/requests/confirmation',
+  'Sound review model PASS: immutable sample identities, adoption, append sequence, issued-data migrations preserve choices, notes and requests',
 );

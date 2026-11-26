@@ -3,8 +3,6 @@ export type Choice = string | 'pending' | 'redo' | 'none';
 export interface Decision {
   choice: Choice;
   note: string;
-  singleConfirmed: boolean;
-  gameConfirmed: boolean;
 }
 export interface Review<S extends string = string> {
   format: 'omochabox-sound-review';
@@ -51,15 +49,7 @@ export function createReviewModel<S extends string>(
       updatedAt: new Date().toISOString(),
       additions: [],
       scenes: Object.fromEntries(
-        SCENES.map(({ id }) => [
-          id,
-          {
-            choice: 'pending',
-            note: '',
-            singleConfirmed: false,
-            gameConfirmed: false,
-          },
-        ]),
+        SCENES.map(({ id }) => [id, { choice: 'pending', note: '' }]),
       ) as Review<S>['scenes'],
     };
   }
@@ -106,22 +96,12 @@ export function createReviewModel<S extends string>(
         (!['pending', 'redo', 'none'].includes(decision.choice) &&
           !isCandidate(id, decision.choice)) ||
         typeof decision.note !== 'string' ||
-        decision.note.length > 2000 ||
-        typeof decision.singleConfirmed !== 'boolean' ||
-        typeof decision.gameConfirmed !== 'boolean' ||
-        (!isCandidate(id, decision.choice) && decision.singleConfirmed) ||
-        (!isCandidate(id, decision.choice) &&
-          decision.choice !== 'none' &&
-          decision.gameConfirmed)
+        decision.note.length > 2000
       )
-        throw new Error(
-          '選定内容が不正です。候補と確認状態を確かめてください。',
-        );
+        throw new Error('選定内容が不正です。候補とメモを確かめてください。');
       result.scenes[id] = {
         choice: decision.choice as Choice,
         note: decision.note,
-        singleConfirmed: decision.singleConfirmed,
-        gameConfirmed: decision.gameConfirmed,
       };
     }
     const ids = new Set<string>();

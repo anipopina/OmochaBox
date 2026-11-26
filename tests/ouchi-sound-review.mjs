@@ -273,23 +273,27 @@ const click=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=
   assert.equal(await evaluate('reviewAudio.starts.length'), stopped);
 
   await click('input[value="hit-b"]');
-  await click('[data-confirm="singleConfirmed"][data-id="hit"]');
-  await click('[data-confirm="gameConfirmed"][data-id="hit"]');
+  assert.equal(
+    await evaluate("document.querySelectorAll('input[type=checkbox]').length"),
+    0,
+  );
+  assert.equal(
+    await evaluate(
+      "document.querySelector('input[name=crumble][value=pending]').parentElement.textContent.trim()",
+    ),
+    'そのた',
+  );
   await evaluate(
     `const note=document.querySelector('#note-hit');note.value='音色は好き。もう少し短く。';note.dispatchEvent(new Event('input',{bubbles:true}))`,
   );
   await click('input[value="hit-c"]');
-  assert.equal(
-    await evaluate(
-      'document.querySelector(\'[data-confirm="gameConfirmed"][data-id="hit"]\').checked',
-    ),
-    false,
-    'Changing sound clears confirmation',
-  );
   await click('input[name="collapse"][value="redo"]');
   await click('input[name="rubble"][value="none"]');
-  await click('[data-confirm="gameConfirmed"][data-id="rubble"]');
   await click('input[value="drive-b"]');
+  await click('input[name="crumble"][value="pending"]');
+  await evaluate(
+    `(() => {const note=document.querySelector('#note-crumble');note.value='打撃のAを使う';note.dispatchEvent(new Event('input',{bubbles:true}));})()`,
+  );
   await click('#add-request');
   await evaluate(`for(const [key,value] of Object.entries({scene:'アームを振り上げる',timing:'動き始め',sound:'やわらかい機械音',note:'短め。声は不要。'})){
     const input=document.querySelector('[data-request-field="'+key+'"]');input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}))}`);
@@ -322,7 +326,14 @@ const click=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=
   await click('#export');
   const exported = await evaluate('downloads[0]');
   assert.equal(JSON.parse(exported).scenes.hit.choice, 'hit-c');
-  assert.equal(JSON.parse(exported).scenes.rubble.gameConfirmed, true);
+  assert.deepEqual(JSON.parse(exported).scenes.rubble, {
+    choice: 'none',
+    note: '',
+  });
+  assert.deepEqual(JSON.parse(exported).scenes.crumble, {
+    choice: 'pending',
+    note: '打撃のAを使う',
+  });
   await evaluate(
     `window.copiedSelection='';Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.copiedSelection=text}}})`,
   );
@@ -407,7 +418,7 @@ const click=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=
   await click('#preview');
   assert.equal(
     await evaluate('previewUrls[0]'),
-    '/ouchi-barabara/?sound-preview=hit-c,redo,none,drive-b,none',
+    '/ouchi-barabara/?sound-preview=hit-c,redo,none,drive-b,pending',
   );
   const previousDraft = JSON.parse(exported);
   previousDraft.catalog = 'ouchi-barabara-audio-2026-11-11-v2';

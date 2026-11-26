@@ -1,7 +1,7 @@
 import './style.css';
 import { ReviewPlayer } from './player';
 import type { Candidate, ReviewConfig } from './catalogue';
-import { MAX_REQUESTS, type Review, type createReviewModel } from './model';
+import { MAX_REQUESTS, type createReviewModel } from './model';
 
 /** Development-only UI. The caller owns disposal when replacing the page. */
 export function mountSoundReview<S extends string>({
@@ -98,15 +98,11 @@ export function mountSoundReview<S extends string>({
       <fieldset class="other-choices"><legend>ほかの選び方</legend>
         <label class="choice"><input type="radio" name="${scene.id}" value="redo">作り直す</label>
         <label class="choice"><input type="radio" name="${scene.id}" value="none">今回は音なし</label>
-        <label class="choice"><input type="radio" name="${scene.id}" value="pending">まだ選ばない</label>
+        <label class="choice"><input type="radio" name="${scene.id}" value="pending">そのた</label>
       </fieldset>
       <div class="scene-notes"><label for="note-${scene.id}">音のメモ</label>
         <textarea id="note-${scene.id}" data-note="${scene.id}" maxlength="2000" rows="2"
           placeholder="例：Bの音色が好き。もう少し短くしたい。"></textarea>
-        <div class="confirmations">
-          <label class="choice"><input type="checkbox" data-confirm="singleConfirmed" data-id="${scene.id}">単音で確認した</label>
-          <label class="choice"><input type="checkbox" data-confirm="gameConfirmed" data-id="${scene.id}">遊びの中でも確認した</label>
-        </div>
       </div>
     </section>`,
   ).join('')}</div>
@@ -119,8 +115,7 @@ export function mountSoundReview<S extends string>({
   </section>
   <footer class="review-footer">
     <h2>選んだ音で、遊んでみる</h2>
-    <p>別のタブで今回の組み合わせを試せます。「作り直す」「音なし」の場面は鳴らしません。未選定の場面は今の音を使います。<br>
-    操作とのタイミングや重なりを確かめたら、この画面の「遊びの中でも確認した」にチェックしてください。</p>
+    <p>別のタブで今回の組み合わせを試せます。「作り直す」「今回は音なし」の場面は無音で、「そのた」は今の音で試せます。別の場面の候補を使いたいときは、場面名と候補の記号をメモに書いてください。</p>
     <button type="button" id="preview" data-preview>▶ 選んだ音で遊ぶ</button>
     <p>試しただけでは通常の遊びの音は変わりません。選定ができたらJSONを書き出して渡してください。<br>
     選定途中の内容はこのブラウザーに保存します。別の端末やブラウザーには自動で引き継がれません。</p>
@@ -174,17 +169,13 @@ export function mountSoundReview<S extends string>({
   }, config.playback);
 
   function summary() {
-    const decisions = SCENES.map(({ id }) => review.scenes[id]);
     const chosen = SCENES.filter(
       ({ id }) =>
         isCandidate(id, review.scenes[id].choice) ||
         review.scenes[id].choice === 'none',
     ).length;
-    const checked = decisions.filter(
-      (decision) => decision.gameConfirmed,
-    ).length;
     element('#progress').textContent =
-      `${chosen} / ${SCENES.length} 場面を選定 ・ 遊びで確認 ${checked} / ${SCENES.length} ・ 追加 ${review.additions.length}件`;
+      `${chosen} / ${SCENES.length} 場面を選定 ・ 追加 ${review.additions.length}件`;
   }
 
   function persist() {
@@ -267,15 +258,6 @@ export function mountSoundReview<S extends string>({
       ))
         input.checked = input.value === decision.choice;
       element<HTMLTextAreaElement>(`#note-${id}`).value = decision.note;
-      for (const key of ['singleConfirmed', 'gameConfirmed'] as const) {
-        const input = element<HTMLInputElement>(
-          `[data-confirm="${key}"][data-id="${id}"]`,
-        );
-        input.checked = decision[key];
-        input.disabled =
-          !isCandidate(id, decision.choice) &&
-          !(key === 'gameConfirmed' && decision.choice === 'none');
-      }
       for (const card of main.querySelectorAll<HTMLElement>(
         `[data-scene="${id}"] .candidate`,
       ))
@@ -304,20 +286,11 @@ export function mountSoundReview<S extends string>({
   });
   listen(main, 'change', (event) => {
     const target = event.target;
-    if (!(target instanceof HTMLInputElement)) return;
-    if (target.type === 'radio') {
-      const decision = review.scenes[target.name as SceneId];
-      decision.choice = target.value as Review<S>['scenes'][SceneId]['choice'];
-      decision.singleConfirmed = false;
-      decision.gameConfirmed = false;
-      renderState();
-      persist();
-    } else if (target.dataset.confirm) {
-      review.scenes[target.dataset.id as SceneId][
-        target.dataset.confirm as 'singleConfirmed' | 'gameConfirmed'
-      ] = target.checked;
-      persist();
-    }
+    if (!(target instanceof HTMLInputElement) || target.type !== 'radio')
+      return;
+    review.scenes[target.name as SceneId].choice = target.value;
+    renderState();
+    persist();
   });
   listen(main, 'input', (event) => {
     const target = event.target;

@@ -61,7 +61,6 @@ test('two toys keep independent drafts, preview defaults and immutable choices a
     const model = createReviewModel(config);
     const draft = model.initialReview();
     draft.scenes.tap.note = 'もう少し軽く';
-    draft.scenes.tap.singleConfirmed = true;
     draft.additions = [
       {
         id: 'request-1',
@@ -85,6 +84,18 @@ test('two toys keep independent drafts, preview defaults and immutable choices a
     );
     ({ config } = await checkCatalogue(root, 'first-toy'));
     assert.deepEqual(createReviewModel(config).parseReview(exported), draft);
+    const oldDraft = JSON.parse(exported);
+    oldDraft.scenes.tap = {
+      choice: 'pending',
+      note: 'ほかの場面のAを使う',
+      singleConfirmed: false,
+      gameConfirmed: false,
+    };
+    assert.deepEqual(
+      createReviewModel(config).parseReview(JSON.stringify(oldDraft)).scenes
+        .tap,
+      { choice: 'pending', note: 'ほかの場面のAを使う' },
+    );
     assert.deepEqual(
       await readFile(join(root, 'src/first-toy/sound-review/assets/tap-a.mp3')),
       before,
@@ -120,7 +131,6 @@ test('two toys keep independent drafts, preview defaults and immutable choices a
       (d) => (d.scenes.tap.choice = 'tap-z'),
       (d) => (d.scenes.tap.choice = 'https://example.org/'),
       (d) => (d.scenes.tap.note = 42),
-      (d) => (d.scenes.tap.choice = 'none'),
       (d) => d.additions.push(d.additions[0]),
       (d) => delete d.scenes.tap,
     ]) {
