@@ -1,0 +1,47 @@
+{
+  "original_candidate": "tap-c",
+  "scene": "tap",
+  "source_path": "tmp/audio-originals/mizutamari/generated/light-plop.wav",
+  "source_sha256": "09b1502c06446cbd9291513b4d78a83bd9e76bd908f5833e1286f7c49080788b",
+  "original_generation_record": "source-assets/mizutamari/audio/review/round-1.json",
+  "trim_seconds": [
+    0,
+    0.169
+  ],
+  "leading_pad_seconds": 0.008,
+  "bandpass_hz": [
+    155,
+    5100
+  ],
+  "crossover_hz": 1450,
+  "high_band_envelope_seconds_gain": [
+    [
+      0,
+      0.075
+    ],
+    [
+      0.056,
+      0.075
+    ],
+    [
+      0.098,
+      0.76
+    ]
+  ],
+  "normalization": "RMS -34 dBFS before tanh limiting at -15 dBFS",
+  "fade_in_seconds": 0.007,
+  "fade_out_seconds": 0.031,
+  "format": "32 kHz mono 64 kbps MP3 (libmp3lame)",
+  "output_sha256": "734f4a52134d668e492ff15f7c23c45eba8f8ef74219086cbab109e7eeb7f0bc",
+  "bytes": 2060,
+  "duration_seconds": 0.17703,
+  "decoded_peak_dbfs": -21.65,
+  "decoded_rms_dbfs": -34.78,
+  "onset_high_band_dbfs": {
+    "cutoff_hz": 2200,
+    "window_seconds": 0.048,
+    "candidate_c": -29.77,
+    "candidate_d": -33.1,
+    "candidate_e": -44.94
+  }
+}

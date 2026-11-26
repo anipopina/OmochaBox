@@ -598,8 +598,10 @@ type Voice = FlowerVoice | SampleVoice;
         compressor.ratio.value = 8;
         compressor.attack.value = 0.003;
         compressor.release.value = 0.2;
+        const output = audio.createGain();
+        output.gain.value = 0.7;
         master.connect(compressor);
-        compressor.connect(audio.destination);
+        compressor.connect(output).connect(audio.destination);
       }
       loadSample();
       if (audio.state !== 'running') return audio.resume().catch(() => {});

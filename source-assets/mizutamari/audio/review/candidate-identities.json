@@ -16,5 +16,23 @@
     "file": "tap-c.mp3",
     "sha256": "18cd71a50fc13b54977e04efd82948533a9f110776b8012e00a23f814ef78d8d",
     "provenance": "source-assets/mizutamari/audio/review/round-1.json"
+  },
+  {
+    "id": "tap-d",
+    "file": "tap-d.mp3",
+    "sha256": "5d4c2feca47a4aff5e353dd1465ff8097c967a7a3c739c00cace4fe7910a6318",
+    "provenance": "source-assets/mizutamari/audio/review/round-2-soft-onset.json"
+  },
+  {
+    "id": "tap-e",
+    "file": "tap-e.mp3",
+    "sha256": "734f4a52134d668e492ff15f7c23c45eba8f8ef74219086cbab109e7eeb7f0bc",
+    "provenance": "source-assets/mizutamari/audio/review/round-3-softer-onset.json"
+  },
+  {
+    "id": "tap-f",
+    "file": "tap-f.mp3",
+    "sha256": "3758e4fa38fc8b127589e35e84a7d80e00c34441753f2b60019029a9220eb860",
+    "provenance": "source-assets/mizutamari/audio/review/round-4-user-edit.json"
   }
 ]

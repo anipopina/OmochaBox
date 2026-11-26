@@ -1,13 +1,13 @@
 {
-  "selection": "review/selections/2026-11-26-final.json",
+  "selection": "review/selections/2026-11-27-f.json",
   "cues": {
     "tap": [
       {
-        "candidate": "tap-c",
-        "source": "src/mizutamari/sound-review/assets/tap-c.mp3",
+        "candidate": "tap-f",
+        "source": "src/mizutamari/sound-review/assets/tap-f.mp3",
         "output": "src/mizutamari/assets/tap.mp3",
-        "sha256": "18cd71a50fc13b54977e04efd82948533a9f110776b8012e00a23f814ef78d8d",
-        "provenance": "source-assets/mizutamari/audio/review/round-1.json"
+        "sha256": "3758e4fa38fc8b127589e35e84a7d80e00c34441753f2b60019029a9220eb860",
+        "provenance": "source-assets/mizutamari/audio/review/round-4-user-edit.json"
       }
     ]
   }

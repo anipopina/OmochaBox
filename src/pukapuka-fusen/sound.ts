@@ -23,6 +23,7 @@ export function setSoundPreview(preview: SoundUrls) {
 const MAX_VOICES = 2;
 const MIN_INTERVAL = 0.12;
 const GAIN = 0.55;
+const PUMP_GAIN = GAIN * 0.5;
 const PUMP_FADE = 0.045;
 
 export class Sounds {
@@ -94,7 +95,7 @@ export class Sounds {
     const now = context.currentTime;
     if (cue === 'pump') {
       // The air sample has its own envelope. Keep this gain available for early release.
-      gain.gain.value = GAIN;
+      gain.gain.value = PUMP_GAIN;
       this.pump = { source, gain: gain.gain };
     } else {
       gain.gain.setValueAtTime(0, now);
@@ -135,7 +136,7 @@ export class Sounds {
     if (!pump || !context) return;
     this.pump = null;
     const now = context.currentTime;
-    pump.gain.setValueAtTime(GAIN, now);
+    pump.gain.setValueAtTime(PUMP_GAIN, now);
     pump.gain.linearRampToValueAtTime(0, now + PUMP_FADE);
     pump.source.stop(now + PUMP_FADE);
   }

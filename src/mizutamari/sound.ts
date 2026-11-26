@@ -6,11 +6,13 @@ export function setSoundPreview(preview: { tap: string | null }) {
   if (import.meta.env.DEV) tapUrl = preview.tap;
 }
 
-const GAIN = 0.55;
+const GAIN = 0.825;
 const MIN_INTERVAL = 0.13;
 const MAX_VOICES = 2;
 const MIN_RATE = 0.88;
 const MAX_RATE = 1.05;
+const MIN_DRAG_INTERVAL = 0.8;
+const DRAG_INTERVAL_VARIATION = 0.4;
 
 export class PondSound {
   private context: AudioContext | null = null;
@@ -18,6 +20,7 @@ export class PondSound {
   private download = new AbortController();
   private voices = new Map<AudioBufferSourceNode, GainNode>();
   private lastPlayed = -Infinity;
+  private nextDrag = -Infinity;
 
   constructor() {
     if (tapUrl) void this.preload(tapUrl);
@@ -42,20 +45,29 @@ export class PondSound {
     return this.sample !== null && this.context?.state !== 'running';
   }
 
-  play() {
-    const sample = this.sample;
-    if (!sample || document.hidden) return;
+  activate() {
+    if (!this.needsTouchActivation || document.hidden) return;
     try {
       const context = (this.context ??= new AudioContext());
-      if (context.state !== 'running') {
-        // A later resume never queues a sound for an earlier gesture.
-        void context.resume().catch(() => {});
-        return;
-      }
+      // Resuming never queues a sound for an earlier gesture.
+      if (context.state !== 'running') void context.resume().catch(() => {});
+    } catch {
+      // Web Audio availability is independent of play.
+    }
+  }
+
+  play(fromDrag = false) {
+    const sample = this.sample;
+    if (!sample || document.hidden) return;
+    if (!fromDrag) this.activate();
+    const context = this.context;
+    if (!context || context.state !== 'running') return;
+    try {
       const now = context.currentTime;
       if (
         this.voices.size >= MAX_VOICES ||
-        now - this.lastPlayed < MIN_INTERVAL
+        now - this.lastPlayed < MIN_INTERVAL ||
+        (fromDrag && now < this.nextDrag)
       )
         return;
       const source = context.createBufferSource();
@@ -83,6 +95,8 @@ export class PondSound {
       source.start();
       this.voices.set(source, gain);
       this.lastPlayed = now;
+      this.nextDrag =
+        now + MIN_DRAG_INTERVAL + Math.random() * DRAG_INTERVAL_VARIATION;
     } catch {
       // Web Audio permission and availability are independent of play.
     }
@@ -97,6 +111,7 @@ export class PondSound {
     }
     this.voices.clear();
     this.lastPlayed = -Infinity;
+    this.nextDrag = -Infinity;
     const context = this.context;
     if (context && context.state !== 'closed')
       void context.suspend().catch(() => {});

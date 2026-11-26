@@ -1,0 +1,22 @@
+{
+  "scene": "tap",
+  "original_candidate": "tap-c",
+  "source_kind": "user-supplied edit of the original waveform",
+  "source_filename": "light-plop_ユーザ修正版2.wav",
+  "source_path": "tmp/audio-originals/mizutamari/user-edits/light-plop-user.wav",
+  "source_sha256": "246b1a010562db6de6f2a1740081330142010587c5374e9a44fa62df3111e262",
+  "original_generation_record": "source-assets/mizutamari/audio/review/round-1.json",
+  "trim_seconds": [
+    0,
+    0.36
+  ],
+  "fade_out_seconds": 0.012,
+  "eq": "none",
+  "gain_db": 0,
+  "format": "44.1 kHz stereo 96 kbps MP3 (libmp3lame)",
+  "bytes": 5059,
+  "output_sha256": "3758e4fa38fc8b127589e35e84a7d80e00c34441753f2b60019029a9220eb860",
+  "duration_seconds": 0.36,
+  "decoded_peak_dbfs": -17.73,
+  "decoded_rms_dbfs": -46.84
+}

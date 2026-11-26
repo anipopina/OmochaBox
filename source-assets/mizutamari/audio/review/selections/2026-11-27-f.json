@@ -1,0 +1,14 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 2,
+  "toy": "mizutamari",
+  "catalog": "mizutamari-audio-fixed-v1",
+  "updatedAt": "2026-11-26T19:02:44.886Z",
+  "additions": [],
+  "scenes": {
+    "tap": {
+      "choice": "tap-f",
+      "note": "ユーザー修正版2のF案を採用"
+    }
+  }
+}

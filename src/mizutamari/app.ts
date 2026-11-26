@@ -156,7 +156,8 @@ canvas.addEventListener('pointerdown', (event) => {
   });
   canvas.setPointerCapture(event.pointerId);
   splash(p.x, p.y, now);
-  if (!deferSound) sounds.play();
+  if (deferSound) sounds.activate();
+  else sounds.play();
 });
 canvas.addEventListener('pointermove', (event) => {
   const previousPoint = pointers.get(event.pointerId);
@@ -171,6 +172,7 @@ canvas.addEventListener('pointermove', (event) => {
     return;
   pointers.set(event.pointerId, { ...p, time: now, soundUntil: 0 });
   splash(p.x, p.y, now);
+  sounds.play(true);
 });
 for (const type of [
   'pointerup',
@@ -183,13 +185,14 @@ for (const type of [
     if (canvas.hasPointerCapture(event.pointerId))
       canvas.releasePointerCapture(event.pointerId);
     if (type === 'pointercancel' && pointer) sounds.stop();
-    if (
-      type === 'pointerup' &&
-      pointer &&
-      performance.now() <= pointer.soundUntil
-    ) {
+    if (type === 'pointerup' && pointer) {
       const p = point(event);
-      if (Math.hypot(p.x - pointer.x, p.y - pointer.y) <= 16) sounds.play();
+      if (
+        performance.now() <= pointer.soundUntil &&
+        Math.hypot(p.x - pointer.x, p.y - pointer.y) <= 16
+      )
+        sounds.play();
+      else if (event.pointerType !== 'mouse') sounds.activate();
     }
   });
 }

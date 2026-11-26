@@ -454,8 +454,8 @@ try {
   assert.ok(publishedTap, 'The adopted sample is in the published build');
   assert.deepEqual(
     await readFile(join(root, 'dist', publishedTap)),
-    await readFile(join(root, 'src/mizutamari/sound-review/assets/tap-c.mp3')),
-    'The published sample matches candidate C',
+    await readFile(join(root, 'src/mizutamari/sound-review/assets/tap-f.mp3')),
+    'The published sample matches candidate F',
   );
   reviewServer = await createServer({
     server: { host: '127.0.0.1', port: 0, strictPort: false },
@@ -466,7 +466,11 @@ try {
   const candidates = await evaluate(
     "Array.from(document.querySelectorAll('[data-candidate]'), node=>node.dataset.candidate)",
   );
-  assert.ok(['tap-a', 'tap-b', 'tap-c'].every((id) => candidates.includes(id)));
+  assert.ok(
+    ['tap-a', 'tap-b', 'tap-c', 'tap-d', 'tap-e', 'tap-f'].every((id) =>
+      candidates.includes(id),
+    ),
+  );
   assert.equal(await evaluate('pondAudio.contexts'), 0);
   for (const [index, id] of candidates.entries()) {
     const selector = JSON.stringify(`[data-play="${id}"][data-count="1"]`);
@@ -474,12 +478,12 @@ try {
     await waitFor(`pondAudio.starts===${index + 1}`);
   }
   await evaluate(
-    `document.querySelector('input[value="tap-c"]').click();
+    `document.querySelector('input[value="tap-f"]').click();
     window.open = url => {window.testPreview = url};
     document.querySelector('#preview').click();`,
   );
   const preview = await evaluate('window.testPreview');
-  assert.equal(preview, '/mizutamari/?sound-preview=tap-c');
+  assert.equal(preview, '/mizutamari/?sound-preview=tap-f');
   assert.ok(await evaluate('pondAudio.rates.every(rate=>rate===1)'));
   await shot('pond-sound-review');
   const mouseDown = () =>
@@ -538,13 +542,28 @@ try {
     y: 370,
     buttons: 1,
   });
-  await mouseUp(270);
-  await delay(180);
   assert.equal(
     await evaluate('pondAudio.starts'),
     starts,
-    'Dragging does not add sound',
+    'An early drag ripple does not add sound',
   );
+  await delay(1250);
+  await call('Input.dispatchMouseEvent', {
+    type: 'mouseMoved',
+    x: 140,
+    y: 370,
+    buttons: 1,
+  });
+  await waitFor(`pondAudio.starts===${starts + 1}`);
+  await delay(150);
+  await call('Input.dispatchMouseEvent', {
+    type: 'mouseMoved',
+    x: 270,
+    y: 370,
+    buttons: 1,
+  });
+  await mouseUp(270);
+  assert.equal(await evaluate('pondAudio.starts'), starts + 1);
   for (let i = 0; i < 12; i++) {
     await mouseTap();
   }
@@ -579,7 +598,7 @@ try {
   assert.equal(await evaluate('pondAudio.starts'), 0);
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
-    'Pond sound PASS: fixed comparison playback, varied game speed, review selection, drag silence, bounded voices, blur cleanup, delayed/failed audio, no published preview assets',
+    'Pond sound PASS: fixed comparison playback, varied game speed, review selection, spaced drag sounds, bounded voices, blur cleanup, delayed/failed audio, no published preview assets',
   );
   await writeFile(join(output, 'pond-results.txt'), reports.join('\n') + '\n');
 } finally {

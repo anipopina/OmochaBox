@@ -867,7 +867,7 @@ try {
     const reviewUrl = `http://127.0.0.1:${review.httpServer.address().port}/pukapuka-fusen/`;
     await call('Page.addScriptToEvaluateOnNewDocument', {
       source: `
-      window.balloonAudio={decoded:0,contexts:0,starts:0,active:new Set(),buffers:new WeakMap(),played:[],stops:[],ramps:[]};
+      window.balloonAudio={decoded:0,contexts:0,starts:0,active:new Set(),buffers:new WeakMap(),played:[],stops:[],ramps:[],gainSets:[]};
       const Decoder=OfflineAudioContext;
       window.OfflineAudioContext=class extends Decoder {
         async decodeAudioData(data){const buffer=await super.decodeAudioData(data);balloonAudio.buffers.set(buffer,++balloonAudio.decoded);return buffer;}
@@ -877,12 +877,16 @@ try {
         constructor(...args){super(...args);balloonAudio.contexts++;balloonAudio.context=this;}
         createGain(){
           const node=super.createGain(),ramp=node.gain.linearRampToValueAtTime.bind(node.gain);
+          const set=node.gain.setValueAtTime.bind(node.gain);
           node.gain.linearRampToValueAtTime=(gain,when)=>{balloonAudio.ramps.push({gain,delay:when-this.currentTime});return ramp(gain,when);};
+          node.gain.setValueAtTime=(gain,when)=>{balloonAudio.gainSets.push(gain);return set(gain,when);};
           return node;
         }
         createBufferSource(){
-          const source=super.createBufferSource(),start=source.start.bind(source),stop=source.stop.bind(source);
-          source.start=(...args)=>{balloonAudio.starts++;balloonAudio.played.push({id:balloonAudio.buffers.get(source.buffer),duration:source.buffer.duration});balloonAudio.active.add(source);source.addEventListener('ended',()=>balloonAudio.active.delete(source));return start(...args);};
+          const source=super.createBufferSource(),start=source.start.bind(source),stop=source.stop.bind(source),connect=source.connect.bind(source);
+          let gain;
+          source.connect=(target,...args)=>{if(target instanceof GainNode)gain=target.gain;return connect(target,...args);};
+          source.start=(...args)=>{balloonAudio.starts++;balloonAudio.played.push({id:balloonAudio.buffers.get(source.buffer),duration:source.buffer.duration,gain:gain?.value});balloonAudio.active.add(source);source.addEventListener('ended',()=>balloonAudio.active.delete(source));return start(...args);};
           source.stop=(when=0)=>{balloonAudio.stops.push(when ? when-this.currentTime : 0);if(!when)balloonAudio.active.delete(source);return stop(when);};
           return source;
         }
@@ -956,6 +960,11 @@ try {
       await mouse('mousePressed', previewPump);
       await waitFor('balloonAudio.starts===1');
       assert.ok(
+        Math.abs((await evaluate('balloonAudio.played[0].gain')) - 0.275) <
+          0.00001,
+        'Pump starts at half gain',
+      );
+      assert.ok(
         Math.abs(
           (await evaluate('balloonAudio.played[0].duration')) - GROW_MS / 1000,
         ) < 0.01,
@@ -987,6 +996,14 @@ try {
           'balloonAudio.ramps.some(r=>r.gain===0&&r.delay>0.03&&r.delay<0.07)',
         ),
         'Early release fades the volume to zero',
+      );
+      assert.ok(
+        await evaluate('balloonAudio.gainSets[0]===0.275'),
+        'Early release keeps the quieter pump gain at the start of the fade',
+      );
+      assert.ok(
+        await evaluate('balloonAudio.ramps.some(r=>r.gain===0.55)'),
+        'Release keeps its original gain',
       );
       await waitFor('balloonAudio.active.size===0');
       await mouse('mousePressed', previewPump);
