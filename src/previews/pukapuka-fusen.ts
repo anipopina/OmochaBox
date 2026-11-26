@@ -1,10 +1,8 @@
-import balloonCyan from '../pukapuka-fusen/assets/cyan.svg';
-import balloonStar from '../pukapuka-fusen/assets/star.svg';
-import balloonTriangle from '../pukapuka-fusen/assets/triangle.svg';
+import cardUrl from '../assets/previews/pukapuka-fusen.webp';
 
 export default function createPreview() {
   return {
     className: 'balloon-preview',
-    html: `<img src="${balloonCyan}" alt="" loading="lazy"><img src="${balloonStar}" alt="" loading="lazy"><img src="${balloonTriangle}" alt="" loading="lazy">`,
+    html: `<img src="${cardUrl}" width="1200" height="600" alt="" loading="lazy">`,
   };
 }

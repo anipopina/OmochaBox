@@ -64,3 +64,7 @@ Make a subtle color-only edit to image 1, the isolated three-lobed ivy leaf. Lif
 ```text
 Generate an original edge-to-edge photographic texture of very fine crushed pea gravel, intended as the submerged bed of a shallow interactive puddle. Capture a broad patch of ground from directly overhead, looking straight down through an orthographic field, wide 4:3. The camera should feel about two to three meters above a broad patch of tiny crushed stones, not like a close-up. Hundreds to thousands of tiny pieces, each only about 1.5% of the image width and about 1% of the diagonal on average; no standout big rocks. Natural small angular stone fragments and rounded chips, tightly packed, mottled warm gray with hints of slate and sand, gentle low-contrast overcast light, fine detail without crunchy highlights. Fill every edge and corner uniformly; detailed enough that the center third is usable as a vertical crop. Show only gravel. No water, ripples, greenery, debris, text, boundaries, vignetting, borders, or watermark. Generate from text alone.
 ```
+
+## 入口カード
+
+[入口カードの原本PNG](card-original.png) は、遊びの砂利・葉と波紋の描画を使ってChromiumで撮影し、カードに合わせて葉を大きく置き、中心をずらした大小の波紋を間隔を空けて配置し、外側の波紋の明暗を補ったものです。砂利と葉の来歴・利用条件はこの資料に記録しています。[配信用WebP](../../src/assets/previews/mizutamari.webp) は1200×600、113,956 bytesです。

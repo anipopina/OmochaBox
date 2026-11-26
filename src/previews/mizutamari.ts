@@ -1,9 +1,8 @@
-import pondGreen from '../mizutamari/assets/leaf-green.webp';
-import pondTeal from '../mizutamari/assets/leaf-teal.webp';
+import cardUrl from '../assets/previews/mizutamari.webp';
 
 export default function createPreview() {
   return {
     className: 'pond-preview',
-    html: `<i></i><img src="${pondGreen}" alt="" loading="lazy"><img src="${pondTeal}" alt="" loading="lazy">`,
+    html: `<img src="${cardUrl}" width="1200" height="600" alt="" loading="lazy">`,
   };
 }

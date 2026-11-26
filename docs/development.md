@@ -53,13 +53,20 @@ WSLで開発サーバーを動かし、Windows側でTailscaleを使う場合は�
 ## ページと素材の追加
 
 - `src/<slug>/` に `index.html`・`app.ts`・`style.css`・`README.md` と必要な素材を置きます。`index.html` に `<script type="module" src="app.ts"></script>` を記載します。ViteがHTMLを自動検出し、`/<slug>/` で開けます。
-- 一覧への登録は [src/games.json](../src/games.json)、カードの図案は `src/previews/<slug>.ts` で管理します。本番公開の選択は [config/production-games.json](../config/production-games.json)、AWSの手順は [infra/README.md](../infra/README.md) を参照してください。
+- 一覧への登録は [src/games.json](../src/games.json) で管理します。本番公開の選択は [config/production-games.json](../config/production-games.json)、AWSの手順は [infra/README.md](../infra/README.md) を参照してください。
 - 各遊びにREADMEを用意し、遊び方・状態の扱い・実装上の注意・素材の出典へのリンク・固有の確認項目を記載します。
 - `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
 - 共有キャラクターSVGは出典・SHA-256とMatter.jsの当たり判定を登録します。配置、利用例、ローカル確認画面は[キャラクターSVGの追加手順](../src/assets/characters/README.md#svgを追加するとき)を参照してください。
 - 素材原本と出典・利用条件・変換記録は `source-assets/<slug>/` に保存します。生成効果音の原本WAVはGit管理外の `tmp/audio-originals/<slug>/` に保管し、比較・配信用MP3と制作記録だけをリポジトリに保持します。確認すべき利用条件は [AGENTS.md](../AGENTS.md) を参照してください。`dist/` を直接編集しません。
+
+### 入口カード画像の作り方
+
+- **遊びの中で起きることを一枚で伝える。** 一覧の小さな表示でも遊びが伝わるよう、主役や動きがわかる効果を大きく見せます。何が起きているか読み取れれば、画像の端で一部が見切れても構いません。
+- **実際の遊びの素材を優先する。** ゲーム画面の撮影や、使用中のキャラクター・背景・エフェクトの再構成から始め、カードに合わせて配置や明暗を調整します。
+- **背景と効果を含めて一枚に書き出す。** 1200×600（2:1）のWebPを目安に `src/assets/previews/` へ置き、`src/previews/<slug>.ts` から参照します。
+- **トップページで確認する。** スマートフォン幅と広い画面で、隣のカードと表示サイズが揃い、切り抜き後も主役や効果が読み取れるかを確認します。
 
 ## ブラウザーテスト
 
