@@ -46,7 +46,7 @@ export function validateCatalogue() {
 }
 const build = (name) => ({
   id: name,
-  command: 'npm',
+  command: 'pnpm',
   args: ['run', name],
   needs: [],
 });
@@ -110,7 +110,7 @@ export function plan(mode, targets = []) {
       },
       {
         id: 'sound-review-framework',
-        command: 'npm',
+        command: 'pnpm',
         args: ['run', 'test:sound-review'],
         needs: [],
       },

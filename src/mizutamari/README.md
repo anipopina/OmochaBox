@@ -12,6 +12,6 @@
 
 自然物はOpenAIの画像生成で本企画向けに生成された葉2種の透過WebP。3枚に大きさ・角度の変化をつけます。企画参照の指・枠・文字は表示しません。[素材の出典](../../source-assets/mizutamari/README.md)。
 
-`npm run check`、`npm test`。専用はビルド後 `node tests/pond.mjs` と `node tests/toy-interactions.mjs`。モデル上限／収束、6画面サイズ、タップ・複数指・ドラッグ・キャンセル、キーボード、resize、非表示相当の後始末、軽減動作、入口往復と再入場を確認。CDP合成タッチとヘッドレスChromiumの画像検査であり、実機Safari・OSジェスチャーの確認ではありません。
+`pnpm run check`、`pnpm test`。専用はビルド後 `node tests/pond.mjs` と `node tests/toy-interactions.mjs`。モデル上限／収束、6画面サイズ、タップ・複数指・ドラッグ・キャンセル、キーボード、resize、非表示相当の後始末、軽減動作、入口往復と再入場を確認。CDP合成タッチとヘッドレスChromiumの画像検査であり、実機Safari・OSジェスチャーの確認ではありません。
 
 実装と調整値は [app.ts](app.ts) と、そこから参照するモジュールで管理します。

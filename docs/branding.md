@@ -20,7 +20,7 @@
 | Apple用アイコン | `apple-touch-icon.png`：180×180の不透明PNG                    |
 
 各HTMLのOGP画像は絶対URLで指定します。公開先を変更する場合は、入口と各ゲームのOGP URLも更新します。
-検査はリポジトリ直下で `npm run build`、`node tests/branding.mjs` を実行します。
+検査はリポジトリ直下で `pnpm run build`、`node tests/branding.mjs` を実行します。
 
 ## 出典
 

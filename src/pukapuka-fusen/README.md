@@ -23,7 +23,7 @@
 
 制作時の画像生成による画面案を参考に、既存マスコットの顔・輪郭を使った派生SVGを使用します。原本6SVGは変更しません。[素材記録](../../source-assets/pukapuka-fusen/README.md)を参照してください。
 
-`npm run check`、`npm test`。専用テストは `node tests/balloon.mjs`（ビルド済みのdistを使用）。短いタップ、上限まで長押し、繰り返し、2本指、cancel、キーリピート、非表示／離脱、画面変更、reduced-motion、6種類の画像読込と順番の一巡、入口往復と画面寸法を検証します。実機Safari・OSジェスチャーは別途確認が必要です。
+`pnpm run check`、`pnpm test`。専用テストは `node tests/balloon.mjs`（ビルド済みのdistを使用）。短いタップ、上限まで長押し、繰り返し、2本指、cancel、キーリピート、非表示／離脱、画面変更、reduced-motion、6種類の画像読込と順番の一巡、入口往復と画面寸法を検証します。実機Safari・OSジェスチャーは別途確認が必要です。
 
 ## 浮遊風船を弾く
 

@@ -1,5 +1,5 @@
 {
-  "app": "npx tsx infra/app.ts",
+  "app": "pnpm exec tsx infra/app.ts",
   "output": "cdk.out",
   "context": {
     "@aws-cdk/core:enablePartitionLiterals": true,

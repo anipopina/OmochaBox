@@ -10,7 +10,7 @@
 - 無音。回転・拡縮・追加・保存・時間制限・物理ライブラリなし。
 - 画面案は[素材記録](../../source-assets/kasanete-iroglass/README.md)に保存。配信するのはコード描画のみで巨大画像や指・矢印は表示しません。
 
-`npm run check`、`npm test`。専用検査はビルド後 `node tests/glass.mjs` と `node tests/toy-interactions.mjs`。色の合成、直接タッチ、隠れた板の選択、境界、縦横リサイズ、キャンセル、再入場、キーボードを確認。実機Safari・OSジェスチャーは別途確認が必要です。
+`pnpm run check`、`pnpm test`。専用検査はビルド後 `node tests/glass.mjs` と `node tests/toy-interactions.mjs`。色の合成、直接タッチ、隠れた板の選択、境界、縦横リサイズ、キャンセル、再入場、キーボードを確認。実機Safari・OSジェスチャーは別途確認が必要です。
 
 フィールドは画面全体に広げ、ヘッダ・個別タイトルは表示しません。戻るボタンは左上に配置し、下部は操作を妨げない案内文だけを重ねます。
 

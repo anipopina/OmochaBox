@@ -13,7 +13,7 @@
 
 ## 検証
 
-`npm run check` と `npm test`。単独はビルド後 `node tests/slide.mjs`。
+`pnpm run check` と `pnpm test`。単独はビルド後 `node tests/slide.mjs`。
 タッチ、3色、連打上限、キーボード、サイズ変更、入口往復・再入場、非表示・離脱、軽減動作、経路接続、寿命後の停止を検査し、縦横各画面の画像を保存します。実機Safari・OSジェスチャーは別途確認が必要です。
 
 実装と調整値は [app.ts](app.ts) と、そこから参照するモジュールで管理します。

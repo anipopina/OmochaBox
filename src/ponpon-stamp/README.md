@@ -19,7 +19,7 @@
 
 ## 検証
 
-`npm run check`、`npm test`。単独検査はビルド後 `node tests/stamp.mjs`。セット境界がページ途中にある構成の実ブラウザー検査は `npm run test:stamp-boundaries`。紙面タップ、多指、ドラッグ／cancel、中断、白紙への切替、上限、回転、再入場、キーボード、reduced-motion、各端末寸法と画像の読込を確認します。実機Safari・OSジェスチャーは別途確認が必要です。[ページ送りの検証記録](../../docs/ponpon-pagination-verification.txt) に対象ケースと結果をまとめます。
+`pnpm run check`、`pnpm test`。単独検査はビルド後 `node tests/stamp.mjs`。セット境界がページ途中にある構成の実ブラウザー検査は `pnpm run test:stamp-boundaries`。紙面タップ、多指、ドラッグ／cancel、中断、白紙への切替、上限、回転、再入場、キーボード、reduced-motion、各端末寸法と画像の読込を確認します。実機Safari・OSジェスチャーは別途確認が必要です。[ページ送りの検証記録](../../docs/ponpon-pagination-verification.txt) に対象ケースと結果をまとめます。
 
 ## ページと選択
 

@@ -29,7 +29,7 @@ if (
   built.origin !== `https://${config.domainName}`
 )
   throw new Error(
-    '本番ビルドと公開設定が一致しません。npm run build:production を実行してください。',
+    '本番ビルドと公開設定が一致しません。pnpm run build:production を実行してください。',
   );
 if (!process.env.CDK_DEFAULT_ACCOUNT)
   throw new Error(

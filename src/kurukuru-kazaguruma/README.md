@@ -14,7 +14,7 @@
 
 ## 検証
 
-`npm run check` と `npm test`。ビルド後の単独検証は `node tests/pinwheel.mjs`。
+`pnpm run check` と `pnpm test`。ビルド後の単独検証は `node tests/pinwheel.mjs`。
 方向切替、減速・上限・停止後RAF、タップ・スワイプ・連続入力・多指・キャンセル・キーボード、非表示復帰・回転・軽減動作・入口往復・再入場を確認します。縦横の複数画面サイズを `test-results/pinwheel-*.png` に保存します。回転時の外接円が戻るボタン・下部説明へ入らないことを検査し、羽根が上下左右や斜めに向く場合も画像を保存します。実機SafariとOSジェスチャーの確認は別途必要です。
 
 実装と調整値は [app.ts](app.ts) と、そこから参照するモジュールで管理します。

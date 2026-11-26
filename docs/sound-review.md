@@ -6,10 +6,10 @@
 
 | 変更 | 実施する検証 |
 | --- | --- |
-| 比較用MP3・候補台帳・制作記録だけを追加・更新 | `npm run sound-review:check -- <slug>`。生成・加工した候補を人が試聴する。ビルド、ゲームの詳細テスト、全体回帰、AWSビルドは省略する |
-| 比較ツールのコードを変更 | 変更ファイルの整形、`npm run check`、`npm run test:sound-review`。UI・再生・プレビューを変更したら通常ビルドと対象の比較画面のブラウザー検査・実画面レビューを行う |
-| 初めてゲーム内の再生箇所を追加、再生処理・タイミングを変更 | 選定途中でも `npm run check` と `npm run test:toy -- <slug>`、対象の実画面レビューを行う |
-| 音を最終採用し、通常の遊びの採用音・音なしを変更 | `npm run check` と `npm run test:toy -- <slug>`、対象の実画面レビュー。単音と重ねた音の聴感を確認し、実機未確認は明記する |
+| 比較用MP3・候補台帳・制作記録だけを追加・更新 | `pnpm run sound-review:check <slug>`。生成・加工した候補を人が試聴する。ビルド、ゲームの詳細テスト、全体回帰、AWSビルドは省略する |
+| 比較ツールのコードを変更 | 変更ファイルの整形、`pnpm run check`、`pnpm run test:sound-review`。UI・再生・プレビューを変更したら通常ビルドと対象の比較画面のブラウザー検査・実画面レビューを行う |
+| 初めてゲーム内の再生箇所を追加、再生処理・タイミングを変更 | 選定途中でも `pnpm run check` と `pnpm run test:toy <slug>`、対象の実画面レビューを行う |
+| 音を最終採用し、通常の遊びの採用音・音なしを変更 | `pnpm run check` と `pnpm run test:toy <slug>`、対象の実画面レビュー。単音と重ねた音の聴感を確認し、実機未確認は明記する |
 
 候補だけの反復で長いテストを毎回実行しません。一方、選定途中という理由でゲーム本体の変更に必要な検査を省略しません。既に確認した共通コードを変更していなければ、候補追加のたびにUIテストも反復する必要はありません。対象のブラウザー専用検査は各遊びのREADME・[テスト対応表](../tests/test-plan.mjs) を参照してください。全体回帰が必要な変更は [開発ガイド](development.md#検証範囲の選び方) に従います。
 
@@ -39,7 +39,7 @@
 2. 既存の遊びに比較用の設定と小さな接続モジュールを作ります。既存の選定ツールを上書きするコマンドではありません。
 
    ```sh
-   npm run sound-review -- init <slug> --title "遊びの名前" --scene tap --scene-title "触ったとき"
+   pnpm run sound-review init <slug> --title "遊びの名前" --scene tap --scene-title "触ったとき"
    ```
 
 3. 作成された `sound-review/review.json` の場面の説明、繰り返し間隔、再生ゲイン・フェードをゲームに合わせます。場面を増やすときは `scenes` へ追記し、`current` に同じIDと `null` を追加します。未採用は `null`、明示的な「音なし」の初期選択は `initialChoices` で指定します。設定の定義・検査は [catalogue.ts](../src/shared/sound-review/catalogue.ts) が正本です。
@@ -80,16 +80,16 @@
 3. 圧縮済みの新候補を登録します。入力MP3は `tmp/` など比較用assetsの外に置き、加工記録は `source-assets/<slug>/audio/` 内に置きます。
 
    ```sh
-   npm run sound-review -- add <slug> <scene-id> \
+   pnpm run sound-review add <slug> <scene-id> \
      --file tmp/audio-originals/<slug>/processed/candidate.mp3 \
      --name "短く落ち着く木の音" \
      --record source-assets/<slug>/audio/review/round-2-optimization.json
-   npm run sound-review:check -- <slug>
+   pnpm run sound-review:check <slug>
    ```
 
    コマンドは次の記号を割り当て、MP3のコピー、候補台帳・固定ID記録・制作記録への対応を追加します。既存候補・採用音・選定済みの下書きは変更しません。A・B・Cの次はD・E・F、Zの次はAAです。場面単位の記号なので、JSONでは `<scene-id>-<letter>` を使います。同じ台帳への追加コマンドを並列実行しないでください。
 
-4. `npm run dev` で `/<slug>/?sound-review` を開きます。新候補の直接リンクは `#candidate-<scene-id>-<letter>` です。1回と連続再生を聴き比べ、「選んだ音で遊ぶ」で操作との同期や重なりを確認します。既存の候補の変更が必要になっても、ファイルを差し替えず新しい記号として追加します。
+4. `pnpm run dev` で `/<slug>/?sound-review` を開きます。新候補の直接リンクは `#candidate-<scene-id>-<letter>` です。1回と連続再生を聴き比べ、「選んだ音で遊ぶ」で操作との同期や重なりを確認します。既存の候補の変更が必要になっても、ファイルを差し替えず新しい記号として追加します。
 5. 「この音にする」「作り直す」「今回は音なし」「まだ選ばない」とメモを記録します。追加したい場面は「追加したい音」に書きます。「選定結果をコピー」でチャットに貼るか、JSONを書き出して渡します。確認チェックは人が実際に確認したときだけ付けます。選択の変更でチェックは解除されます。
 
 候補を追加しても `catalog`・`storageKey` を変えず、既存のIDと意味を維持します。追加だけなら以前のJSONは同じ音を指し続けます。後から新しい場面を追加して古いJSONを読み込む必要が生じた場合は、その発行済み形式だけを対象に移行方法を決めます。新しい遊びに過去の遊びの互換処理をコピーしません。

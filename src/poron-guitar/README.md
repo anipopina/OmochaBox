@@ -11,6 +11,6 @@
 
 本企画用に生成したギターの透過WebPを再利用し、弦はコードで独立して動かします。[素材記録](../../source-assets/poron-guitar/README.md)。追加ライブラリ・保存・外部通信なし。
 
-`npm run check`、`npm test`。専用はビルド後 `node tests/guitar.mjs`。6画面サイズ、素材読込、大きな対象、タップ・速いなで・複数指・キャンセル・キー・再入場、連打の音源／描画上限、非表示・resize・軽減動作・音声失敗時を検査します。ヘッドレスChromiumの合成タッチと音声API検査であり、実機iPhone/iPad・音の聴感・幼児の反応は未確認です。
+`pnpm run check`、`pnpm test`。専用はビルド後 `node tests/guitar.mjs`。6画面サイズ、素材読込、大きな対象、タップ・速いなで・複数指・キャンセル・キー・再入場、連打の音源／描画上限、非表示・resize・軽減動作・音声失敗時を検査します。ヘッドレスChromiumの合成タッチと音声API検査であり、実機iPhone/iPad・音の聴感・幼児の反応は未確認です。
 
 実装と調整値は [app.ts](app.ts) と、そこから参照するモジュールで管理します。

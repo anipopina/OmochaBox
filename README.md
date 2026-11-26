@@ -33,27 +33,27 @@ HTML・CSS・TypeScriptで作り、Viteで静的ファイルにビルドしま�
 
 ## 開発を始める
 
-Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。
+Node.js 24を推奨します。対応範囲は22.13以降の22系、または24以降です。pnpmは [package.json](package.json) の `packageManager` に指定した版を使います。
 
 ```sh
-npm ci
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 # http://127.0.0.1:4173
 ```
 
 `src/` を編集するとブラウザーへ反映されます。
 
-| コマンド                          | 用途                                         |
-| --------------------------------- | -------------------------------------------- |
-| `npm run dev`                     | 開発サーバー                                 |
-| `npm run check`                   | 型・ESLint・整形の検査                       |
-| `npm run format`                  | Prettierで整形                               |
-| `npm run build`                   | 型チェックと公開用ビルド（`dist/`）          |
-| `npm run preview`                 | ビルド結果のローカル確認                     |
-| `npm test` / `npm run test:smoke` | 通常ビルドと軽い全作品の入口・往復・素材確認 |
-| `npm run test:toy -- <slug>`      | 通常ビルド・対象の詳細検査と往復確認         |
-| `npm run test:full`               | AWS向けを含む全体回帰（節目のみ）            |
-| `npm run test:list`               | 対象slugと詳細検査の対応表                   |
+| コマンド                            | 用途                                         |
+| ----------------------------------- | -------------------------------------------- |
+| `pnpm run dev`                      | 開発サーバー                                 |
+| `pnpm run check`                    | 型・ESLint・整形の検査                       |
+| `pnpm run format`                   | Prettierで整形                               |
+| `pnpm run build`                    | 型チェックと公開用ビルド（`dist/`）          |
+| `pnpm run preview`                  | ビルド結果のローカル確認                     |
+| `pnpm test` / `pnpm run test:smoke` | 通常ビルドと軽い全作品の入口・往復・素材確認 |
+| `pnpm run test:toy <slug>`          | 通常ビルド・対象の詳細検査と往復確認         |
+| `pnpm run test:full`                | AWS向けを含む全体回帰（節目のみ）            |
+| `pnpm run test:list`                | 対象slugと詳細検査の対応表                   |
 
 ブラウザーテストにはChromiumが必要です。実行ファイルの指定方法や個別の検査コマンドは [開発ガイド](docs/development.md) を参照してください。
 
@@ -92,7 +92,7 @@ docs/                         開発資料・過去の検証記録
 
 ## 公開
 
-- 検証用の [Sites](https://omochabox.ryonchibi.chatgpt.site/) は、`npm run build` の `dist/` を既存プロジェクトへ公開します。全遊びが対象で、改善中の操作も通常の入口・URLから確認します。
-- AWS本番は `https://omochabox.anipopina.com/`。通常表示する遊びは [config/production-games.json](config/production-games.json) の `true`／`false` で選びます。「しさくひんも みる」をオンにすると全遊びを表示します。`npm run build:production` は全遊びを `dist-production/` に出力します。
+- 検証用の [Sites](https://omochabox.ryonchibi.chatgpt.site/) は、`pnpm run build` の `dist/` を既存プロジェクトへ公開します。全遊びが対象で、改善中の操作も通常の入口・URLから確認します。
+- AWS本番は `https://omochabox.anipopina.com/`。通常表示する遊びは [config/production-games.json](config/production-games.json) の `true`／`false` で選びます。「しさくひんも みる」をオンにすると全遊びを表示します。`pnpm run build:production` は全遊びを `dist-production/` に出力します。
 
 AWSの構成・初回準備とデプロイ手順は [infra/README.md](infra/README.md) を参照してください。

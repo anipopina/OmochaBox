@@ -8,20 +8,20 @@
 
 | コマンド                                  | 内容                         |
 | ----------------------------------------- | ---------------------------- |
-| `npm run typecheck`                       | アプリとVite設定の型チェック |
-| `npm run lint` / `npm run lint:fix`       | ESLintによる検査／自動修正   |
-| `npm run format` / `npm run format:check` | Prettierによる整形／確認     |
-| `npm run check`                           | 上記3種類の検査              |
+| `pnpm run typecheck`                       | アプリとVite設定の型チェック |
+| `pnpm run lint` / `pnpm run lint:fix`       | ESLintによる検査／自動修正   |
+| `pnpm run format` / `pnpm run format:check` | Prettierによる整形／確認     |
+| `pnpm run check`                           | 上記3種類の検査              |
 
-Vite自体は型チェックを行いません。`npm run build` は型チェックを通してから `dist/` に出力します。
-依存関係は `package-lock.json` で固定し、環境構築には `npm ci` を使います。
+Vite自体は型チェックを行いません。`pnpm run build` は型チェックを通してから `dist/` に出力します。
+依存関係は `pnpm-lock.yaml` で固定し、環境構築には `pnpm install --frozen-lockfile` を使います。
 
 VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vscode/) にあります。原本の `source-assets/`、検証資料の `docs/`、`AGENTS.md`、生成物は一括整形の対象外です。
 
 ## 新しい遊びの開発とレビュー
 
 1. 最新の `main` から作品ごとのブランチ `feat/<slug>` を作ります。本体・素材・一覧のカード・詳細検査を同じブランチで揃えます。途中で差分を共有するときはDraft PRを使えます。[ページと素材の追加](#ページと素材の追加)
-2. 作品ブランチで `npm run check` と `npm run test:toy -- <slug>` を実行します。レビュー担当が遊べる状態になったら、必要に応じてSitesへ検証版を公開します。検証範囲は [検証範囲の選び方](#検証範囲の選び方) に従います。
+2. 作品ブランチで `pnpm run check` と `pnpm run test:toy <slug>` を実行します。レビュー担当が遊べる状態になったら、必要に応じてSitesへ検証版を公開します。検証範囲は [検証範囲の選び方](#検証範囲の選び方) に従います。
 3. 独立した実画面レビューを行い、確認した作品のコミット・結果・未確認事項をPRに残します。Sitesを使った場合はURLと版番号も記録します。`main` の更新を取り込んだ後に作品や依存する共通部分が変わった場合は、影響する操作を再確認します。
 4. ユーザーが確認した作品から、作品ブランチのPRを個別に `main` へ取り込みます。試行錯誤のコミットはSquash mergeでまとめられます。本番で通常表示するかは別途ユーザーが決めます。[AWS本番公開](../infra/README.md)
 
@@ -33,7 +33,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 
 1. 最新の `main` からローカルに一時ブランチを作り、その回に確認する作品のコミットをマージします。作業中の変更がある場合は `git worktree` で別の作業ツリーを使えます。前の版から引き続き確認したい作品も含めます。例えばAを更新してBのレビューが続いている場合は、Aの新版とBの確認中のコミットを入れます。Aが `main` に入った後は、最新の `main` とBの候補で組み立てます。
 2. 一覧やテスト対応表で追記が競合した場合は、候補すべての登録を残します。作品自体の修正は作品ブランチに反映し、検証用にも取り込みます。
-3. 一時ブランチから `npm run build` で全作品入りの `dist/` を作り、ビルドと同じソースで既存Sitesプロジェクトへ公開します。公開された版番号と、そこに含めた作品のコミットを、対応するPRに記録します。
+3. 一時ブランチから `pnpm run build` で全作品入りの `dist/` を作り、ビルドと同じソースで既存Sitesプロジェクトへ公開します。公開された版番号と、そこに含めた作品のコミットを、対応するPRに記録します。
 4. 公開版を確認し、版とコミットを記録したら一時ブランチを削除します。専用の作業ツリーを使った場合はそれも片付けます。一時ブランチはローカルで管理し、修正と `main` への取り込みは各作品ブランチから行います。
 
 ## ページと素材の追加
@@ -52,32 +52,32 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 既存のChromium / DevTools Protocolのテストを使います。Linuxでの既定の実行ファイルは `/usr/bin/chromium` です。異なる場合は絶対パスを指定します。
 
 ```sh
-CHROME_PATH=/path/to/chromium npm test
+CHROME_PATH=/path/to/chromium pnpm test
 ```
 
 ### 検証範囲の選び方
 
 | 変更・目的 | 実施する検証 |
 | --- | --- |
-| 効果音の比較候補・台帳・制作記録だけの反復 | `npm run sound-review:check -- <slug>` と対象候補の試聴。ビルド・ゲーム詳細テストは省略。[効果音の制作・選定](sound-review.md) を参照 |
+| 効果音の比較候補・台帳・制作記録だけの反復 | `pnpm run sound-review:check <slug>` と対象候補の試聴。ビルド・ゲーム詳細テストは省略。[効果音の制作・選定](sound-review.md) を参照 |
 | 比較ツールのコード変更／音の最終採用 | [効果音の制作・選定の検証表](sound-review.md#反復中と採用時の検証) に従う。ゲーム側の再生処理を変える場合は選定途中でも対象の詳細検査を行う |
-| 毎日の遊び追加・個別修正 | `npm run check` と `npm run test:toy -- <slug>`。対象の独立した実画面レビューも行う |
-| テスト運用スクリプトだけの変更 | `npm run check`、`npm run test:runner` と変更に対応する代表テスト。全体回帰の反復は不要 |
-| 入口の一覧・遷移 | `npm run check` と `npm run test:smoke` |
-| 共通の戻るボタン | `npm run check`、`npm run build`、`npm run test:home-button`（全作品・3画面サイズ） |
-| その他の共通処理 | 依存する遊びを `test:toy -- <slug1> <slug2>` で指定し、変更内容に応じた確認を追加 |
-| 広範囲の依存・Vite・共通基盤、影響不明、横断的な問題、AWS本番へのまとめ反映前 | `npm run check` と `npm run test:full` |
+| 毎日の遊び追加・個別修正 | `pnpm run check` と `pnpm run test:toy <slug>`。対象の独立した実画面レビューも行う |
+| テスト運用スクリプトだけの変更 | `pnpm run check`、`pnpm run test:runner` と変更に対応する代表テスト。全体回帰の反復は不要 |
+| 入口の一覧・遷移 | `pnpm run check` と `pnpm run test:smoke` |
+| 共通の戻るボタン | `pnpm run check`、`pnpm run build`、`pnpm run test:home-button`（全作品・3画面サイズ） |
+| その他の共通処理 | 依存する遊びを `pnpm run test:toy <slug1> <slug2>` で指定し、変更内容に応じた確認を追加 |
+| 広範囲の依存・Vite・共通基盤、影響不明、横断的な問題、AWS本番へのまとめ反映前 | `pnpm run check` と `pnpm run test:full` |
 
-`npm test` は `test:smoke` の別名です。日常の追加に無関係な作品の詳細回帰・AWS用ビルドは必須にしません。Sitesは全作品を公開する検証環境です。無関係な既知の失敗は新作の公開ゲートにせず、対象・理由・未確認事項を報告します。対象の失敗や真の共通回帰は解消または明示し、未確認を成功扱いにしません。定期実行は設定していません。
+`pnpm test` は `test:smoke` の別名です。日常の追加に無関係な作品の詳細回帰・AWS用ビルドは必須にしません。Sitesは全作品を公開する検証環境です。無関係な既知の失敗は新作の公開ゲートにせず、対象・理由・未確認事項を報告します。対象の失敗や真の共通回帰は解消または明示し、未確認を成功扱いにしません。定期実行は設定していません。
 
 ### 実行コマンドと対象対応表
 
 ```sh
-npm run test:list
-npm run test:toy -- pitatto-magnet
-npm run test:smoke -- pitatto-magnet
-npm run test:full
-npm run test:runner
+pnpm run test:list
+pnpm run test:toy pitatto-magnet
+pnpm run test:smoke pitatto-magnet
+pnpm run test:full
+pnpm run test:runner
 ```
 
 `test:toy` は通常ビルド・出力素材検査、対象の入口から開く・戻る・再入場・初期素材読み込み、対象のモデル／ブラウザー詳細検査を実行します。`test:smoke` は通常ビルド・出力素材検査と軽い往復確認だけで、省略時は全作品、slug指定時は対象作品を確認します。共通確認は1画面サイズで実行し、各作品の詳細操作や音の聴感を保証するものではありません。変更した操作で後から読む素材は詳細検査と実画面レビューで確認します。
@@ -92,7 +92,7 @@ npm run test:runner
 
 ### テスト用ビルド
 
-公開用の `dist/` では、入口・各ゲームの基本操作と素材参照を検証します。内部状態を確認する詳細な回帰テストには、`npm run build:test` で作る `test-results/build/` を使います。
+公開用の `dist/` では、入口・各ゲームの基本操作と素材参照を検証します。内部状態を確認する詳細な回帰テストには、`pnpm run build:test` で作る `test-results/build/` を使います。
 
 テストモードに限り、[Vite設定](../vite.config.ts) が [hikari-hook.js](../tests/fixtures/hikari-hook.js) を描画ゲームのクロージャー内へ挿入してからコンパイルします。挿入箇所が変わるとビルドを失敗させます。公開用への混入は出力検査で検出します。`test-results/` は公開対象に含めません。
 
