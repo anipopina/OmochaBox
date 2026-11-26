@@ -1,0 +1,14 @@
+{
+  "selection": "review/selections/2026-11-26-final.json",
+  "cues": {
+    "tap": [
+      {
+        "candidate": "tap-c",
+        "source": "src/mizutamari/sound-review/assets/tap-c.mp3",
+        "output": "src/mizutamari/assets/tap.mp3",
+        "sha256": "18cd71a50fc13b54977e04efd82948533a9f110776b8012e00a23f814ef78d8d",
+        "provenance": "source-assets/mizutamari/audio/review/round-1.json"
+      }
+    ]
+  }
+}

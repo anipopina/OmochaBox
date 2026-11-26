@@ -450,6 +450,13 @@ try {
     ),
     'Comparison modules and candidates stay out of the published build',
   );
+  const publishedTap = manifest['mizutamari/assets/tap.mp3']?.file;
+  assert.ok(publishedTap, 'The adopted sample is in the published build');
+  assert.deepEqual(
+    await readFile(join(root, 'dist', publishedTap)),
+    await readFile(join(root, 'src/mizutamari/sound-review/assets/tap-c.mp3')),
+    'The published sample matches candidate C',
+  );
   reviewServer = await createServer({
     server: { host: '127.0.0.1', port: 0, strictPort: false },
   });
@@ -497,6 +504,17 @@ try {
     await mouseDown();
     await mouseUp();
   };
+  await visit();
+  await waitFor('pondAudio.decodes===1');
+  assert.deepEqual(
+    await evaluate('[pondAudio.contexts,pondAudio.starts]'),
+    [0, 0],
+  );
+  await mouseTap();
+  await waitFor('pondAudio.starts===1');
+  assert.ok(
+    await evaluate('pondAudio.rates[0]>=0.88 && pondAudio.rates[0]<=1.05'),
+  );
   await visit(preview, dev);
   await waitFor('pondAudio.decodes===1');
   assert.deepEqual(

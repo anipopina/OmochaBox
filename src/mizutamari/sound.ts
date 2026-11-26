@@ -1,4 +1,6 @@
-let tapUrl: string | null = null;
+import tap from './assets/tap.mp3?no-inline';
+
+let tapUrl: string | null = tap;
 
 export function setSoundPreview(preview: { tap: string | null }) {
   if (import.meta.env.DEV) tapUrl = preview.tap;

@@ -1,0 +1,16 @@
+{
+  "format": "omochabox-sound-review",
+  "version": 2,
+  "toy": "mizutamari",
+  "catalog": "mizutamari-audio-fixed-v1",
+  "updatedAt": "2026-11-26T13:59:43.000Z",
+  "additions": [],
+  "scenes": {
+    "tap": {
+      "choice": "tap-c",
+      "note": "遊び本体に採用。再生速度は0.88〜1.05倍でランダム。",
+      "singleConfirmed": false,
+      "gameConfirmed": false
+    }
+  }
+}
