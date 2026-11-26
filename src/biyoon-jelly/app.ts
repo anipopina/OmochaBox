@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import jellyUrl from './assets/jelly.webp';
 

@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import potatoUrl from './assets/sweet-potato.webp';
 import leavesUrl from './assets/leaves.webp';
 import soilUrl from './assets/soil-surface.webp';

@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 
 const field = document.querySelector<HTMLElement>('#field')!;
 const layer = document.querySelector<HTMLElement>('#bubbles')!;

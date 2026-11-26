@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import { Clay, SIZE } from './model';
 import ballUrl from './assets/clay-ball.webp';

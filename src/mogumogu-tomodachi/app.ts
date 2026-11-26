@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { Friend, friends, type Food } from './model';
 import body from './assets/body.webp';
 import ghost from './assets/ghost-body.webp';

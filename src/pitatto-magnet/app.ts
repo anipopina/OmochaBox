@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import fish from './assets/fish.webp';
 import flower from './assets/flower.webp';

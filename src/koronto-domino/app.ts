@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import woodUrl from './assets/wood.webp';
 import { layout, nearest, progress, GAP, FALL, type Point } from './model';
 

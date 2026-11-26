@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireContext2d, requireElement } from '../shared/dom';
 import topLeftUrl from './assets/leaves-top-left.webp';
 import topRightUrl from './assets/leaves-top-right.webp';
@@ -745,7 +746,6 @@ type Voice = FlowerVoice | SampleVoice;
   });
   for (const name of ['pointercancel', 'lostpointercapture'] as const)
     canvas.addEventListener(name, release);
-  canvas.addEventListener('contextmenu', (e) => e.preventDefault());
   function reset() {
     generation++;
     for (const id of [...fingers.keys()]) release({ pointerId: id });

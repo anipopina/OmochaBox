@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import { Peekaboo, DURATIONS } from './model';
 import { Knock } from './sound';

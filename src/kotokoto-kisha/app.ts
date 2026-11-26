@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import { Journey } from './model';
 import { Whistle } from './sound';

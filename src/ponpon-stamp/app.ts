@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { stampFeedback, suspendFeedback, clearParticles } from './feedback';
 import { requireElement } from '../shared/dom';
 import { stampSets, type StampItem } from './sets';

@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireContext2d, requireElement } from '../shared/dom';
 import { Pond } from './model';
 import type { Leaf } from './model';

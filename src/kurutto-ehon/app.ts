@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import meadow from './assets/meadow.webp';
 import ocean from './assets/ocean.webp';
 import forest from './assets/forest.webp';

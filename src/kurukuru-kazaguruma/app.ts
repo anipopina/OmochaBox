@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import { advance, clampSpeed, swipeSpeed } from './model';
 const wheel = requireElement('#wheel', HTMLButtonElement);

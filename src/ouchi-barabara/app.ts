@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { requireElement } from '../shared/dom';
@@ -1207,7 +1208,6 @@ canvas.addEventListener('keydown', (event) => {
   aim = null;
   if (!event.repeat) request();
 });
-canvas.addEventListener('contextmenu', (event) => event.preventDefault());
 nextButton.addEventListener('click', requestNext);
 canvas.addEventListener('webglcontextlost', (event) => {
   event.preventDefault();

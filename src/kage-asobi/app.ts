@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import rabbitUrl from './assets/rabbit.webp';
 import { layout, lightAt, type Light } from './model';
 

@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import guitar from './assets/guitar.webp';
 import { GuitarSound } from './sound';

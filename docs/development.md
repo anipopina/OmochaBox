@@ -56,6 +56,7 @@ WSLで開発サーバーを動かし、Windows側でTailscaleを使う場合は�
 - 一覧への登録は [src/games.json](../src/games.json) で管理します。本番公開の選択は [config/production-games.json](../config/production-games.json)、AWSの手順は [infra/README.md](../infra/README.md) を参照してください。
 - 各遊びにREADMEを用意し、遊び方・状態の扱い・実装上の注意・素材の出典へのリンク・固有の確認項目を記載します。
 - `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
+- `app.ts` で [共通のメディア設定](../src/shared/play-media.ts) を読み込み、Canvasや画像を長押ししたときの選択・保存メニューや画像の標準ドラッグを抑えます。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
 - 共有キャラクターSVGは出典・SHA-256とMatter.jsの当たり判定を登録します。配置、利用例、ローカル確認画面は[キャラクターSVGの追加手順](../src/assets/characters/README.md#svgを追加するとき)を参照してください。

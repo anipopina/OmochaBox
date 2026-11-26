@@ -1,4 +1,5 @@
 import '../shared/home-button';
+import '../shared/play-media';
 import { requireElement } from '../shared/dom';
 import cone from './assets/cone.webp';
 import strawberry from './assets/strawberry.webp';

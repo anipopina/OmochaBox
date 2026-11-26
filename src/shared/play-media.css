@@ -1,0 +1,9 @@
+:where(canvas, img, svg image) {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+:where(img, svg image) {
+  -webkit-user-drag: none;
+}
