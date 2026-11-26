@@ -1,0 +1,93 @@
+:root {
+  color-scheme: light;
+  font:
+    16px/1.5 system-ui,
+    sans-serif;
+  color: #14274c;
+  background: #f4f9ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+
+main {
+  width: min(100%, 1040px);
+  margin: auto;
+  padding: 16px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3.5vw, 2rem);
+}
+p {
+  margin: 6px 0 12px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.picker,
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle,
+button,
+select {
+  min-height: 56px;
+  min-width: 56px;
+  padding: 8px 12px;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  border: 2px solid #254677;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+
+#add {
+  background: #175bc5;
+  color: #fff;
+}
+.toggle input {
+  width: 24px;
+  height: 24px;
+  accent-color: #175bc5;
+}
+:is(button, select, input):focus-visible {
+  outline: 3px solid #a32478;
+  outline-offset: 3px;
+}
+
+#board {
+  display: block;
+  width: 100%;
+  height: clamp(300px, 66dvh, 670px);
+  border: 3px solid #254677;
+  border-radius: 16px;
+  background-color: #dff3ff;
+  background-image: radial-gradient(#81b7df 1px, transparent 1px);
+  background-size: 24px 24px;
+  cursor: grab;
+  touch-action: none;
+}
+
+#board:active {
+  cursor: grabbing;
+}
+#status {
+  min-height: 1.5em;
+}

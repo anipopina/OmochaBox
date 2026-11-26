@@ -102,6 +102,7 @@ export function plan(mode, targets = []) {
       test('branding'),
       test('home-visibility', ['build', 'build:production']),
       test('characters'),
+      test('character-physics-model', []),
       {
         id: 'runner',
         command: process.execPath,

@@ -6,17 +6,26 @@ const root = new URL('../', import.meta.url);
 const hashes = JSON.parse(
   await readFile(new URL('source-assets/characters/sha256.json', root), 'utf8'),
 );
-for (const [series, count] of [
-  ['shapes', 6],
-  ['aquarium', 10],
-]) {
+const folders = await readdir(new URL('src/assets/characters/', root), {
+  withFileTypes: true,
+});
+const seriesNames = [
+  ...new Set(Object.keys(hashes).map((name) => name.split('/')[0])),
+].sort();
+assert.deepEqual(
+  folders
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort(),
+  seriesNames,
+);
+for (const series of seriesNames) {
   const directory = new URL(`src/assets/characters/${series}/`, root);
   const names = (await readdir(directory)).sort();
   const expected = Object.keys(hashes)
     .filter((name) => name.startsWith(`${series}/`))
     .map((name) => name.split('/')[1])
     .sort();
-  assert.equal(names.length, count);
   assert.deepEqual(names, expected);
   for (const name of names) {
     const data = await readFile(new URL(name, directory));
@@ -34,5 +43,5 @@ assert.equal(
   0,
 );
 console.log(
-  'Characters PASS: 6 shapes + 10 user-provided aquarium SVGs, exact SHA-256, series directories',
+  `Characters PASS: ${Object.keys(hashes).length} original SVGs, exact SHA-256, series directories`,
 );

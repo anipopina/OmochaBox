@@ -44,7 +44,7 @@ VS Codeの推奨拡張はESLintとPrettierです。設定は [.vscode/](../.vsco
 - `../` への戻るリンク、終了・非表示時の音声と入力の後始末、共有画像・faviconを備えます。anipopina.comへのリンクは入口ページのフッターに置き、遊び個別のページには不要です。操作寸法などは [AGENTS.md](../AGENTS.md) に従います。
 - 画像・音声は `import imageUrl from './assets/image.webp'` のように参照し、`image.src = imageUrl` や `fetch(audioUrl)` に渡します。CSSの `url()` とHTMLの画像参照もViteが処理し、公開用にはハッシュ付きファイル名を付けます。
 - 固定URLが必要な素材は `src/public/` に置き、`/favicon.ico` のように参照します。ビルド時に `dist/` 直下へコピーされます。
-- 共有キャラクターSVGは `src/assets/characters/<series>/` に置き、出典とSHA-256は `source-assets/characters/` に記録します。原本SVGを整形・最適化せず、ゲームへの採用は別途判断します。
+- 共有キャラクターSVGは出典・SHA-256とMatter.jsの当たり判定を登録します。配置、利用例、ローカル確認画面は[キャラクターSVGの追加手順](../src/assets/characters/README.md#svgを追加するとき)を参照してください。
 - 素材原本と出典・利用条件・変換記録は `source-assets/<slug>/` に保存します。生成効果音の原本WAVはGit管理外の `tmp/audio-originals/<slug>/` に保管し、比較・配信用MP3と制作記録だけをリポジトリに保持します。確認すべき利用条件は [AGENTS.md](../AGENTS.md) を参照してください。`dist/` を直接編集しません。
 
 ## ブラウザーテスト

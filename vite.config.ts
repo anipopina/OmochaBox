@@ -13,8 +13,14 @@ async function htmlEntries(directory: string): Promise<string[]> {
   const pages = await Promise.all(
     entries.map(async (entry) => {
       const path = join(directory, entry.name);
-      if (entry.isDirectory() && entry.name !== 'public')
+      if (entry.isDirectory()) {
+        if (
+          entry.name === 'public' ||
+          (directory === sourceRoot && entry.name === 'dev')
+        )
+          return [];
         return htmlEntries(path);
+      }
       return entry.isFile() && entry.name.endsWith('.html') ? [path] : [];
     }),
   );

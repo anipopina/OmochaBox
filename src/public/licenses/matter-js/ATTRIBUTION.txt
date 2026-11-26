@@ -1,0 +1,4 @@
+Matter.js (Liam Brummitt and contributors)
+License: MIT (see LICENSE in this directory)
+Package: matter-js@0.20.0 from the npm registry
+Repository: https://github.com/liabru/matter-js

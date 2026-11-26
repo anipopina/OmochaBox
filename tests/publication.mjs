@@ -26,6 +26,10 @@ for (const [directory, games, origin] of [
   ['dist-production', catalogue, 'https://omochabox.anipopina.com'],
 ]) {
   const manifest = await json(`${directory}/.vite/manifest.json`);
+  assert.ok(
+    !Object.keys(manifest).some((key) => key.startsWith('dev/')),
+    'Local test tools stay out of public builds',
+  );
   const entries = Object.keys(manifest)
     .filter((key) => key.endsWith('.html'))
     .sort();
