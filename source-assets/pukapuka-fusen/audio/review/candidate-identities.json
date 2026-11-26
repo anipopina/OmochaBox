@@ -1,0 +1,110 @@
+[
+  {
+    "id": "pump-a",
+    "file": "pump-a.mp3",
+    "sha256": "84c07aa67cb358bcc602a9b8169932a8d1b2ed9d8b9738fd9b4574e6379e2422",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "pump-b",
+    "file": "pump-b.mp3",
+    "sha256": "e8e43f52f4135cfa861c65c68728d883f6fe2797cd5e00573eab68d7419c4552",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "pump-c",
+    "file": "pump-c.mp3",
+    "sha256": "79809f896a7dc84ae0cf0cfbd40390918598227f62087dff2c159643554993c2",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "pump-d",
+    "file": "pump-d.mp3",
+    "sha256": "809400ecfeff3bb06604fb5ff97e72742bbfeba2e90922e0c16615bc15fdfc76",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "release-a",
+    "file": "release-a.mp3",
+    "sha256": "bacda39ae012a026489de3d6fe49b2c64e2b895709dac6d514eb28553bdcaf7f",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "release-b",
+    "file": "release-b.mp3",
+    "sha256": "f7001999d8230469d4c2a48dccfc12b2d61b8356a9d803d8a68206818d34a95e",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "release-c",
+    "file": "release-c.mp3",
+    "sha256": "f7a836a5a4e5849985756c7131ef509f5c08feffbc6e4e62c761344656a8781a",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "release-d",
+    "file": "release-d.mp3",
+    "sha256": "1b7a89560d54896791c3dd5d3c7ea2665f1a332c3f5f94105ec39885013bde79",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "tap-a",
+    "file": "tap-a.mp3",
+    "sha256": "2195e82c8d08955a6199775cfad6433384402117560e9d7f01ad31726d7b3caa",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "tap-b",
+    "file": "tap-b.mp3",
+    "sha256": "4497c4dbeefb7b92d06ffc504e1539b221b168f57dcf89fdb68dd5666db7d528",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "tap-c",
+    "file": "tap-c.mp3",
+    "sha256": "8351224e660cf3f7dea400c4d8f203c671457073cfec12dd7b0d1602c9b3d4ba",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "tap-d",
+    "file": "tap-d.mp3",
+    "sha256": "21cffe8d2b011135488b10ae66a1978e9f7ab79c908371fd07e9a64f6afc8311",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "tap-e",
+    "file": "tap-e.mp3",
+    "sha256": "4e996e5f7612ae08983714f048375f7ecf3e30e90ed589ce1282abb32c291c46",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "full-a",
+    "file": "full-a.mp3",
+    "sha256": "50979081257bf03e317403d04db639f9a82003c1ca83de16b65219f32a9c8d2b",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "full-b",
+    "file": "full-b.mp3",
+    "sha256": "d0177ee49c07a0360dd89c5271921f65ae477263cdfda0d349f109174fd53b4a",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  },
+  {
+    "id": "full-c",
+    "file": "full-c.mp3",
+    "sha256": "e475949041aa9fbdb3c70db9f222e40de0f1da0d81fa7c3caccdec8509f58568",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "full-d",
+    "file": "full-d.mp3",
+    "sha256": "631b890ba3ab46c38d2203efafd29232a93a4278ae68b84dae05f0a2ced31b48",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-2.json"
+  },
+  {
+    "id": "full-e",
+    "file": "full-e.mp3",
+    "sha256": "84c07aa67cb358bcc602a9b8169932a8d1b2ed9d8b9738fd9b4574e6379e2422",
+    "provenance": "source-assets/pukapuka-fusen/audio/review/round-1.json"
+  }
+]

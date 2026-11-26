@@ -43,7 +43,7 @@ document.addEventListener(
   (event) => {
     if (
       !(event.target instanceof HTMLImageElement) ||
-      !event.target.classList.contains('balloon')
+      !event.target.matches('.balloon, .welcome')
     )
       return;
     const bounds = event.target.getBoundingClientRect();

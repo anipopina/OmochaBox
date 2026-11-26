@@ -49,10 +49,26 @@
       <div class="cloud cloud-one" aria-hidden="true"></div>
       <div class="cloud cloud-two" aria-hidden="true"></div>
       <div class="cloud cloud-three" aria-hidden="true"></div>
-      <div id="sky" aria-hidden="true">
-        <img class="welcome welcome-one" src="assets/cyan.svg" alt="" />
-        <img class="welcome welcome-two" src="assets/triangle.svg" alt="" />
-        <img id="held" src="assets/cyan.svg" alt="" draggable="false" />
+      <div id="sky">
+        <img
+          class="welcome welcome-one"
+          src="assets/cyan.svg"
+          alt=""
+          role="button"
+          aria-label="まるい ふうせんを はじく"
+          tabindex="0"
+          draggable="false"
+        />
+        <img
+          class="welcome welcome-two"
+          src="assets/triangle.svg"
+          alt=""
+          role="button"
+          aria-label="さんかくの ふうせんを はじく"
+          tabindex="0"
+          draggable="false"
+        />
+        <img id="held" src="assets/cyan.svg" alt="" draggable="false" hidden />
       </div>
       <div class="controls">
         <button
@@ -61,6 +77,12 @@
           aria-pressed="false"
         >
           <img src="assets/pump.svg" alt="" draggable="false" />
+          <img
+            class="pump-cap"
+            src="assets/pump-cap.svg"
+            alt=""
+            draggable="false"
+          />
           <svg class="hand" viewBox="0 0 100 120" aria-hidden="true">
             <path
               d="M35 104L18 73Q11 59 21 57Q28 54 39 69L29 26Q26 12 36 12Q43 12 46 24L53 50Q56 40 64 46Q70 38 78 48Q87 42 92 58L96 79Q98 94 80 110Z"
@@ -74,6 +96,6 @@
       </div>
       <p id="status" class="sr-only" role="status"></p>
     </main>
-    <script type="module" src="app.ts"></script>
+    <script type="module" src="entry.ts"></script>
   </body>
 </html>

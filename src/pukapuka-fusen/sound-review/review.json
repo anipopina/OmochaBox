@@ -1,0 +1,191 @@
+{
+  "toy": "pukapuka-fusen",
+  "catalog": "pukapuka-fusen-audio-fixed-v1",
+  "storageKey": "pukapuka-fusen:sound-review:fixed-v1",
+  "title": "ぷかぷか、ふうせんの音をえらぶ",
+  "subtitle": "ぷかぷか、ふうせん・効果音の聴き比べ",
+  "symbol": "🎵",
+  "intro": [
+    "場面ごとに単音と3回再生を聴き比べ、ゲーム内で操作との合い方を確認します。"
+  ],
+  "links": [],
+  "playback": {
+    "gain": 0.55,
+    "attack": 0.005,
+    "release": 0.035
+  },
+  "current": {
+    "pump": "pump-d",
+    "release": "release-c",
+    "tap": "tap-c",
+    "full": "full-e"
+  },
+  "scenes": [
+    {
+      "id": "pump",
+      "title": "ポンプで空気が入る音",
+      "symbol": "💨",
+      "timing": "C・Dでは、押している間は空気が流れ、離すとすぐに音が小さくなります。",
+      "duration": "最大サイズまで",
+      "interval": 2.65,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "やわらかい空気",
+          "file": "pump-a.mp3",
+          "seconds": 0.153,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "小さなポフッ",
+          "file": "pump-b.mp3",
+          "seconds": 0.169,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "すーっと続く空気",
+          "file": "pump-c.mp3",
+          "seconds": 2.4,
+          "round": 3
+        },
+        {
+          "letter": "d",
+          "name": "やわらかいシューッ",
+          "file": "pump-d.mp3",
+          "seconds": 2.4,
+          "round": 4
+        }
+      ]
+    },
+    {
+      "id": "release",
+      "title": "風船を放す音",
+      "symbol": "🎈",
+      "timing": "風船を放すときに鳴ります。C・Dのどちらかを選ぶと、ゲーム内では両方からランダムに鳴ります。",
+      "duration": "短い音",
+      "interval": 0.972,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "ふわっと抜ける風",
+          "file": "release-a.mp3",
+          "seconds": 0.722,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "すうっと上がる風",
+          "file": "release-b.mp3",
+          "seconds": 0.621,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "Bに似た やわらかいトン",
+          "file": "release-c.mp3",
+          "seconds": 0.16562,
+          "round": 3
+        },
+        {
+          "letter": "d",
+          "name": "Bに似た 軽いトン",
+          "file": "release-d.mp3",
+          "seconds": 0.14547,
+          "round": 4
+        }
+      ]
+    },
+    {
+      "id": "tap",
+      "title": "風船を弾く音",
+      "symbol": "🟠",
+      "timing": "C・D・Eは、どれかを選ぶとゲーム内では3種類の音がランダムに鳴ります。",
+      "duration": "短い弾み",
+      "interval": 0.499,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "やわらかい弾み",
+          "file": "tap-a.mp3",
+          "seconds": 0.187,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "軽いぽよん",
+          "file": "tap-b.mp3",
+          "seconds": 0.17703,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "まるい ぽよよん 1",
+          "file": "tap-c.mp3",
+          "seconds": 0.247,
+          "round": 3
+        },
+        {
+          "letter": "d",
+          "name": "まるい ぽよよん 2",
+          "file": "tap-d.mp3",
+          "seconds": 0.249,
+          "round": 4
+        },
+        {
+          "letter": "e",
+          "name": "まるい ぽよよん 3",
+          "file": "tap-e.mp3",
+          "seconds": 0.241,
+          "round": 5
+        }
+      ]
+    },
+    {
+      "id": "full",
+      "title": "風船が最大サイズになった音",
+      "symbol": "✨",
+      "timing": "ポンプを長押しし、風船が最大の大きさに達した瞬間に1回。",
+      "duration": "短い光の合図",
+      "interval": 0.88703,
+      "candidates": [
+        {
+          "letter": "a",
+          "name": "まるいポンッ",
+          "file": "full-a.mp3",
+          "seconds": 0.18503,
+          "round": 1
+        },
+        {
+          "letter": "b",
+          "name": "やさしいトン",
+          "file": "full-b.mp3",
+          "seconds": 0.15403,
+          "round": 2
+        },
+        {
+          "letter": "c",
+          "name": "軽いぴかーん",
+          "file": "full-c.mp3",
+          "seconds": 0.63703,
+          "round": 3
+        },
+        {
+          "letter": "d",
+          "name": "小さな光の余韻",
+          "file": "full-d.mp3",
+          "seconds": 0.34,
+          "round": 4
+        },
+        {
+          "letter": "e",
+          "name": "ポンプAの やわらかい空気",
+          "file": "full-e.mp3",
+          "seconds": 0.153,
+          "round": 5
+        }
+      ]
+    }
+  ]
+}

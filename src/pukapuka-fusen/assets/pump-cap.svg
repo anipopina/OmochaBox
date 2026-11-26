@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 180">
+  <title>つやのある黄色い押し面</title>
+  <path
+    d="M35 66C35 37 100 15 180 15S325 37 325 66V93C325 120 260 140 180 140S35 120 35 93Z"
+    fill="#ffab20"
+    stroke="#10194c"
+    stroke-width="8"
+  />
+  <ellipse
+    cx="180"
+    cy="66"
+    rx="145"
+    ry="51"
+    fill="#ffed32"
+    stroke="#10194c"
+    stroke-width="8"
+  />
+  <path
+    d="M60 58C72 41 105 30 149 26C159 25 164 30 158 33C116 38 91 46 73 60C64 67 55 65 60 58Z"
+    fill="#fffde5"
+  />
+  <path
+    d="M190 107C230 106 271 97 294 83"
+    fill="none"
+    stroke="#fff49c"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+</svg>

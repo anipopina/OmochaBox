@@ -12,16 +12,20 @@ import {
   growth,
   flightPosition,
   kickFlight,
+  tapImpulse,
 } from './model';
 import type { Flight } from './model';
+import { Sounds } from './sound';
 
 const pump = requireElement('#pump', HTMLButtonElement);
 const sky = requireElement('#sky', HTMLDivElement);
 const held = requireElement('#held', HTMLImageElement);
 const status = requireElement('#status', HTMLParagraphElement);
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const sounds = new Sounds();
 const artwork = [cyan, star, triangle, purple, square, rectangle];
-const flights: (Flight & { element: HTMLImageElement })[] = [];
+type Balloon = Flight & { element: HTMLImageElement };
+const flights: Balloon[] = [];
 let next = 0;
 let sequence = 0;
 let started: number | null = null;
@@ -44,28 +48,48 @@ function drawHeld(now: number) {
   held.dataset.full = String(progress === 1);
 }
 
+function drawFlight(
+  balloon: Balloon,
+  now: number,
+  width: number,
+  height: number,
+) {
+  const { element } = balloon;
+  const reduced = motion.matches;
+  const { x, y, tilt, done } = flightPosition(
+    balloon,
+    now,
+    width,
+    height,
+    reduced,
+  );
+  if (done) return true;
+  const anchor = reduced && !balloon.origin ? '-50%' : '-100%';
+  element.style.transform = `translate(${x}px, ${y}px) translate(-50%, ${anchor}) rotate(${tilt}deg)`;
+  element.dataset.tapped = String(
+    !!balloon.kick && now - balloon.kick.at < 220,
+  );
+  // With reduced motion the balloon stays fixed and fades as it expires.
+  element.style.opacity = reduced
+    ? String(Math.min(1, (FLIGHT_MS - (now - balloon.born)) / 1000))
+    : '';
+  return false;
+}
+
 function tick(now: number) {
   frame = 0;
+  const wasFull = held.dataset.full === 'true';
   drawHeld(now);
+  if (!wasFull && held.dataset.full === 'true') {
+    sounds.stopPump();
+    sounds.play('full');
+  }
   const { width, height } = dimensions();
   for (let i = flights.length - 1; i >= 0; i--) {
     const flight = flights[i];
-    const position = flightPosition(flight, now, width, height, motion.matches);
-    if (position.done) {
+    if (drawFlight(flight, now, width, height)) {
       flight.element.remove();
       flights.splice(i, 1);
-      continue;
-    }
-    flight.element.style.transform = `translate(${position.x}px, ${position.y}px) translate(-50%, -100%) rotate(${position.tilt}deg)`;
-    flight.element.dataset.tapped = String(
-      !!flight.kick && now - flight.kick.at < 180,
-    );
-    // Reduced motion uses a short, gentle reveal at rest, then fades away.
-    if (motion.matches) {
-      flight.element.style.transform = `translate(${width / 2 + flight.lane * width * 0.3}px, ${height * 0.48}px) translate(-50%, -50%)`;
-      flight.element.style.opacity = String(
-        Math.min(1, (FLIGHT_MS - (now - flight.born)) / 1000),
-      );
     }
   }
   if (flights.length || (started !== null && growth(now - started) < 1))
@@ -76,9 +100,109 @@ function wake() {
   if (!frame) frame = requestAnimationFrame(tick);
 }
 
+function addFlight(balloon: Balloon) {
+  flights.push(balloon);
+  if (flights.length > MAX_BALLOONS) flights.shift()?.element.remove();
+}
+
+function releaseWelcome(
+  element: HTMLImageElement,
+  now: number,
+  width: number,
+  height: number,
+): Balloon {
+  const bounds = element.getBoundingClientRect();
+  const skyBounds = sky.getBoundingClientRect();
+  const style = getComputedStyle(element);
+  const size = parseFloat(style.width);
+  const rotation = new DOMMatrix(
+    style.transform === 'none' ? undefined : style.transform,
+  );
+  // Keep the visible position and angle when leaving the idle animation.
+  const balloon = {
+    element,
+    born: now,
+    size,
+    lane: element.classList.contains('welcome-one') ? -0.82 : 0.84,
+    origin: {
+      x: (bounds.left + bounds.width / 2 - skyBounds.left) / width,
+      y:
+        (bounds.top +
+          (bounds.height + parseFloat(style.height)) / 2 -
+          skyBounds.top) /
+        height,
+      tilt:
+        (Math.atan2(rotation.b, rotation.a) * 180) / Math.PI +
+        (parseFloat(style.rotate) || 0),
+    },
+  };
+  element.style.width = `${size}px`;
+  element.className = 'balloon';
+  addFlight(balloon);
+  return balloon;
+}
+
+function bindBalloon(element: HTMLImageElement) {
+  function kick(point?: PointerEvent) {
+    if (document.hidden) return;
+    const now = performance.now();
+    const { width, height } = dimensions();
+    const reduced = motion.matches;
+    let impulse;
+    if (point && !reduced) {
+      const bounds = element.getBoundingClientRect();
+      impulse = tapImpulse(
+        1 - (2 * (point.clientX - bounds.left)) / bounds.width,
+        1 - (2 * (point.clientY - bounds.top)) / bounds.height,
+      );
+    }
+    const welcome = element.classList.contains('welcome');
+    const balloon = welcome
+      ? releaseWelcome(element, now, width, height)
+      : flights.find((flight) => flight.element === element);
+    if (!balloon) return;
+    const { dx, dy } = impulse ?? {
+      dx: balloon.lane < 0 ? 0.65 : -0.65,
+      dy: -1,
+    };
+    const previousKick = balloon.kick;
+    kickFlight(balloon, now, dx, dy, reduced, width, height);
+    if (balloon.kick === previousKick) return;
+    sounds.unlock();
+    sounds.play('tap');
+    if (welcome) drawFlight(balloon, now, width, height);
+    status.textContent = 'ふうせんを はじいたよ';
+    wake();
+  }
+
+  element.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    kick(event);
+  });
+  element.addEventListener('keydown', (event) => {
+    if (event.code === 'Enter' || event.code === 'Space') {
+      event.preventDefault();
+      if (!event.repeat) kick();
+    }
+  });
+  element.addEventListener('click', (event) => {
+    if (event.detail === 0) kick();
+  });
+}
+
 function begin() {
   if (started !== null || document.hidden) return;
   started = performance.now();
+  sounds.unlock();
+  sounds.play('pump');
+  if (!document.body.classList.contains('played')) {
+    const { width, height } = dimensions();
+    for (const element of sky.querySelectorAll<HTMLImageElement>('.welcome')) {
+      const balloon = releaseWelcome(element, started, width, height);
+      drawFlight(balloon, started, width, height);
+    }
+  }
   pump.setAttribute('aria-pressed', 'true');
   document.body.classList.add('holding', 'played');
   wake();
@@ -86,6 +210,7 @@ function begin() {
 
 function finish(launch: boolean) {
   if (started === null) return;
+  sounds.stopPump();
   const now = performance.now();
   drawHeld(now);
   started = null;
@@ -94,64 +219,24 @@ function finish(launch: boolean) {
   if (launch) {
     const element = document.createElement('img');
     element.src = artwork[next];
-    element.alt = 'ふうせんを はじく';
+    element.alt = '';
     element.setAttribute('role', 'button');
+    element.setAttribute('aria-label', 'ふうせんを はじく');
     element.tabIndex = 0;
     element.draggable = false;
     element.className = 'balloon';
     element.style.width = `${currentSize}px`;
     const lane = [-0.82, 0.84, -0.38, 0.42, 0][sequence++ % 5];
     const { width, height } = dimensions();
-    element.style.transform = motion.matches
-      ? `translate(${width / 2 + lane * width * 0.3}px, ${height * 0.48}px) translate(-50%, -50%)`
-      : `translate(${width / 2}px, ${height}px) translate(-50%, -100%)`;
+    const balloon = { element, born: now, size: currentSize, lane };
+    drawFlight(balloon, now, width, height);
     sky.append(element);
-    const flight = { element, born: now, size: currentSize, lane };
-    flights.push(flight);
-    const kick = (clientX?: number, clientY?: number) => {
-      if (document.hidden) return;
-      const r = element.getBoundingClientRect();
-      const direction =
-        clientX === undefined
-          ? lane < 0
-            ? 1
-            : -1
-          : clientX < r.x + r.width / 2
-            ? 1
-            : -1;
-      const directionY =
-        clientY !== undefined && clientY < r.y + r.height / 2 ? 1 : -1;
-      const { width, height } = dimensions();
-      kickFlight(
-        flight,
-        performance.now(),
-        direction,
-        directionY,
-        motion.matches,
-        width,
-        height,
-      );
-      status.textContent = 'ふうせんを はじいたよ';
-      wake();
-    };
-    element.addEventListener('pointerdown', (event) => {
-      if (event.button !== 0) return;
-      event.preventDefault();
-      kick(event.clientX, event.clientY);
-    });
-    element.addEventListener('keydown', (event) => {
-      if (event.code === 'Enter' || event.code === 'Space') {
-        event.preventDefault();
-        if (!event.repeat) kick();
-      }
-    });
-    element.addEventListener('click', (event) => {
-      if (event.detail === 0) kick();
-    });
-    if (flights.length > MAX_BALLOONS) flights.shift()?.element.remove();
+    bindBalloon(element);
+    addFlight(balloon);
     next = (next + 1) % artwork.length;
     held.src = artwork[next];
     status.textContent = 'ふうせんが とんだよ';
+    sounds.play('release');
   }
   drawHeld(now);
   wake();
@@ -206,14 +291,21 @@ pump.addEventListener('click', (event) => {
 });
 pump.addEventListener('contextmenu', (event) => event.preventDefault());
 pump.addEventListener('blur', cancel);
-window.addEventListener('blur', cancel);
+window.addEventListener('blur', () => {
+  cancel();
+  sounds.stop();
+});
 function clear() {
   cancel();
+  sounds.stop();
   cancelAnimationFrame(frame);
   frame = 0;
   flights.splice(0).forEach((flight) => flight.element.remove());
 }
-window.addEventListener('pagehide', clear);
+window.addEventListener('pagehide', (event) => {
+  clear();
+  if (!event.persisted) sounds.dispose();
+});
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) clear();
 });
@@ -223,5 +315,6 @@ new ResizeObserver(() => {
   wake();
 }).observe(sky);
 motion.addEventListener('change', wake);
-held.src = artwork[0];
+sky.querySelectorAll<HTMLImageElement>('.welcome').forEach(bindBalloon);
 drawHeld(performance.now());
+held.hidden = false;

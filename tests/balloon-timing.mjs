@@ -119,7 +119,7 @@ try {
     await waitFor(
       `performance.timeOrigin !== ${previousDocument} && document.readyState === 'complete'`,
     );
-    await waitFor("!!document.querySelector('#pump')");
+    await waitFor("!!document.querySelector('#held:not([hidden])')");
     // Offscreen lazy hub images may never start loading until scrolled into view.
     // Force their request in this test, retaining full decode validation.
     await evaluate(
@@ -157,7 +157,7 @@ try {
   await call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await delay(1500);
   const before = await evaluate(
-    `(()=>{const e=document.querySelector('.balloon'),r=e.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(e).transform);return {x:r.x+r.width*.25,y:r.y+r.height*.25,tx:m.m41,ty:m.m42}})()`,
+    `(()=>{const e=document.querySelector('.balloon:last-child'),r=e.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(e).transform);return {x:r.x+r.width*.25,y:r.y+r.height*.25,tx:m.m41,ty:m.m42}})()`,
   );
   await call('Input.dispatchTouchEvent', {
     type: 'touchStart',
@@ -172,7 +172,7 @@ try {
   );
   await delay(1200);
   const late = await evaluate(
-    `(()=>{const e=document.querySelector('.balloon'),m=new DOMMatrix(getComputedStyle(e).transform);return {tx:m.m41,ty:m.m42,tapped:e.dataset.tapped}})()`,
+    `(()=>{const e=document.querySelector('.balloon:last-child'),m=new DOMMatrix(getComputedStyle(e).transform);return {tx:m.m41,ty:m.m42,tapped:e.dataset.tapped}})()`,
   );
   assert.ok(
     late.ty < before.ty,
@@ -189,6 +189,10 @@ try {
     }),
   );
   await visit();
+  // Clear the welcoming flights before measuring the pump's idle loop in isolation.
+  await evaluate(
+    "document.querySelector('#pump').click(); window.dispatchEvent(new Event('pagehide'))",
+  );
   await waitFor('window.pendingRafs.size===0');
   await evaluate('window.deferFrames=true');
   await mouse('mousePressed', await point());

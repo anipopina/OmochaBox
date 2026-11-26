@@ -1,0 +1,183 @@
+{
+  "generated_on": "2026-11-26",
+  "model": "stabilityai/stable-audio-open-1.0",
+  "model_revision": "f21265c1e2710b3bd2386596943f0007f55f802e",
+  "runner": "Stable Audio Open local gen.py (Diffusers)",
+  "tool_versions": {
+    "diffusers": "0.42.1",
+    "torch": "2.6.0+cu124",
+    "scipy": "1.18.1",
+    "numpy": "2.5.4",
+    "accelerate": "1.15.0"
+  },
+  "generation": {
+    "source_format": "44.1 kHz stereo float WAV",
+    "seconds": 2,
+    "steps": 80,
+    "negative_prompt": "Low quality",
+    "precision": "torch.float16 with model CPU offload"
+  },
+  "processing": {
+    "channel_mix": "stereo channel mean",
+    "filtering": "third-order Butterworth bandpass, 90–5600 Hz, zero-phase",
+    "linear_fade_in_seconds": 0.007,
+    "linear_fade_out_seconds": 0.035,
+    "normalization": "RMS target per cue with tanh soft limiting at -8 dBFS before encoding",
+    "output_format": "32 kHz mono 64 kbps MP3 (libmp3lame)",
+    "ffmpeg": "ffmpeg version n9.0.2-17-g2a571b6068-20260930"
+  },
+  "cues": [
+    {
+      "key": "pump-soft",
+      "scene": "pump",
+      "name": "やわらかい空気",
+      "seed": 49010,
+      "prompt": "An isolated single short soft squeeze of a small rubber hand air pump for a child's toy, one low rounded pff of air starts immediately, gently swelling and fading quickly, light dry foley recorded close, no squeal, no second hit, silence after the sound, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/pump-soft.wav",
+      "source_sha256": "3dbbd1c22045571499adad1ebe9d594f71e3b0673308ab7c8c5e581d508e9567",
+      "trim_seconds": [
+        0.04,
+        0.193
+      ],
+      "target_rms_dbfs": -22,
+      "output_sha256": "84c07aa67cb358bcc602a9b8169932a8d1b2ed9d8b9738fd9b4574e6379e2422",
+      "duration_seconds": 0.153,
+      "decoded_peak_dbfs": -8.5,
+      "decoded_rms_dbfs": -26.06,
+      "bytes": 2060
+    },
+    {
+      "key": "pump-puff",
+      "scene": "pump",
+      "name": "小さなポフッ",
+      "seed": 49011,
+      "prompt": "One very short playful soft rounded poof, the compressed air from a toy bellows, tiny warm rubber thump blended into the quiet breath, starts promptly, isolated clean dry cartoon Foley, no hiss tail, no pop, no repeated pulses, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/pump-puff.wav",
+      "source_sha256": "35f589e2943478f5fe9b6dd6a86b33195c2c5cfbf14383d416300b55fcbf1181",
+      "trim_seconds": [
+        0.116,
+        0.285
+      ],
+      "target_rms_dbfs": -22,
+      "output_sha256": "e8e43f52f4135cfa861c65c68728d883f6fe2797cd5e00573eab68d7419c4552",
+      "duration_seconds": 0.169,
+      "decoded_peak_dbfs": -8.23,
+      "decoded_rms_dbfs": -25.79,
+      "bytes": 2060
+    },
+    {
+      "key": "release-breeze",
+      "scene": "release",
+      "name": "ふわっと抜ける風",
+      "seed": 49020,
+      "prompt": "One isolated gentle airy fwoosh as a small floating balloon is let go, a soft warm breath that rises very slightly and quickly diffuses, close dry cartoon foley for toddlers, no sharp attack, no whistle, no balloon pop, no second event, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/release-breeze.wav",
+      "source_sha256": "8867d3132677b32abc90923b7202455cc4a8f702adbc82f00ceb162dd982674d",
+      "trim_seconds": [
+        0.13,
+        0.852
+      ],
+      "target_rms_dbfs": -23,
+      "output_sha256": "bacda39ae012a026489de3d6fe49b2c64e2b895709dac6d514eb28553bdcaf7f",
+      "duration_seconds": 0.722,
+      "decoded_peak_dbfs": -12.01,
+      "decoded_rms_dbfs": -23.45,
+      "bytes": 6668
+    },
+    {
+      "key": "release-swirl",
+      "scene": "release",
+      "name": "すうっと上がる風",
+      "seed": 49021,
+      "prompt": "A single brief light swish of air drifting upward from a little toy balloon starting to float, rounded smooth airy onset and quick feathered tail, clean isolated playful sound effect, no sharp hiss, no windy ambience, no musical note, no words or voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/release-swirl.wav",
+      "source_sha256": "1d35fdc0a4a89746729855aee83adf9e5c5fc6963ffb7554fbbc6bc3b86f20cc",
+      "trim_seconds": [
+        0.129,
+        0.75
+      ],
+      "target_rms_dbfs": -23,
+      "output_sha256": "f7001999d8230469d4c2a48dccfc12b2d61b8356a9d803d8a68206818d34a95e",
+      "duration_seconds": 0.621,
+      "decoded_peak_dbfs": -9.77,
+      "decoded_rms_dbfs": -23.58,
+      "bytes": 5804
+    },
+    {
+      "key": "tap-spring",
+      "scene": "tap",
+      "name": "やわらかい弾み",
+      "seed": 49030,
+      "prompt": "A single small rubber balloon gently bounces from a finger tap, one soft rounded low cartoon bwoing with a little elastic pitch bend, very quick dry decay, charming lightweight child-friendly toy feedback, no bursting, no explosion, no second bounce, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/tap-spring.wav",
+      "source_sha256": "79163b6201d11c352c2ef7f2f9e31bf307160e706268fa53888bc5b53c39178a",
+      "trim_seconds": [
+        0.286,
+        0.473
+      ],
+      "target_rms_dbfs": -22,
+      "output_sha256": "2195e82c8d08955a6199775cfad6433384402117560e9d7f01ad31726d7b3caa",
+      "duration_seconds": 0.187,
+      "decoded_peak_dbfs": -8.78,
+      "decoded_rms_dbfs": -24.06,
+      "bytes": 2348
+    },
+    {
+      "key": "tap-knock",
+      "scene": "tap",
+      "name": "軽いぽよん",
+      "seed": 49031,
+      "prompt": "One isolated tiny soft poppy thunk made by tapping the taut rubber surface of an inflated balloon without breaking it, a rounded playful poyon with short springy resonance, warm and quiet dry foley, no crack or high squeal, silence after, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/tap-knock.wav",
+      "source_sha256": "da39c6e23f559fc9bf41c81b9d09f0aad3f9a571f0d8ea6eff308e1f8d0cf83f",
+      "trim_seconds": [
+        0.212,
+        0.389
+      ],
+      "target_rms_dbfs": -22,
+      "output_sha256": "4497c4dbeefb7b92d06ffc504e1539b221b168f57dcf89fdb68dd5666db7d528",
+      "duration_seconds": 0.17703,
+      "decoded_peak_dbfs": -9.15,
+      "decoded_rms_dbfs": -24.9,
+      "bytes": 2060
+    },
+    {
+      "key": "full-chime",
+      "scene": "full",
+      "name": "まるいポンッ",
+      "seed": 49040,
+      "prompt": "A single tiny soft rounded hollow plonk announcing that a toy balloon is fully inflated, warm rubber resonance and a quick soft tail, one isolated child-friendly completion effect, no sharp transient, no balloon bursting, no melody, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/full-chime.wav",
+      "source_sha256": "bd3b1c4f9b0d73f77a4df182afa792ef30cb7ed61388919f08d678c1056e4d92",
+      "trim_seconds": [
+        0.01,
+        0.195
+      ],
+      "target_rms_dbfs": -22,
+      "output_sha256": "50979081257bf03e317403d04db639f9a82003c1ca83de16b65219f32a9c8d2b",
+      "duration_seconds": 0.18503,
+      "decoded_peak_dbfs": -9.2,
+      "decoded_rms_dbfs": -24.55,
+      "bytes": 2348
+    },
+    {
+      "key": "full-tock",
+      "scene": "full",
+      "name": "やさしいトン",
+      "seed": 49041,
+      "prompt": "One gentle short satisfying soft tock as a small toy air pump reaches its full stop, light warm rubbery cup resonance and a smooth short tail, starts promptly, clean isolated foley, no hard smack, no metallic ringing, no popping balloon, no music, no voices",
+      "source_path": "tmp/audio-originals/pukapuka-fusen/generated/full-tock.wav",
+      "source_sha256": "62ea9d49f8c45db0780ad0f34f4606311f8c7f35f9fd587fb482ace4ed833990",
+      "trim_seconds": [
+        0.401,
+        0.555
+      ],
+      "target_rms_dbfs": -22,
+      "output_sha256": "d0177ee49c07a0360dd89c5271921f65ae477263cdfda0d349f109174fd53b4a",
+      "duration_seconds": 0.15403,
+      "decoded_peak_dbfs": -9.19,
+      "decoded_rms_dbfs": -23.1,
+      "bytes": 2060
+    }
+  ]
+}
