@@ -22,7 +22,7 @@ export class GardenSound extends SamplePlayer<Cue> {
   private nextDrag = -Infinity;
 
   constructor() {
-    super(urls, 0.55);
+    super(urls, 0.385);
     this.preload();
   }
 

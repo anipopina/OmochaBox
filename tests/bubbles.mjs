@@ -261,8 +261,10 @@ try {
     'Trusted touch starts audio',
   );
   assert.ok(
-    await evaluate('soundStats.max===1 && soundStats.gains.every(g=>g<=.035)'),
-    'One voice and quiet gain',
+    await evaluate(
+      'soundStats.max===1 && soundStats.gains.length>0 && soundStats.gains.every(g=>g===.0525)',
+    ),
+    'One voice at the expected peak gain',
   );
   report(
     'Bubbles PASS: six viewports, touch create/pop, 96px+ targets, no overflow, screenshots',

@@ -67,7 +67,7 @@ async function sound(pop: boolean) {
       t + 0.11,
     );
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.035, t + 0.012);
+    gain.gain.linearRampToValueAtTime(0.0525, t + 0.012);
     gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
     oscillator.connect(gain).connect(audio.destination);
     voice = oscillator;
