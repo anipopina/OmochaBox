@@ -91,6 +91,22 @@ try {
   await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `window.lastPointerId=0;document.addEventListener('pointerdown',e=>window.lastPointerId=e.pointerId);window.rafCalls=0;const raf=requestAnimationFrame;window.requestAnimationFrame=(f)=>raf(t=>{window.rafCalls++;f(t)});`,
   });
+  await call('Page.addScriptToEvaluateOnNewDocument', {
+    source: `window.shabonRandom=.99;Math.random=()=>window.shabonRandomSequence?.shift()??window.shabonRandom;
+      const outcome=new URL(location.href).searchParams.get('tilt-permission');
+      Object.defineProperty(DeviceMotionEvent,'requestPermission',{value:undefined,configurable:true});
+      Object.defineProperty(DeviceOrientationEvent,'requestPermission',{configurable:true,value:outcome?async()=>{
+        if(!navigator.userActivation.isActive){
+          if(outcome==='already-granted')return 'granted';
+          if(outcome==='already-denied')return 'denied';
+          throw new DOMException('A tap is required','NotAllowedError');
+        }
+        window.tiltActivation=navigator.userActivation.isActive;
+        window.tiltRequests=(window.tiltRequests??0)+1;
+        if(outcome==='already-denied')return 'denied';
+        return new Promise(resolve=>{window.finishTiltPermission=(decision=outcome)=>resolve(decision)});
+      }:undefined});`,
+  });
 
   await call('Page.addScriptToEvaluateOnNewDocument', {
     source: `window.soundStats={active:0,max:0,gains:[],starts:[],contexts:[]};const AC=AudioContext;window.AudioContext=class extends AC {constructor(...a){super(...a);soundStats.contexts.push(this)}createOscillator(){const o=super.createOscillator(),start=o.start.bind(o);o.start=(t)=>{soundStats.starts.push(performance.now());soundStats.active++;soundStats.max=Math.max(soundStats.max,soundStats.active);start(t)};o.addEventListener('ended',()=>soundStats.active--);return o}createGain(){const g=super.createGain(),ramp=g.gain.linearRampToValueAtTime.bind(g.gain);g.gain.linearRampToValueAtTime=(v,t)=>{soundStats.gains.push(v);return ramp(v,t)};return g}};`,
@@ -153,7 +169,31 @@ try {
       mobile: true,
     });
     await visit();
-    assert.equal(await count(), 1);
+    assert.equal(await count(), 2, 'Two bubbles are present on entry');
+    const [small, large] = await evaluate(
+      "[...document.querySelectorAll('.bubble')].map(b=>b.getBoundingClientRect().toJSON())",
+    );
+    assert.ok(large.width > small.width, 'The second bubble is larger');
+    assert.ok(small.x < large.x && small.y > large.y, 'Diagonal layout');
+    for (const bubble of [small, large]) {
+      assert.ok(
+        bubble.left >= 0 &&
+          bubble.top >= 0 &&
+          bubble.right <= width &&
+          bubble.bottom <= height,
+        'Initial bubbles fit inside the viewport',
+      );
+    }
+    const separation = Math.hypot(
+      large.x + large.width / 2 - (small.x + small.width / 2),
+      large.y + large.height / 2 - (small.y + small.height / 2),
+    );
+    assert.ok(
+      separation > (small.width + large.width) / 2,
+      'Bubbles have a gap',
+    );
+    await delay(250);
+    await shot(`bubbles-initial-${width}`);
     assert.equal(
       await evaluate(
         "getComputedStyle(document.querySelector('.film'),'::after').content",
@@ -172,7 +212,7 @@ try {
       ),
     );
     await tap(width * 0.3, height * 0.8);
-    assert.equal(await count(), 2, 'Empty-space touch creates a bubble');
+    assert.equal(await count(), 3, 'Empty-space touch creates a bubble');
     const center = await evaluate(
       "(()=>{const r=document.querySelector('.bubble:last-child').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()",
     );
@@ -194,7 +234,7 @@ try {
     );
     await shot(`bubbles-pop-${width}`);
     await delay(450);
-    assert.equal(await count(), 1);
+    assert.equal(await count(), 2);
     assert.equal(
       await evaluate("document.querySelectorAll('.pop-glint').length"),
       0,
@@ -208,6 +248,13 @@ try {
     );
     await tap(width * 0.75, height * 0.8);
     await shot(`bubbles-${width}`);
+    await tap(large.x + large.width / 2, large.y + large.height / 2);
+    assert.ok(
+      await evaluate(
+        "document.querySelector('.bubble:nth-child(2)').classList.contains('popping')",
+      ),
+      'The large initial bubble can be popped',
+    );
   }
   assert.ok(
     await evaluate('soundStats.starts.length > 0'),
@@ -357,7 +404,7 @@ try {
   await delay(100);
   assert.notDeepEqual(await positions(), away);
   await visit();
-  await evaluate("document.querySelector('.bubble').click()");
+  await evaluate("document.querySelectorAll('.bubble').forEach(b=>b.click())");
   await delay(450);
   await evaluate("document.querySelector('#create').focus()");
   await call('Input.dispatchKeyEvent', {
@@ -422,13 +469,358 @@ try {
     'document.querySelector(\'a[href="pukupuku-shabon/"]\').click()',
   );
   await waitFor("document.querySelector('#field')?.dataset.ready==='true'");
-  assert.equal(await count(), 1, 'Re-entry starts fresh');
+  assert.equal(await count(), 2, 'Re-entry starts fresh');
   await evaluate(
     "window.AudioContext=class {constructor(){throw new Error('Unavailable')}}",
   );
   await evaluate("document.querySelector('#create').click()");
   await delay(100);
-  assert.equal(await count(), 2, 'Audio unavailable does not block play');
+  assert.equal(await count(), 3, 'Audio unavailable does not block play');
+
+  await call('Emulation.setEmulatedMedia', { features: [] });
+  await visit();
+  const active = '#characters .shabon-character:not(.leaving)';
+  const sprites = () =>
+    evaluate(
+      `[...document.querySelectorAll('${active}')].map(e=>e.getBoundingClientRect().toJSON())`,
+    );
+  const makeBubble = (x, y) =>
+    evaluate(
+      `document.querySelector('#create').dispatchEvent(new PointerEvent('pointerdown',{button:0,clientX:${x},clientY:${y}}))`,
+    );
+  const popNewest = () =>
+    evaluate("document.querySelector('.bubble:last-child').click()");
+  const shapes = [
+    'コーラルのしかく',
+    'あおいまる',
+    'むらさきのまる',
+    'きいろいさんかく',
+    'コーラルのほし',
+    'ミントのながしかく',
+  ];
+  for (const [index, name] of shapes.entries()) {
+    const x = index % 2 ? 232 : 88;
+    const y = 130 + Math.floor(index / 2) * 150;
+    await evaluate(`window.shabonRandomSequence=[0,${(index + 0.5) / shapes.length}];
+      document.querySelector('#create').dispatchEvent(new PointerEvent('pointerdown',{button:0,clientX:${x},clientY:${y}}));`);
+    const label = await evaluate(
+      "document.querySelector('.bubble:last-child').getAttribute('aria-label')",
+    );
+    assert.equal(label, `${name}のシャボン玉をわる`);
+    await waitFor(
+      "document.querySelector('.bubble:last-child img')?.naturalWidth > 0",
+    );
+  }
+  await delay(250);
+  await shot('bubbles-all-characters');
+  await visit();
+  await evaluate('window.shabonRandom=.26');
+  await tap(154, 185);
+  await waitFor(
+    "document.querySelector('.bubble:last-child img')?.naturalWidth > 0",
+  );
+  assert.equal(
+    (await sprites()).length,
+    0,
+    'The character stays in the bubble until it pops',
+  );
+  const passengerSource = await evaluate(
+    "document.querySelector('.bubble:last-child img').src",
+  );
+  await delay(250);
+  await shot('bubbles-character-inside');
+  const bubbleCenter = await evaluate(
+    "(()=>{const r=document.querySelector('.bubble:last-child').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()",
+  );
+  await tap(bubbleCenter.x, bubbleCenter.y);
+  const [released] = await sprites();
+  assert.ok(released, 'The character is released immediately');
+  assert.equal(
+    await evaluate(`document.querySelector('${active} img').src`),
+    passengerSource,
+  );
+  await delay(300);
+  const [falling] = await sprites();
+  assert.ok(
+    falling.y > released.y + 20,
+    'Downward gravity without sensor input',
+  );
+  await waitFor(
+    `document.querySelector('${active}').getBoundingClientRect().bottom > 566`,
+  );
+  const [resting] = await sprites();
+
+  const grabX = resting.x + resting.width / 2;
+  const grabY = resting.y + resting.height / 2;
+  await touch('touchStart', [{ x: grabX, y: grabY, id: 4 }]);
+  await touch('touchMove', [{ x: 122, y: 256, id: 4 }]);
+  await delay(320);
+  const [held] = await sprites();
+  assert.ok(held.y < resting.y - 150, 'Touch drag lifts the character');
+  await touch('touchCancel');
+  await delay(120);
+  assert.ok(
+    (await sprites())[0].y > held.y + 3,
+    'Cancelled drag releases the character',
+  );
+
+  await evaluate(
+    "window.dispatchEvent(new DeviceMotionEvent('devicemotion',{accelerationIncludingGravity:{x:9.8,y:0,z:0}}))",
+  );
+  await waitFor(
+    `document.querySelector('${active}').getBoundingClientRect().left < 2`,
+  );
+  await evaluate(
+    "window.dispatchEvent(new DeviceOrientationEvent('deviceorientation',{beta:0,gamma:90}))",
+  );
+  await waitFor(
+    `document.querySelector('${active}').getBoundingClientRect().right > 317`,
+  );
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 568,
+    height: 320,
+    deviceScaleFactor: 2,
+    mobile: true,
+    screenOrientation: { type: 'landscapePrimary', angle: 90 },
+  });
+  await evaluate(
+    "window.dispatchEvent(new DeviceOrientationEvent('deviceorientation',{beta:-90,gamma:0}))",
+  );
+  await waitFor(
+    `document.querySelector('${active}').getBoundingClientRect().left < 2`,
+  );
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 320,
+    height: 568,
+    deviceScaleFactor: 2,
+    mobile: true,
+    screenOrientation: { type: 'portraitPrimary', angle: 0 },
+  });
+  await visit();
+  await evaluate('window.shabonRandom=.26');
+  await makeBubble(150, 210);
+  await popNewest();
+  await makeBubble(168, 210);
+  await popNewest();
+  await delay(250);
+  const [left, right] = await sprites();
+  assert.ok(
+    right.x - left.x > 36,
+    'Overlapping spawn positions separate through collision',
+  );
+
+  const characterPoint = await evaluate(
+    `(()=>{const r=document.querySelector('${active}').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`,
+  );
+  await makeBubble(characterPoint.x, characterPoint.y);
+  assert.ok(
+    await evaluate(
+      `document.elementFromPoint(${characterPoint.x},${characterPoint.y}).closest('.bubble') === document.querySelector('.bubble:last-child')`,
+    ),
+    'Bubble input takes priority above characters',
+  );
+  await delay(500);
+  assert.equal(
+    (await sprites()).length,
+    2,
+    'A bubble does not release its character on contact',
+  );
+  await shot('bubbles-characters-released');
+
+  await evaluate(`window.oldestCharacter=document.querySelector('${active}')`);
+  for (let i = 0; i < 11; i++) {
+    await makeBubble(105 + (i % 3) * 55, 125 + Math.floor(i / 3) * 65);
+    await popNewest();
+  }
+  assert.equal(
+    (await sprites()).length,
+    12,
+    'Active character count is capped',
+  );
+  assert.ok(
+    await evaluate(
+      "oldestCharacter.classList.contains('leaving') && getComputedStyle(oldestCharacter.firstElementChild).animationName === 'character-shrink'",
+    ),
+    'Oldest character shrinks first',
+  );
+  await waitFor('!oldestCharacter.isConnected');
+
+  for (const outcome of ['granted', 'denied']) {
+    await visit(`/pukupuku-shabon/?tilt-permission=${outcome}`);
+    await waitFor("!document.querySelector('.tilt-control-button').hidden");
+    assert.equal(await evaluate('window.tiltActivation'), undefined);
+    const tiltButton = await evaluate(
+      "document.querySelector('.tilt-control-button').getBoundingClientRect().toJSON()",
+    );
+    assert.ok(tiltButton.width >= 56 && tiltButton.height >= 56);
+    assert.ok(tiltButton.top === 12 && tiltButton.right === 308);
+    if (outcome === 'granted') await shot('bubbles-tilt-button');
+    await tap(160, 480);
+    assert.equal(await count(), 3, 'Play is available before permission');
+    assert.equal(await evaluate('window.tiltActivation'), undefined);
+    await tap(
+      tiltButton.x + tiltButton.width / 2,
+      tiltButton.y + tiltButton.height / 2,
+    );
+    assert.ok(
+      await evaluate(
+        "window.tiltActivation && document.querySelector('.tilt-control-button').disabled",
+      ),
+      'The tilt button requests permission with user activation',
+    );
+    await evaluate('window.finishTiltPermission()');
+    await waitFor(
+      outcome === 'granted'
+        ? "document.querySelector('.tilt-control-button').hidden"
+        : "Boolean(document.querySelector('.tilt-control-button:not([hidden]):not(:disabled)'))",
+    );
+    await evaluate('window.shabonRandom=.26');
+    await makeBubble(160, 190);
+    await popNewest();
+    if (outcome === 'granted') {
+      await evaluate(
+        "window.dispatchEvent(new DeviceOrientationEvent('deviceorientation',{beta:0,gamma:90}))",
+      );
+    }
+    const edge = outcome === 'granted' ? 'right > 318' : 'bottom > 566';
+    await waitFor(
+      `document.querySelector('${active}').getBoundingClientRect().${edge}`,
+    );
+    if (outcome === 'denied') {
+      assert.equal(
+        await evaluate(
+          "document.querySelector('.tilt-control-status').textContent",
+        ),
+        '',
+        'The first denial leaves gameplay clear',
+      );
+      await shot('bubbles-tilt-denied');
+      await tap(
+        tiltButton.x + tiltButton.width / 2,
+        tiltButton.y + tiltButton.height / 2,
+      );
+      assert.equal(
+        await evaluate('window.tiltRequests'),
+        2,
+        'Denial can be retried',
+      );
+      await evaluate("window.finishTiltPermission('granted')");
+      await waitFor("document.querySelector('.tilt-control-button').hidden");
+    }
+  }
+  for (const path of [
+    '/pukupuku-shabon/',
+    '/pukupuku-shabon/?tilt-permission=already-granted',
+  ]) {
+    await visit(path);
+    assert.ok(
+      await evaluate("document.querySelector('.tilt-control-button').hidden"),
+      'No tilt button without a permission API or after a grant',
+    );
+  }
+  await visit('/pukupuku-shabon/?tilt-permission=already-denied');
+  await waitFor(
+    "Boolean(document.querySelector('.tilt-control-button:not([hidden]):not(:disabled)'))",
+  );
+  const settingsHint = "document.querySelector('.tilt-control-status')";
+  assert.equal(await evaluate(`${settingsHint}.textContent`), '');
+  const retryButton = await evaluate(
+    "document.querySelector('.tilt-control-button').getBoundingClientRect().toJSON()",
+  );
+  await tap(
+    retryButton.x + retryButton.width / 2,
+    retryButton.y + retryButton.height / 2,
+  );
+  await waitFor(
+    `${settingsHint}.textContent === 'ブラウザの設定で傾きセンサーを許可できます'`,
+  );
+  await delay(250);
+  await shot('bubbles-tilt-settings');
+  const hint = await evaluate(
+    `${settingsHint}.getBoundingClientRect().toJSON()`,
+  );
+  await tap(hint.x + hint.width / 2, hint.y + hint.height / 2);
+  assert.equal(
+    await count(),
+    3,
+    'Tapping through the hint still creates a bubble',
+  );
+  assert.equal(await evaluate(`${settingsHint}.textContent`), '');
+  const debugCanvas = "document.querySelector('.shabon-shape-debug')";
+  assert.equal(await evaluate(`Boolean(${debugCanvas})`), false);
+  await visit('/pukupuku-shabon/?debug=shapes');
+  const readDebugPixel = (x, y) =>
+    `(() => {
+      const canvas = ${debugCanvas};
+      const pixel = canvas.getContext('2d').getImageData(
+        Math.floor((${x}) * canvas.width / canvas.clientWidth),
+        Math.floor((${y}) * canvas.height / canvas.clientHeight), 1, 1);
+      return pixel.data[3];
+    })()`;
+  const debugPixel = (x, y) => evaluate(readDebugPixel(x, y));
+  for (const [x, y] of [
+    [8, 160],
+    [312, 160],
+    [160, 8],
+    [160, 560],
+  ]) {
+    assert.ok((await debugPixel(x, y)) > 0, 'Debug view marks the inset wall');
+  }
+  assert.equal(await debugPixel(0, 160), 0);
+  await evaluate('window.shabonRandom=.26');
+  await tap(150, 170);
+  assert.equal(
+    await count(),
+    3,
+    'The debug overlay leaves touch input available',
+  );
+  assert.equal(
+    await debugPixel(150, 170),
+    0,
+    'Bubbles have no collision shape',
+  );
+  await popNewest();
+  const [debugReleased] = await sprites();
+  assert.ok(
+    (await debugPixel(
+      debugReleased.x + debugReleased.width / 2,
+      debugReleased.y + debugReleased.height / 2,
+    )) > 0,
+    'Debug view draws the collider when the character is released',
+  );
+  await waitFor(
+    `document.querySelector('${active}').getBoundingClientRect().bottom > 566`,
+  );
+  const [debugFallen] = await sprites();
+  assert.equal(
+    await debugPixel(150, 170),
+    0,
+    'The outline follows the falling body',
+  );
+  assert.ok(
+    (await debugPixel(
+      debugFallen.x + debugFallen.width / 2,
+      debugFallen.y + debugFallen.height / 2,
+    )) > 0,
+  );
+  await waitFor(
+    `${readDebugPixel(debugFallen.x + debugFallen.width / 2, 558)} > 0`,
+  );
+  assert.equal(await debugPixel(debugFallen.x + debugFallen.width / 2, 564), 0);
+  await shot('bubbles-shape-debug');
+  await call('Emulation.setDeviceMetricsOverride', {
+    width: 568,
+    height: 320,
+    deviceScaleFactor: 2,
+    mobile: true,
+  });
+  await waitFor(
+    `${debugCanvas}.width === 1136 && ${debugCanvas}.height === 640`,
+  );
+  assert.ok((await debugPixel(8, 160)) > 0);
+  report(
+    'Bubbles PASS: shared character SVGs, release and fall, touch drag/cancel, collision and layer order, edge bounds, oldest-first shrink, tilt and permission fallback',
+  );
   assert.equal(errors.length, 0, JSON.stringify(errors));
   report(
     'Bubbles PASS: 1000-input cap, multi-touch, keyboard, resize, reduced motion idle, real tab switch and blur/pagehide/hidden pause and resume, hub/re-entry, single quiet voice/cooldown/audio failure fallback, bounded glints/cleanup/reduced motion, non-interactive clouds, zero JS exceptions',

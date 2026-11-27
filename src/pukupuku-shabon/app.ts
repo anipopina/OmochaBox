@@ -1,5 +1,7 @@
 import '../shared/home-button';
 import '../shared/play-media';
+import { initTiltControl } from '../shared/tilt-control';
+import { bubbleCharacter, createCharacterField } from './characters';
 
 const field = document.querySelector<HTMLElement>('#field')!;
 const layer = document.querySelector<HTMLElement>('#bubbles')!;
@@ -20,6 +22,7 @@ interface Bubble {
   age: number;
   direction: number;
   pop: number | null;
+  passenger: ReturnType<typeof bubbleCharacter>;
 }
 const bubbles: Bubble[] = [];
 let raf = 0;
@@ -32,6 +35,13 @@ let audioGeneration = 0;
 let pausedAt: number | null = null;
 let blurred = false;
 let pageAway = false;
+const characters = createCharacterField(
+  field,
+  document.querySelector<HTMLElement>('#characters')!,
+  reduced,
+  wake,
+);
+const tilt = initTiltControl(field, characters.gravity);
 
 // One quiet voice, with a global cooldown even when several fingers tap.
 async function sound(pop: boolean) {
@@ -108,13 +118,21 @@ function frame(now: number) {
       position(b);
     }
   }
-  if (bubbles.some((b) => b.pop !== null || !reduced.matches))
+  const charactersMoving = characters.update(dt * 1000);
+  if (
+    charactersMoving ||
+    bubbles.some((b) => b.pop !== null || !reduced.matches)
+  )
     raf = requestAnimationFrame(frame);
 }
 function pop(b: Bubble) {
   if (b.pop !== null || pausedAt !== null) return;
   b.pop = performance.now();
   b.element.classList.add('popping');
+  if (b.passenger) {
+    characters.release(b.passenger, b.x, b.y);
+    b.passenger = undefined;
+  }
   // Glints belong to the capped bubble, so eviction and completed pops
   // remove every effect without timers or a second animation loop.
   const count = reduced.matches ? 3 : 6;
@@ -136,10 +154,14 @@ function pop(b: Bubble) {
   void sound(true);
   wake();
 }
-function spawn(x: number, y: number, audible = true) {
-  if (document.hidden || pausedAt !== null) return;
+function spawn(
+  x: number,
+  y: number,
+  initial = false,
+  radius = [48, 64, 80][serial % 3],
+) {
+  if (!initial && (document.hidden || pausedAt !== null)) return;
   if (bubbles.length >= 18) remove(bubbles[0]);
-  const radius = [48, 64, 80][serial % 3];
   const color = colors[serial++ % colors.length];
   const element = document.createElement('button');
   element.className = 'bubble';
@@ -148,6 +170,11 @@ function spawn(x: number, y: number, audible = true) {
   element.style.setProperty('--rim', color[0]);
   element.style.setProperty('--tint', color[1]);
   element.innerHTML = '<span class="film"></span>';
+  const passenger = initial ? undefined : bubbleCharacter(radius * 2);
+  if (passenger) {
+    element.setAttribute('aria-label', `${passenger.name}のシャボン玉をわる`);
+    element.firstElementChild!.append(passenger.image);
+  }
   const b: Bubble = {
     element,
     x,
@@ -157,6 +184,7 @@ function spawn(x: number, y: number, audible = true) {
     age: 0,
     direction: -1,
     pop: null,
+    passenger,
   };
   clamp(b);
   position(b);
@@ -170,7 +198,7 @@ function spawn(x: number, y: number, audible = true) {
   element.addEventListener('click', (e) => {
     if (e.detail === 0) pop(b);
   });
-  if (audible) void sound(false);
+  if (!initial) void sound(false);
   wake();
 }
 create.addEventListener('pointerdown', (e) => {
@@ -185,6 +213,8 @@ create.addEventListener('click', (e) => {
 function pause() {
   if (pausedAt === null) pausedAt = performance.now();
   field.classList.add('paused');
+  characters.pause();
+  tilt.stop();
   cancelAnimationFrame(raf);
   raf = 0;
   audioGeneration++;
@@ -199,6 +229,7 @@ function resume() {
   for (const b of bubbles) if (b.pop !== null) b.pop += elapsed;
   pausedAt = null;
   field.classList.remove('paused');
+  tilt.start();
   wake();
   // Sound resumes only on the next explicit gesture, never on focus alone.
 }
@@ -210,9 +241,10 @@ window.addEventListener('focus', () => {
   blurred = false;
   resume();
 });
-window.addEventListener('pagehide', () => {
+window.addEventListener('pagehide', (event) => {
   pageAway = true;
   pause();
+  if (event.persisted === false) characters.destroy();
 });
 window.addEventListener('pageshow', () => {
   pageAway = false;
@@ -224,11 +256,19 @@ document.addEventListener('visibilitychange', () => {
   else resume();
 });
 window.addEventListener('resize', () => {
+  characters.resize();
   for (const b of bubbles) {
     clamp(b);
     position(b);
   }
 });
 reduced.addEventListener('change', wake);
-spawn(field.clientWidth * 0.55, field.clientHeight * 0.55, false);
+if (document.hidden) pause();
+else tilt.start();
+const centerX = field.clientWidth / 2;
+const centerY = field.clientHeight / 2;
+const offsetX = Math.min(field.clientWidth * 0.21, 160);
+const offsetY = Math.min(field.clientHeight * 0.1, 85);
+spawn(centerX - offsetX, centerY + offsetY, true);
+spawn(centerX + offsetX, centerY - offsetY, true, 80);
 field.dataset.ready = 'true';

@@ -252,6 +252,7 @@ a:focus-visible {
 .oimo-preview,
 .window-preview,
 .balloon-preview,
+.bubble-preview,
 .stamp-preview,
 .pond-preview,
 .mogu-preview,
@@ -268,6 +269,7 @@ a:focus-visible {
 .garden-preview img,
 .oimo-preview img,
 .balloon-preview img,
+.bubble-preview img,
 .stamp-preview img,
 .pond-preview img,
 .mogu-preview img {
@@ -475,6 +477,7 @@ footer p {
   .oimo-preview,
   .window-preview,
   .balloon-preview,
+  .bubble-preview,
   .stamp-preview,
   .pond-preview,
   .mogu-preview,
@@ -586,18 +589,6 @@ footer p {
   background: #ff26bd;
   border-radius: 0;
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
-.bubble-preview {
-  height: 190px;
-  flex: none;
-  overflow: hidden;
-  background: linear-gradient(#289df1, #68d3f5);
-}
-.bubble-preview svg {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 
 .guitar-preview {

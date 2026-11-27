@@ -12,9 +12,7 @@ body {
   width: 100vw;
   height: 100svh;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse at 90% 0%, #fff9c7 0%, transparent 22%),
-    linear-gradient(#289df1, #68d3f5);
+  background: linear-gradient(#289df1, #68d3f5);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -28,9 +26,18 @@ body {
   background: transparent;
   touch-action: none;
 }
-#bubbles {
+#bubbles,
+#characters {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+}
+.shabon-shape-debug {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
 .bubble {
@@ -45,7 +52,8 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 .film {
-  display: block;
+  display: grid;
+  place-items: center;
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -64,6 +72,40 @@ body {
     inset -4px -5px 8px var(--rim),
     0 3px 4px #25709918;
   animation: arrive 250ms ease-out;
+}
+
+.film img,
+.shabon-character img {
+  display: block;
+  height: auto;
+  pointer-events: none;
+}
+.film img {
+  position: relative;
+}
+.shabon-character {
+  position: absolute;
+  transform-origin: top left;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+.shabon-character.leaving {
+  pointer-events: none;
+}
+.shabon-character.leaving img {
+  animation: character-shrink 320ms ease-in both;
+}
+@keyframes character-shrink {
+  to {
+    scale: 0;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shabon-character.leaving img {
+    animation: fade 140ms ease-out both;
+  }
 }
 
 .bubble.popping .film {
@@ -242,6 +284,7 @@ body {
 }
 
 #field.paused .film,
-#field.paused .pop-glint {
+#field.paused .pop-glint,
+#field.paused .shabon-character.leaving img {
   animation-play-state: paused;
 }
