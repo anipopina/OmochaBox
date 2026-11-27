@@ -1,4 +1,3 @@
-import '../shared/home-button';
 import '../shared/play-media';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';

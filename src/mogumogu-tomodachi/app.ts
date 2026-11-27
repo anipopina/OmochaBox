@@ -27,7 +27,6 @@ const buttons = [
 ];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let bodyArtwork = document.querySelector<HTMLImageElement>('.body-art')!;
-const message = document.querySelector<HTMLSpanElement>('.friend-message')!;
 const bodyLoads = new Map<number, Promise<HTMLImageElement>>();
 let shownCharacter = -1;
 let requestedCharacter = -1;
@@ -68,7 +67,8 @@ function showBody(index: number, image: HTMLImageElement) {
     'aria-label',
     `${friendNames[friends[index]!]}に ふれる`,
   );
-  message.textContent = '';
+  character.removeAttribute('aria-disabled');
+  status.textContent = 'たべものを どうぞ';
   render();
   if (arriving) sounds.play('arrival');
 }
@@ -80,7 +80,8 @@ function prepareCharacter() {
   character.dataset.artState = artState;
   character.dataset.ready = 'false';
   character.setAttribute('aria-label', 'おともだちを よんでいるよ');
-  message.textContent = 'おともだちを よんでいるよ';
+  character.setAttribute('aria-disabled', 'true');
+  status.textContent = 'おともだちを よんでいるよ';
   void loadBody(target).then(
     (image) => {
       if (requestedCharacter === target && friend.character === target)
@@ -100,9 +101,9 @@ function prepareCharacter() {
         artState = 'error';
         character.dataset.artState = artState;
         character.setAttribute('aria-label', 'もういちど おともだちを よぶ');
-        message.textContent = 'もういちど あう';
+        character.removeAttribute('aria-disabled');
         status.textContent =
-          'おともだちを よべなかったよ。もういちど あう を おしてね';
+          'おともだちを よべなかったよ。もういちど よぶ ボタンを おしてね';
       }
     },
   );
@@ -174,7 +175,11 @@ function render() {
     }
     if (friend.phase === 'chewing') sounds.play('chew');
     if (friend.phase === 'swallowing') sounds.play('gulp');
-    if (friend.phase === 'idle' && friend.available.size === 3)
+    if (
+      artState === 'ready' &&
+      friend.phase === 'idle' &&
+      friend.available.size === 3
+    )
       status.textContent = 'たべものを どうぞ';
     if (friend.phase === 'offering') {
       flying.src = assets[friend.food];
@@ -287,8 +292,10 @@ window.addEventListener('pagehide', () => {
 });
 window.addEventListener('pageshow', reset);
 document.addEventListener('visibilitychange', () => {
+  character.toggleAttribute('data-paused', document.hidden);
   if (document.hidden) reset();
 });
+character.toggleAttribute('data-paused', document.hidden);
 window.addEventListener('resize', reset);
 reduced.addEventListener('change', reset);
 render();

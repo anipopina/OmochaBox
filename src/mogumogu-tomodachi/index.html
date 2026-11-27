@@ -66,9 +66,89 @@
         id="friend"
         data-phase="idle"
         data-art-state="loading"
-        aria-label="おともだちに ふれる"
+        aria-label="おともだちを よんでいるよ"
+        aria-disabled="true"
       >
-        <span class="friend-message">おともだちを よんでいるよ</span>
+        <svg class="friend-wait" viewBox="0 0 160 160" aria-hidden="true">
+          <circle cx="80" cy="80" r="72" fill="#fff5d4" />
+          <g class="hourglass">
+            <path
+              d="M49 31h62v14c0 19-12 27-25 35 13 8 25 16 25 35v14H49v-14c0-19 12-27 25-35-13-8-25-16-25-35Z"
+              fill="#fffdf2"
+              stroke="#713813"
+              stroke-width="5"
+            />
+            <path
+              class="sand-top"
+              d="M56 53h48c-4 9-13 16-24 23-11-7-20-14-24-23Z"
+              fill="#ed8d18"
+            />
+            <path
+              class="sand-fall"
+              d="M80 79v34"
+              stroke="#ed8d18"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-dasharray="3 8"
+            />
+            <path
+              class="sand-bottom"
+              d="M55 122c4-8 14-16 25-21 11 5 21 13 25 21Z"
+              fill="#ed8d18"
+            />
+            <path
+              d="M43 32h74M43 128h74"
+              stroke="#713813"
+              stroke-width="15"
+              stroke-linecap="round"
+            />
+            <path
+              d="M43 30h74M43 126h74"
+              stroke="#ffbd4c"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+          </g>
+        </svg>
+        <svg class="friend-retry" viewBox="0 0 160 160" aria-hidden="true">
+          <g class="retry-target">
+            <circle
+              cx="72"
+              cy="70"
+              r="56"
+              fill="#00786c"
+              stroke="#124c48"
+              stroke-width="5"
+            />
+            <circle cx="72" cy="66" r="46" fill="#38e1aa" />
+            <path
+              d="M92 49a25 25 0 1 0 4 30m-3-43 1 16-16-1"
+              fill="none"
+              stroke="#124c48"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+          <circle
+            class="retry-ripple"
+            cx="104"
+            cy="91"
+            r="14"
+            fill="none"
+            stroke="#124c48"
+            stroke-width="4"
+          />
+          <g class="retry-hand" transform="translate(80 78) scale(.62)">
+            <path
+              d="M35 104L18 73Q11 59 21 57Q28 54 39 69L29 26Q26 12 36 12Q43 12 46 24L53 50Q56 40 64 46Q70 38 78 48Q87 42 92 58L96 79Q98 94 80 110Z"
+              fill="#fffdf2"
+              stroke="#124c48"
+              stroke-width="6"
+              stroke-linejoin="round"
+            />
+          </g>
+        </svg>
         <span class="friend-art">
           <img class="body-art" alt="" draggable="false" />
           <svg class="face" viewBox="0 0 500 500" aria-hidden="true">

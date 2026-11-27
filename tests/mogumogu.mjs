@@ -796,17 +796,41 @@ try {
     await delay(200);
     assert.equal(
       await evaluate(
+        `getComputedStyle(document.querySelector('.friend-wait')).visibility`,
+      ),
+      'hidden',
+      'Short waits do not show the hourglass',
+    );
+    assert.equal(
+      await evaluate(
         `getComputedStyle(document.querySelector('.friend-art')).visibility`,
       ),
       'hidden',
     );
     await choose('strawberry');
     assert.equal(await phase(), 'idle');
-    await shot(`mogu-loading-entry-${round}`);
+    if (round === 1) {
+      await waitFor(
+        `getComputedStyle(document.querySelector('.friend-wait')).visibility==='visible'`,
+      );
+      assert.equal(
+        await evaluate(
+          `document.querySelector('#friend').getAttribute('aria-disabled')`,
+        ),
+        'true',
+      );
+      await shot('mogu-loading-entry');
+    }
     imagePolicy = 'normal';
     releaseImages.splice(0).forEach((release) => release());
     await waitFor(
       `document.querySelector('#friend')?.dataset.artState==='ready'`,
+    );
+    assert.equal(
+      await evaluate(
+        `getComputedStyle(document.querySelector('.friend-wait')).display`,
+      ),
+      'none',
     );
     assert.deepEqual(await evaluate('window.syncFailures'), []);
     await evaluate(`document.querySelector('#back').click()`);
@@ -839,6 +863,9 @@ try {
       `document.querySelector('#friend').getAttribute('aria-label')`,
     ),
     'くまに ふれる',
+  );
+  await waitFor(
+    `getComputedStyle(document.querySelector('.friend-wait')).visibility==='visible'`,
   );
   await shot('mogu-delayed-handover');
   await evaluate('window.releaseBodyDecode()');
@@ -879,6 +906,18 @@ try {
       `getComputedStyle(document.querySelector('.friend-art')).visibility`,
     ),
     'hidden',
+  );
+  assert.equal(
+    await evaluate(
+      `document.querySelector('#friend').hasAttribute('aria-disabled')`,
+    ),
+    false,
+  );
+  assert.notEqual(
+    await evaluate(
+      `getComputedStyle(document.querySelector('.friend-retry')).display`,
+    ),
+    'none',
   );
   await shot('mogu-image-retry');
   imagePolicy = 'normal';

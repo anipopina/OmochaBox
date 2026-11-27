@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
-    <meta name="theme-color" content="#3fb4ff" />
+    <meta name="theme-color" content="#bd8d60" />
     <title>おうちバラバラ｜おもちゃボックス</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
@@ -42,10 +42,17 @@
     <main id="scene">
       <canvas
         id="field"
+        inert
         tabindex="0"
         role="button"
         aria-label="ショベルカーで おうちを こわす。エンターキーや スペースキーでも うごくよ"
       ></canvas>
+      <p id="loading" role="status">
+        <span class="loading-stones" aria-hidden="true"
+          ><i></i><i></i><i></i
+        ></span>
+        じゅんびちゅう
+      </p>
       <p id="fallback" hidden>
         <span aria-hidden="true">🚜🏠</span>
         このきかいでは あそべないよ

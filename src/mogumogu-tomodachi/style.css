@@ -339,15 +339,133 @@ a:focus-visible {
 #friend:not([data-art-state='ready']) .friend-art {
   visibility: hidden;
 }
-.friend-message {
-  display: block;
-  font:
-    700 clamp(18px, 4vw, 28px) system-ui,
-    sans-serif;
-  color: #633e34;
-}
-#friend[data-art-state='ready'] .friend-message {
+.friend-wait,
+.friend-retry {
   display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+#friend:not([data-art-state='ready']) {
+  width: clamp(120px, 44vmin, 180px);
+  border-radius: 50%;
+}
+#friend[data-art-state='loading'] {
+  cursor: default;
+}
+#friend[data-art-state='loading'] .friend-wait {
+  display: block;
+  visibility: hidden;
+  animation: show-wait 1ms 450ms step-end forwards;
+}
+#friend[data-art-state='error'] .friend-retry {
+  display: block;
+}
+#friend[data-art-state='error']:active .friend-retry {
+  scale: 0.94;
+}
+@keyframes show-wait {
+  to {
+    visibility: visible;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hourglass {
+    transform-origin: 50% 50%;
+    animation: turn-hourglass 2.2s 450ms ease-in-out infinite;
+  }
+  .sand-top,
+  .sand-bottom {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: sand-drain 2.2s 450ms linear infinite;
+  }
+  .sand-bottom {
+    animation-name: sand-fill;
+  }
+  .sand-fall {
+    animation: sand-flow 400ms 450ms linear infinite;
+  }
+  .retry-target {
+    transform-origin: 45% 44%;
+    animation: retry-press 1.65s ease-in-out infinite;
+  }
+  .retry-hand {
+    animation: retry-point 1.65s ease-in-out infinite;
+  }
+  .retry-ripple {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: retry-ripple 1.65s ease-out infinite;
+  }
+  #friend[data-paused] :is(.friend-wait, .friend-wait *, .friend-retry *) {
+    animation-play-state: paused;
+  }
+}
+@keyframes turn-hourglass {
+  0%,
+  74% {
+    rotate: 0deg;
+  }
+  100% {
+    rotate: 180deg;
+  }
+}
+@keyframes sand-drain {
+  from {
+    scale: 1;
+  }
+  74%,
+  to {
+    scale: 1 0.12;
+  }
+}
+@keyframes sand-fill {
+  from {
+    scale: 1 0.12;
+  }
+  74%,
+  to {
+    scale: 1;
+  }
+}
+@keyframes sand-flow {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+@keyframes retry-point {
+  0%,
+  100% {
+    translate: 8px 8px;
+  }
+  38%,
+  52% {
+    translate: 0 0;
+  }
+}
+@keyframes retry-press {
+  38%,
+  52% {
+    scale: 0.94;
+  }
+}
+@keyframes retry-ripple {
+  0%,
+  35% {
+    opacity: 0;
+    scale: 0.6;
+  }
+  43% {
+    opacity: 1;
+  }
+  78%,
+  100% {
+    opacity: 0;
+    scale: 1.7;
+  }
 }
 
 .bear-nose {
