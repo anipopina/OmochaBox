@@ -1,3 +1,5 @@
+@import '../shared/play-font.css';
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -12,7 +14,6 @@ body {
   background: #ffe8b8;
 }
 body {
-  font-family: system-ui, sans-serif;
   user-select: none;
   -webkit-user-select: none;
 }

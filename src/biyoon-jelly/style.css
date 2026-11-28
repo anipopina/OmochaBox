@@ -1,3 +1,5 @@
+@import '../shared/play-font.css';
+
 * {
   box-sizing: border-box;
 }
@@ -9,7 +11,6 @@ body {
   overflow: clip;
 }
 body {
-  font-family: system-ui, sans-serif;
   color: #56332a;
   background: #ffc94e;
 }

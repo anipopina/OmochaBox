@@ -1,3 +1,5 @@
+@import '../shared/play-font.css';
+
 /* Clip decorative overflow without creating programmatically scrollable containers. */
 * {
   box-sizing: border-box;
@@ -10,7 +12,6 @@ body {
   overflow: clip;
 }
 body {
-  font-family: system-ui, sans-serif;
   background: #a1e6f3;
   color: #163b56;
 }

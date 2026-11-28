@@ -1,5 +1,6 @@
+@import '../shared/play-font.css';
+
 :root {
-  font-family: 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
   color: #17334b;
   background: #f4fcff;
   font-synthesis: weight;
@@ -138,7 +139,7 @@ button:focus-visible {
   flex: none;
   color: #17618c;
   font-size: clamp(14px, 3.7vw, 20px);
-  font-weight: 900;
+  font-weight: 700;
 }
 .sr-only {
   position: absolute;

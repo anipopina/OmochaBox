@@ -1,6 +1,7 @@
+@import '../shared/play-font.css';
+
 :root {
   --window-surroundings: 325px;
-  font-family: 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
   color: #16475c;
   background: #ffec91;
   font-synthesis: none;
@@ -62,7 +63,7 @@ button {
   background: #fff;
   color: #16475c;
   font: inherit;
-  font-weight: 800;
+  font-weight: 700;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -96,7 +97,7 @@ main {
 }
 #hint {
   display: table;
-  font-weight: 800;
+  font-weight: 700;
   font-size: clamp(14px, 2vw, 20px);
   margin: 16px auto 20px;
   padding: 9px 18px;

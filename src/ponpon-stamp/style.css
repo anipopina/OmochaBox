@@ -1,7 +1,6 @@
+@import '../shared/play-font.css';
+
 :root {
-  font-family:
-    'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Yu Gothic', Meiryo,
-    sans-serif;
   color: #172339;
   background: #fff9eb;
   font-synthesis: weight;
@@ -23,7 +22,7 @@ button {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   font: inherit;
-  font-weight: 900;
+  font-weight: 700;
   color: inherit;
   border: 3px solid #172339;
   background: white;
@@ -208,7 +207,7 @@ aside button {
   box-shadow: 0 5px 0 #17334b40;
   text-align: center;
   font-size: clamp(20px, 3vw, 30px);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.5;
   pointer-events: none;
 }

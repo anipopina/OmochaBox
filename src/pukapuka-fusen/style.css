@@ -1,5 +1,6 @@
+@import '../shared/play-font.css';
+
 :root {
-  font-family: 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
   color: #10194c;
   background: #b4edff;
   font-synthesis: weight;

@@ -8,6 +8,7 @@ const mime = {
   '.css': 'text/css',
   '.webp': 'image/webp',
   '.mp3': 'audio/mpeg',
+  '.woff2': 'font/woff2',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.ico': 'image/vnd.microsoft.icon',

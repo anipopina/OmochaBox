@@ -1,3 +1,5 @@
+@import '../shared/play-font.css';
+
 * {
   box-sizing: border-box;
 }
@@ -10,7 +12,6 @@ body {
 }
 body {
   background: #bce6d9;
-  font-family: system-ui, sans-serif;
   color: #673715;
 }
 #scene {

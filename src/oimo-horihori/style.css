@@ -1,3 +1,5 @@
+@import '../shared/play-font.css';
+
 @import '../shared/home-button.css';
 * {
   box-sizing: border-box;
@@ -13,7 +15,6 @@ body {
 }
 body {
   background: #b77a43;
-  font-family: system-ui, sans-serif;
   user-select: none;
 }
 #scene {
